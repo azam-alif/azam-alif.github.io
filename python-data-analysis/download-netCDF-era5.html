@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>netCDF file</title>
+</head>
+<body>
+    <header>
+        <h1>Introduction and Download of netCDF file</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
+    <main>
+	    <p> netCDF is quite unfamiliar file type among the newbies. The first question they ask about netCDF is, why don't we use csv?</p>
+	    <p> Ok, in CSV file we have a two dimensional dataset. But sometime we need more. Let's think about temperature. If I tell you "300" you can ask a lot of question from that. Where, when something like that. Again, what is the unit of this 300. To answer these necessary questions, scientists made a file type where you will not get just the data, but their attributes, units everything will be added inside that file also. Which is called "netCDF". </p>
+	    <p> The full form of netCDF is Network Common Data Form. We dont need that, we just need how to use this. Firstly, we need a netCDF file. And we can get this from various of sources. The source I am using here is era5. A very common site for climate data. Go to this <a href ="https://cds.climate.copernicus.eu" target="_blank">link</a>, then login/register. So, when you are logged in, click on "Datasets". In the left, you will see a menu named "product type", there select "Reanalysis". The first link you will get is named like "ERA5 hourly data on pressure levels from 1940 to present", click that. </p>
+	    <p> Now, you are in the overview option, where you will get a lot of informations about the data. You can read if you want. I am going straight to Downloading the data. Right of "overview" you will see "Download" option. Where you can actually see how much rich a netCDF data can be. In the product type option, you will see "Reanalysis" already. Next, In the variable section, select "Temperature". In the Year, select "2021 2022 2023", for Month, Day and Time select "December", "01" and "06:00" respectively. Select "Pressure Level" as "1 hPa". In the Graphical Area section, select "Sub-region extraction", then put these values West: 88.0, East: 92.5, North: 26.5, South: 20.5. Next select "Data Format" "netCDF4". Select download format "Unarchived". If "terms of use" option is selected you will see "submit form" button is ready to click. After clicking, You will be taken to "Your requests" page and see one request pending. Don't do anything, just wait. After some seconds you will see the download option, download that file. <b> Congratulations </b> you just downloaded successfully a netCDF file containing data about Bangladesh's temperature of 2021, 22 and 23 Years, collected at 06:00 am of 1st December each year. </p>
+
+    </main>
+</body>
+</html>
