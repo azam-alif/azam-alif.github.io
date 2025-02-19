@@ -1,0 +1,74 @@
+<!DOCTYPE html
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>github-cli</title>
+</head>
+<body>
+    <header>
+        <h1>How to use github in the terminal (github-cli)</h1>
+        <nav>
+            <a href="../index.html">Home</a>
+            <a href="../topics.html">Topics</a>
+            <a href="../contact.html">Contacts</a>
+        </nav>
+    </header>
+    <main>
+        <p>Using github in website is fine,but in the terminal it's cool. In this blog I going to tell you how you can use github in the terminal.</p>
+        <p>First, you need to install git and github-cli in your pc. So: <br />
+        <ul>
+            <li>for arch:<br/><code>sudo pacman -S git github-cli</code></li>
+        </ul>
+        Once those are installed, it time to configuire git global informations. Now copy paste bellow 2 commands in the terminal replacing "name" and "email" to your actual github account name and email inside the quotation mark.  
+        <ol>
+            <li><code>git config --global user.name "name"</code></li>
+            <li><code>git config --global user.email "email"</code></li>
+        </ol>
+        To check if name and email is configuired correcly, type:
+        <ul>
+            <li><code>git config --global --list</code></li>
+        </ul>
+        </p>
+        <p>Once configuration file is done, move to the directory, that you want to upload as github repository. <br />
+        There type: <code>git init</code> to initialize git in that folder. Now, type: <br />
+        <ul>
+            <li><code>gh auth login</code></li>
+        </ul>
+        Now select <code>GitHub.com  >>  HTTPS  >>  Login with a web browser</code>. If you have done everything correctly, you should see something like this.  
+        </p>
+        <img src="github-cli-images/github-cli.jpeg" alt="GitHub-cli" width="800" style="display: block; margin: 0 auto;">
+        <p>Copy or remember that 8 digit code, then press enter to continue in a browser session. Do accordingly as the GitHub website says to connect to the github.com. Once everything is done, you should see something like this: 
+  <img src="github-cli-images/github-cli-confirmation.jpeg" alt="GitHub-cli-confirmation" width="800" style="display: block; margin: 0 auto;">
+  If you see you github id name in the logged in as section, you are all set. To verify that, type:&emsp; <code>gh auth status</code>
+        </p>
+        <p>Now you are logged in inside the termianl to your github web. Move to the directory which you want to upload to the github. There at first you need to initialize git.<br/>
+        <ul>
+            <li><code>git init</code></li>
+        </ul>
+        This will initialize git in your local repository. Now, we first need to create a repository in our github account. Copy this command and replace repo_name with the directorty name you are working on or the name you want to create a new repository. 
+        <ul>
+            <li><code>gh repo create repo_name --public --source=.</code></li>
+        </ul>
+        This will create a repository named repo_name in your github account. You can check that by viewing your account in the browser, or you can trust me. <br />
+        Now we need to add this repository in our remote repository section of git local. For that, 
+        <ul>
+            <li><code>git remote set-url origin https://github.com/your-github-account/repo_name</code></li>
+        </ul>
+        Now, it's time to push your local repository. Type these four commands accordingly, 
+        <ul>
+            <li>To add all the file:<br/><code>git add .</code></li>
+            <li>To commit the file to local git:<br/><code>git commit -m "first commit"</code></li> 
+            <li>To shift to main branch: <br/><code>git branch -M main</code></li>
+            <li>To push to the main branch: <br/><code>git push -u origin main</code></li>
+        </ul>
+        </p>
+        <p>
+            <b>Congratulations!</b> You have successfully uploaded your code to github web accout usigng just the terminal.  </p>
+        <hr>
+        <footer>
+            <p>Last updated on: <b>February 19, 2025</b></p>
+        </footer>
+    </main>
+</body>
+</html>
