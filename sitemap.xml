@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+
+<url>
+  <loc>https://azam-alif.github.io/</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/index.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/topics.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/contact.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/projects/index.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/quantum-mechanics/index.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/neovim/index.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/python-data-analysis/index.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/random-tech-solutions/index.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/projects/note.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/projects/npp-data-analysis.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/quantum-mechanics/classical-vs-quantum-mechanics.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/neovim/basic_init.lua_configurationl.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/neovim/neovimtutor.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/neovim/how-to-use-vimtutor.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/python-data-analysis/download-netCDF-era5.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/python-data-analysis/npp-data-analysis.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://azam-alif.github.io/random-tech-solutions/how-to-use-github-cli.html</loc>
+  <lastmod>2025-02-19T06:31:33+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+
+
+</urlset>
