@@ -1,0 +1,71 @@
+<!DOCTYPE html
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pendrive use</title>
+</head>
+<body>
+    <header>
+        <h1>How to use any pendrive in linux system. </h1>
+        <nav>
+            <a href="../index.html">Home</a>
+            <a href="../topics.html">Topics</a>
+            <a href="../contact.html">Contacts</a>
+        </nav>
+    </header>
+    <main>
+        <p>Pendrive is a very important data storage device in our day to day life. But we often got in hustle to make things work between our pc and pendrive or usb device. That's why today I am going to show you exactly what you should do to make things work with your pendrive and linux pc. Remember, this process also work for any ssd, hdd, mmc etc external drives.</p>
+        <p>First, type <code><u>lsblk</u></code> to check that your usb device is detected or not. If not detected try inserting again. <br />
+        <code>lsblk</code> command gives us a list of partitions of all the drives avaiable to the pc. Suppose you got a 32GB pendrive. So, you should look for the corresponding device. Your usb device will look something like <code>sdx</code>, where on the place of x, can be a or b or any alphabet. </br>
+        Now, we need to format the disk. This will wipe all the data you have in that pendrive. To format the usb, type:
+        <ul>
+            <li><code>sudo mkfs.ext4 /dev/sdx</code></li>
+        </ul>
+        Now and later, always replace x with your accordingly(eg. sda/sdb). Now we need to create a partition. For that:
+        <ul>
+            <li><code>sudo fdisk /dev/sdx</code></li>
+        </ul>
+        Then, type g and hit enter for GPT partition, then n for new partion, then hit enter for all the defaults. And at last press w to write and exit. </br>
+        Now, <code><u>lsblk</u></code> command will show you a partition under your device(eg. sdx1). To format this partion:
+        <ul>
+            <li><code>sudo mkfs.ext4 /dev/sdx1</code></li>
+        </ul>
+        After formatting, it's time to mount this in a directory. For that, we need to create a directory first. 
+        <ul>
+            <li><code>sudo mkdir -p /mnt/usb</code></li>
+        </ul>
+        Then, to mount:
+        <ul>
+            <li><code>sudo mount /dev/sdx1 /mnt/usb</code></li>
+        </ul>
+        Now, <code><u>lsblk</u></code> will show the mount point(/mnt/usb) right beside your device partion. </br>
+        Congratulations, you have successfully mounted a usb device. Use this as your applications. 
+        </p>
+        Now, if you want to keep this device always mounted, you need to do one more things. Because, shutting down your pc will cause unmount the device. Then you need to mount again(<code>sudo mount /dev/sdx /mnt/usb</code>). So, if you want to keep this device always attached to your pc, not manually do this again and again, then you need to mount this on <code>/etc/fstab</code> file. Type this command in the terminal:
+        <ul>
+            <li><code>sudo blkid /dev/sdx1</code></li>
+        </ul>
+        You will get a string like UUID=xxxx... Copy the hexcode after UUID. We need to put this in <code>/etc/fstab</code> file. So, open that file with this command:
+        <ul>
+            <li><code>sudo vim /etc/fstab</code></li>
+        </ul>
+        Be careful with everything you do in this file, because this is the file that is responsible to boot up your computer. Add this line at the last of the file.
+        <ul>
+            <li><code>UUID=xxxx  /mnt/usb  ext4  defaults 0 2</code></li>
+        </ul>
+        Also, replace xxxx with the full hexcode you got from <code><u>blkid</u></code>.
+        Now, save the file and exit the editor. 
+        To, make the sure that everything is ok, type:
+        <ul>
+            <li><code>sudo mount -a</code></li>
+        </ul>
+        If any error arrives, I suggest you to check the <code>UUID</code> again. If no error, then <b>congratulations</b> you have successfully added a usb device or hard drive permanently to your pc.  
+        </p>
+        <hr>
+        <footer>
+            <p>Last updated on: <b>May 17, 2025</b></p>
+        </footer>
+    </main>
+</body>
+</html>
