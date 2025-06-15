@@ -36,10 +36,10 @@
 
         <p>
         Now, we need to configure the config file for vsftpd to use the ftp server on our accordingly. Type in your termianl:
-        <u><code>vim /etc/vsftpd.conf</code></u> and uncomment(remove # from the starting of each line) these 3 lines:
+        <u><code>sudo vim /etc/vsftpd.conf</code></u> and uncomment(remove # from the starting of each line) these 3 lines:
         <ol>
             <li>write_enable=YES</li>
-            <li>loca_enable=YES</li>
+            <li>local_enable=YES</li>
             <li>chroot_local_user=YES</li>
         </ol>
         And add this line at last: </br>
