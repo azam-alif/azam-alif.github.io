@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DHCP Server Setup</title>
+</head>
+<body>
+  <header>
+    <h1>How To Set Up a DHCP Server</h1>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="../topics.html">Topics</a>
+      <a href="../contact.html">Contact</a>
+    </nav>
+  </header>
+  <main>
+    <p>A DHCP server automatically assigns IP addresses to devices in your network. Follow these steps to set up a DHCP server on Linux.</p>
+   
+
+
+    <h2>1. Install DHCP Server</h2>
+    <ul>
+      <li>Arch Linux:</li>
+    </ul>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo pacman -S dhcp</code></pre>
+
+
+
+    <h2>2. Create a Network Interface File</h2>     
+	<p>First, you need to check your network interface name. Using:</p>
+	<pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>ip addr show</code></pre>
+	<p>You will see something like this: </p>
+	<pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>1. lo: ....
+2. enp2s0: ...</code></pre>
+	<p>Check which interface is showing after "2. ". Here in the example my interface is <code>enp2s0</code>. Remember your interface name. </p>
+    <p>Now create a directory:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkdir -p /etc/systemd/network</code></pre>
+    <p>Edit the network configuration file with the name of your network interface:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo vim /etc/systemd/network/enp2s0.network</code></pre>
+    <p>Example configuration:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>[Match]
+Name=enp2s0
+
+[Network]
+Address=192.168.10.10/24
+</code></pre>
+
+
+
+    <h2>3. Enable and Start systemd-networkd</h2>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo systemctl enable systemd-networkd
+sudo systemctl start systemd-networkd</code></pre>
+    <p>Check your IP address:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>ip addr show</code></pre>
+
+
+
+    <h2>4. Configure DHCP</h2>
+    <p>Edit the DHCP configuration file:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo vim /etc/dhcpd.conf</code></pre>
+    <p>Example configuration:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>subnet 192.168.10.0 netmask 255.255.255.0 {
+  range 192.168.10.100 192.168.10.200;
+  option routers 192.168.10.10;
+  option domain-name-servers 8.8.8.8, 8.8.4.4;
+  default-lease-time 600;
+  max-lease-time 7200;
+}</code></pre>
+	<p>This configuration will make your device ip <code>192.168.10.10</code> in that interface. And provide the connected devices an ip address within the range <code>192.168.10.100</code> to <code>192.168.10.200</code>.
+	<p><h4>Optional: </h4>
+	To make any computer ip address fixed, add those lines in <code>/etc/dhcpd.conf</code> file. 
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>host node1 { 
+  hardware ethernet B0:83:FE:A3:80:18; #MAC address of the client computer network interface
+  fixed-address 192.168.10.160;
+}
+</code></pre>
+
+
+
+    <h2>5. Start the DHCP Service</h2>
+    <p>Start DHCP manually:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo dhcpd -4 -cf /etc/dhcpd.conf enp2s0</code></pre>
+
+<p><b>Congratulations!</b> You have successfully configured a dhcp server on your own. Connect one or two computer to test the server. Best of luck.</p>
+
+    <hr>
+    <footer>
+      <p>Last updated on: <b>August 3, 2025</b></p>
+    </footer>
+  </main>
+</body>
+</html>
+
