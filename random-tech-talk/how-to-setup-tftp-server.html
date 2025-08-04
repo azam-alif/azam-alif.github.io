@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TFTP Server Setup</title>
+</head>
+<body>
+  <header>
+    <h1>How To Set Up a TFTP Server</h1>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="../topics.html">Topics</a>
+      <a href="../contact.html">Contact</a>
+    </nav>
+  </header>
+  <main>
+    <p>A TFTP server allows you to transfer files easily over your network. It is like a machine gun, where you can transfer data very fast when efficiency is not your concern. Follow these steps to set it up on Linux.</p>
+    
+    <h2>1. Install tftp-hpa</h2>
+    <ul>
+      <li>Arch Linux:</li>
+    </ul>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo pacman -S tftp-hpa</code></pre>
+
+    <h2>2. Create the TFTP Directory</h2>
+    <p>Create a directory to store your files:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkdir -p /srv/tftp</code></pre>
+    <p>Then put the files in that folder that you want to share with your tftp server.</p>    
+    
+    <h4>Set Permissions</h2>
+    <p>Change ownership and permissions:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo chown -R nobody:nobody /srv/tftp
+sudo chmod -R 755 /srv/tftp</code></pre>
+
+
+    <h2>3. Configure TFTP</h2>
+    <p>Edit the configuration file:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo vim /etc/conf.d/tftpd</code></pre>
+    <p>Write there</p>	
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>TFTP_USERNAME="tftp"
+TFTP_DIRECTORY="/srv/tftp"
+TFTP_ADDRESS="0.0.0.0:69"
+TFTP_OPTIONS="--secure"
+</code></pre>
+
+
+    <h2>4. Start the TFTP Service</h2>
+    <p>Enable and start TFTP:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo systemctl enable tftpd
+sudo systemctl start tftpd</code></pre>
+
+    <h2>5. Test the TFTP Server</h2>
+    <p>On the client machine, you can test with the ip address of your server. But if you don't have any, then you can try on your own machine.</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>tftp localhost</code></pre>
+    <p>This will open the TFTP CLI. </p>
+    <p><b>Congratulations!</b>You have successfully created and enetered into the tftp server. Type <code>quit</code> to exit from tftp terminal.</p>
+
+    <hr>
+    <footer>
+      <p>Last updated on: <b>August 4, 2025</b></p>
+    </footer>
+  </main>
+</body>
+</html>
+
