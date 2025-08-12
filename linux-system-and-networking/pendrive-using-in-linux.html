@@ -1,71 +1,73 @@
-<!DOCTYPE html
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pendrive use</title>
+    <title>Mount and Use a USB Drive in Linux</title>
 </head>
 <body>
     <header>
-        <h1>How to use any pendrive in linux system. </h1>
+        <h1>Mounting and Using a USB Drive on Linux – Step by Step</h1>
         <nav>
             <a href="../index.html">Home</a>
             <a href="../topics.html">Topics</a>
-            <a href="../contact.html">Contacts</a>
+            <a href="../contact.html">Contact</a>
         </nav>
     </header>
     <main>
-        <p>Pendrive is a very important data storage device in our day to day life. But we often got in hustle to make things work between our pc and pendrive or usb device. That's why today I am going to show you exactly what you should do to make things work with your pendrive and linux pc. Remember, this process also work for any ssd, hdd, mmc etc external drives.</p>
-        <p>First, type <code><u>lsblk</u></code> to check that your usb device is detected or not. If not detected try inserting again. <br />
-        <code>lsblk</code> command gives us a list of partitions of all the drives avaiable to the pc. Suppose you got a 32GB pendrive. So, you should look for the corresponding device. Your usb device will look something like <code>sdx</code>, where on the place of x, can be a or b or any alphabet. </br>
-        Now, we need to format the disk. This will wipe all the data you have in that pendrive. To format the usb, type:
+        <p>If you’re a Linux user, chances are you’ve plugged in a USB drive and wondered, “Now what?”.  
+        Whether it’s a flash drive, SSD, HDD, or MMC card, the process is almost the same.  
+        Below is a clean walkthrough for detecting, formatting, mounting, and even auto-mounting your drive.</p>
+
+        <p><b>Follow these steps to get it working like a pro:</b></p>
+
+        <h2>1. Check if Your System Detects the Device</h2>
+        <p>Plug in the USB and check if it’s recognized:</p>
+        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>lsblk</code></pre>
+        <p>This lists all drives and partitions. Look for something like <code>sdx</code> (where x is a letter).</p>
+
+        <h2>2. Wipe and Format the Drive</h2>
+        <p><b>Warning:</b> This erases everything on it.</p>
+        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkfs.ext4 /dev/sdx</code></pre>
+        <p>Replace <code>x</code> with your drive letter.</p>
+
+        <h2>3. Create a Partition Table</h2>
+        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo fdisk /dev/sdx</code></pre>
         <ul>
-            <li><code>sudo mkfs.ext4 /dev/sdx</code></li>
+            <li>Press <b>g</b> → GPT partition table</li>
+            <li>Press <b>n</b> → New partition</li>
+            <li>Press <b>Enter</b> for all defaults</li>
+            <li>Press <b>w</b> → Save and exit</li>
         </ul>
-        Now and later, always replace x with your accordingly(eg. sda/sdb). Now we need to create a partition. For that:
-        <ul>
-            <li><code>sudo fdisk /dev/sdx</code></li>
-        </ul>
-        Then, type g and hit enter for GPT partition, then n for new partion, then hit enter for all the defaults. And at last press w to write and exit. </br>
-        Now, <code><u>lsblk</u></code> command will show you a partition under your device(eg. sdx1). To format this partion:
-        <ul>
-            <li><code>sudo mkfs.ext4 /dev/sdx1</code></li>
-        </ul>
-        After formatting, it's time to mount this in a directory. For that, we need to create a directory first. 
-        <ul>
-            <li><code>sudo mkdir -p /mnt/usb</code></li>
-        </ul>
-        Then, to mount:
-        <ul>
-            <li><code>sudo mount /dev/sdx1 /mnt/usb</code></li>
-        </ul>
-        Now, <code><u>lsblk</u></code> will show the mount point(/mnt/usb) right beside your device partion. </br>
-        Congratulations, you have successfully mounted a usb device. Use this as your applications. 
-        </p>
-        Now, if you want to keep this device always mounted, you need to do one more things. Because, shutting down your pc will cause unmount the device. Then you need to mount again(<code>sudo mount /dev/sdx /mnt/usb</code>). So, if you want to keep this device always attached to your pc, not manually do this again and again, then you need to mount this on <code>/etc/fstab</code> file. Type this command in the terminal:
-        <ul>
-            <li><code>sudo blkid /dev/sdx1</code></li>
-        </ul>
-        You will get a string like UUID=xxxx... Copy the hexcode after UUID. We need to put this in <code>/etc/fstab</code> file. So, open that file with this command:
-        <ul>
-            <li><code>sudo vim /etc/fstab</code></li>
-        </ul>
-        Be careful with everything you do in this file, because this is the file that is responsible to boot up your computer. Add this line at the last of the file.
-        <ul>
-            <li><code>UUID=xxxx  /mnt/usb  ext4  defaults 0 2</code></li>
-        </ul>
-        Also, replace xxxx with the full hexcode you got from <code><u>blkid</u></code>.
-        Now, save the file and exit the editor. 
-        To, make the sure that everything is ok, type:
-        <ul>
-            <li><code>sudo mount -a</code></li>
-        </ul>
-        If any error arrives, I suggest you to check the <code>UUID</code> again. If no error, then <b>congratulations</b> you have successfully added a usb device or hard drive permanently to your pc.  
-        </p>
+
+        <h2>4. Format the New Partition</h2>
+        <p>After fdisk, you should see something like <code>/dev/sdx1</code>:</p>
+        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkfs.ext4 /dev/sdx1</code></pre>
+
+        <h2>5. Create a Mount Point</h2>
+        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkdir -p /mnt/usb</code></pre>
+
+        <h2>6. Mount the Drive</h2>
+        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mount /dev/sdx1 /mnt/usb</code></pre>
+        <p>Run <code>lsblk</code> to confirm it’s mounted under <code>/mnt/usb</code>.</p>
+
+        <h2>7. Auto-Mount on Boot</h2>
+        <p>Get the UUID of your partition:</p>
+        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo blkid /dev/sdx1</code></pre>
+        <p>Copy the UUID and open <code>/etc/fstab</code>:</p>
+        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo vim /etc/fstab</code></pre>
+        <p>Add this line (replace <code>xxxx</code> with your UUID):</p>
+        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>UUID=xxxx  /mnt/usb  ext4  defaults 0 2</code></pre>
+
+        <h2>8. Test the Setup</h2>
+        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mount -a</code></pre>
+        <p>If no errors appear, the USB will mount automatically on boot.</p>
+
         <hr>
         <footer>
-            <p>Last updated on: <b>May 17, 2025</b></p>
+            <p>Last updated: <b>May 17, 2025</b></p>
         </footer>
     </main>
 </body>
 </html>
+

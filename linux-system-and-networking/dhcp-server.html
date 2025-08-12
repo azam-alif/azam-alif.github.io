@@ -15,9 +15,19 @@
     </nav>
   </header>
   <main>
-    <p>A DHCP server automatically assigns IP addresses to devices in your network. Follow these steps to set up a DHCP server on Linux.</p>
-   
 
+    <h2>What is DHCP?</h2>
+    <p>Dynamic Host Configuration Protocol (DHCP) is a network protocol used to automatically assign IP addresses and other network settings to devices. It eliminates the need for manually configuring IP addresses on each device. DHCP works on a client-server model, where the server provides network details to clients when they join the network. The protocol uses a lease system, where IP addresses are assigned for a limited time and can be reused. It operates over UDP using ports 67 (server) and 68 (client). DHCP greatly simplifies network management, especially in environments with many devices.</p>
+
+    <h2>Why Use DHCP?</h2>
+    <p>DHCP reduces administrative workload by automating IP allocation and avoiding IP conflicts. It allows devices to connect to the network without manual setup, making it ideal for dynamic and frequently changing networks. With DHCP, reconfiguring networks or adding new devices becomes faster. It also ensures that IP addresses are reused efficiently. Additionally, DHCP can distribute other settings like DNS and gateway addresses automatically. This leads to a more reliable and scalable network setup.</p>
+
+    <h2>Where to Use DHCP?</h2>
+    <p>DHCP is used in home networks, corporate offices, data centers, and public Wi-Fi hotspots. It is essential in large organizations where hundreds or thousands of devices connect and disconnect regularly. DHCP is also useful in lab environments where network configurations change frequently. Internet Service Providers (ISPs) use DHCP to assign IP addresses to customer routers. In cloud environments, DHCP helps in managing virtual machine networking. Essentially, DHCP is applicable anywhere IP address management needs to be efficient and automatic.</p>
+
+    <hr>
+
+    <p>A DHCP server automatically assigns IP addresses to devices in your network. Follow these steps to set up a DHCP server on Linux.</p>
 
     <h2>1. Install DHCP Server</h2>
     <ul>
@@ -25,15 +35,13 @@
     </ul>
     <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo pacman -S dhcp</code></pre>
 
-
-
     <h2>2. Create a Network Interface File</h2>     
-	<p>First, you need to check your network interface name. Using:</p>
-	<pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>ip addr show</code></pre>
-	<p>You will see something like this: </p>
-	<pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>1. lo: ....
+    <p>First, you need to check your network interface name. Using:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>ip addr show</code></pre>
+    <p>You will see something like this: </p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>1. lo: ....
 2. enp2s0: ...</code></pre>
-	<p>Check which interface is showing after "2. ". Here in the example my interface is <code>enp2s0</code>. Remember your interface name. </p>
+    <p>Check which interface is showing after "2. ". Here in the example my interface is <code>enp2s0</code>. Remember your interface name. </p>
     <p>Now create a directory:</p>
     <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkdir -p /etc/systemd/network</code></pre>
     <p>Edit the network configuration file with the name of your network interface:</p>
@@ -46,15 +54,11 @@ Name=enp2s0
 Address=192.168.10.10/24
 </code></pre>
 
-
-
     <h2>3. Enable and Start systemd-networkd</h2>
     <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo systemctl enable systemd-networkd
 sudo systemctl start systemd-networkd</code></pre>
     <p>Check your IP address:</p>
     <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>ip addr show</code></pre>
-
-
 
     <h2>4. Configure DHCP</h2>
     <p>Edit the DHCP configuration file:</p>
@@ -67,26 +71,24 @@ sudo systemctl start systemd-networkd</code></pre>
   default-lease-time 600;
   max-lease-time 7200;
 }</code></pre>
-	<p>This configuration will make your device ip <code>192.168.10.10</code> in that interface. And provide the connected devices an ip address within the range <code>192.168.10.100</code> to <code>192.168.10.200</code>.
-	<p><h4>Optional: </h4>
-	To make any computer ip address fixed, add those lines in <code>/etc/dhcpd.conf</code> file. 
+    <p>This configuration will make your device IP <code>192.168.10.10</code> in that interface. And provide the connected devices an IP address within the range <code>192.168.10.100</code> to <code>192.168.10.200</code>.</p>
+    <h4>Optional:</h4>
+    <p>To make any computer IP address fixed, add these lines in <code>/etc/dhcpd.conf</code> file:</p>
     <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>host node1 { 
   hardware ethernet B0:83:FE:A3:80:18; #MAC address of the client computer network interface
   fixed-address 192.168.10.160;
 }
 </code></pre>
 
-
-
     <h2>5. Start the DHCP Service</h2>
     <p>Start DHCP manually:</p>
     <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo dhcpd -4 -cf /etc/dhcpd.conf enp2s0</code></pre>
 
-<p><b>Congratulations!</b> You have successfully configured a dhcp server on your own. Connect one or two computer to test the server. Best of luck.</p>
+    <p><b>Congratulations!</b> You have successfully configured a DHCP server on your own. Connect one or two computers to test the server. Best of luck.</p>
 
     <hr>
     <footer>
-      <p>Last updated on: <b>August 3, 2025</b></p>
+      <p>Last updated on: <b>August 12, 2025</b></p>
     </footer>
   </main>
 </body>
