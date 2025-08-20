@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arch PXE Server Setup</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+  <header>
+    <h1>Setting Up an Arch PXE Server - a straightforward way</h1>
+    <nav>
+      <a href="../index.html">Home</a>&nbsp;
+      <a href="../topics.html">Blog Topics</a>&nbsp;
+      <a href="../contact.html">Contact</a>
+    </nav>
+  </header>
+  <main>
+
+    <h2>What is a PXE Server?</h2>
+    <p>A Preboot Execution Environment (PXE) server allows a client machine to boot a complete operating system from the network, without needing local storage like a hard drive or SSD. This is great for diskless workstations, automated installations, or running a live environment across many machines from a central server.</p>
+
+    <h2>Why Use an Arch PXE Server?</h2>
+    <p>Setting up a PXE server with Arch Linux allows for a lightweight, flexible, and powerful network boot environment. It's especially useful for managing a large number of systems, performing network-based installations, and ensuring all clients are booting from the same, up-to-date kernel.</p>
+
+    <h2>Where to Use an Arch PXE Server?</h2>
+    <p>PXE servers are common in IT labs, data centers for system provisioning, and home labs for testing different operating systems without a USB drive. An Arch PXE server is a robust solution for environments where you need a flexible and highly customizable network boot setup.</p>
+
+    <hr>
+
+    <p>Follow these steps to set up a PXE server on Arch Linux.</p>
+
+    <h2>1. Install Required Packages</h2>
+    <ul>
+      <li>Arch Linux:</li>
+    </ul>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo pacman -S dhcp nfs-utils syslinux tftp-hpa</code></pre>
+    <p>These packages provide the necessary services: DHCP for IP address assignment, NFS for serving files, TFTP for initial boot files, and Syslinux for the bootloader.</p>
+
+    <h2>2. Configure DHCP</h2>
+    <p>Edit the dhcpd configuration file to direct clients to the PXE boot server:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo vim /etc/dhcpd.conf</code></pre>
+    <p>Add the following lines to your configuration, replacing the IP address with your server's IP:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>filename "pxelinux.0";
+next-server 192.168.144.13;</code></pre>
+    <p>Then, enable and start the DHCP service:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo systemctl enable dhcpd
+sudo systemctl start dhcpd</code></pre>
+
+    <h2>3. Set Up NFS Server</h2>
+    <p>The NFS server will provide the root filesystem to the client machines. Create the directory and export it:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkdir -p /srv/nfs/rootfs
+sudo chown -R nobody:nobody /srv/nfs/rootfs</code></pre>
+    <p>Edit the exports file to specify what to share with the clients. Add the following line, replacing the IP range with your network's subnet:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo vim /etc/exports</code></pre>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>/srv/nfs/rootfs 192.168.144.0/24(ro,no_subtree_check)</code></pre>
+    <p>Finally, enable and start the NFS service:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo exportfs -rav
+sudo systemctl enable nfs-server
+sudo systemctl start nfs-server</code></pre>
+
+    <h2>4. Set Up TFTP Server</h2>
+    <p>First, create the TFTP directory and copy the bootloader file from Syslinux:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkdir -p /srv/tftp/pxelinux.cfg
+sudo cp /usr/lib/syslinux/bios/pxelinux.0 /srv/tftp/
+sudo cp /usr/lib/syslinux/bios/ldlinux.c32 /srv/tftp/
+sudo cp /usr/lib/syslinux/bios/libutil.c32 /srv/tftp/
+sudo cp /usr/lib/syslinux/bios/libmenu.c32 /srv/tftp/
+sudo cp /usr/lib/syslinux/bios/menu.c32 /srv/tftp/</code></pre>
+    <p>Next, copy the Arch Linux kernel and initramfs files to the TFTP directory:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo cp /srv/nfs/rootfs/boot/vmlinuz-linux /srv/tftp/vmlinuz-linux
+sudo cp /srv/nfs/rootfs/boot/initramfs-linux.img /srv/tftp/initramfs-linux.img</code></pre>
+    <p>Enable and start the TFTP service:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo systemctl enable tftpd
+sudo systemctl start tftpd</code></pre>
+
+    <h2>5. Configure PXE Boot Menu</h2>
+    <p>Create the main boot menu configuration file. This file tells Syslinux what options to display to the user:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo vim /srv/tftp/pxelinux.cfg/default</code></pre>
+    <p>Add the following content to the file. This configuration will boot an Arch Linux instance from the NFS share. Make sure to replace the IP address with your server's IP.</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>DEFAULT linux
+
+LABEL linux
+  KERNEL vmlinuz-linux
+  APPEND initrd=initramfs-linux.img root=/dev/nfs rw nfsroot=192.168.144.1:/srv/nfs/rootfs ip=dhcp</code></pre>
+
+    <hr>
+    <footer>
+      <p>Posted on: <b>August 20, 2025</b></p>
+    </footer>
+  </main>
+</body>
+</html>
