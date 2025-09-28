@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate Arch Initramfs with NFS Support</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+  <header>
+    <h1>Generating an Initial Ramdisk with NFSv4 Support in Arch Linux</h1>
+    <nav>
+      <a href="../index.html">Home</a>&nbsp;
+      <a href="../topics.html">Blog Topics</a>&nbsp;
+      <a href="../contact.html">Contact</a>
+    </nav>
+  </header>
+  <main>
+
+<p>When I first tried to boot my diskless Arch Linux node over PXE, I kept hitting the frustrating error:</p>
+<pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>ERROR: device '/dev/nfs' not found.</code></pre>
+<p>At first, I thought my NFS server was the problem, but the real issue was the initramfs. By default, initramfs generated with <code>mkinitcpio</code> only supports the legacy <code>nfsmount</code> helper. Modern systems (especially with NFSv4) rely on <code>mount.nfs4</code>. Since the initramfs didn’t know how to handle NFSv4, it failed to detect <code>/dev/nfs</code> and halted the boot process.</p>
+<p>This means the problem isn’t with the server—it’s with the initramfs itself. To successfully mount a root filesystem over the network using NFSv4, we need to extend Arch’s initramfs with proper NFSv4 support. In this post, I’ll show you how to generate a custom initramfs that works seamlessly for diskless PXE clients.</p>
+
+    <hr>
+
+    <h2>1. Create a Btrfs Disk Image</h2>
+    <p>First, create a loopback image that will act as the root filesystem and format it with Btrfs:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo truncate -s 5G /srv/arch.img
+sudo mkfs.btrfs /srv/arch.img
+export root=/srv/arch
+sudo mount --mkdir -o loop,compress=lzo /srv/arch.img "$root"</code></pre>
+
+    <h2>2. Bootstrap a Minimal Arch System</h2>
+    <p>Install the base system along with Linux kernel, firmware, and NFS tools:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo pacstrap -K "$root" base linux linux-firmware mkinitcpio-nfs-utils nfs-utils</code></pre>
+
+    <h2>3. Configure mkinitcpio</h2>
+    <p>Edit <code>$root/etc/mkinitcpio.conf</code> and make these changes:</p>
+    <ul>
+      <li>Add <code>nfsv4</code> to <b>MODULES</b>.</li>
+      <li>Add <code>netnfs4</code> to <b>HOOKS</b>.</li>
+      <li>Add <code>/usr/bin/mount.nfs4</code> to <b>BINARIES</b>.</li>
+    </ul>
+
+    <h2>4. Patch the Net Hook for NFSv4</h2>
+    <p>Enter the chroot and create a new hook for NFSv4 support:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo arch-chroot "$root"
+sed 's/nfsmount/mount.nfs4/' /usr/lib/initcpio/hooks/net > /usr/lib/initcpio/hooks/netnfs4
+cp /usr/lib/initcpio/install/net /usr/lib/initcpio/install/netnfs4</code></pre>
+    
+    <h2>5. Generate Initramfs</h2>
+    <p>Finally, rebuild the initramfs with the new hook being inside chroot:</p>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>mkinitcpio -p linux</code></pre>
+    <p>This produces an <code>initramfs-linux.img</code> at <code>$root/boot/</code> directory that supports mounting a root filesystem over NFSv4 during PXE boot.</p>
+
+    <h2>References</h2>
+    <ul>
+      <li><a href="https://wiki.archlinux.org/title/Diskless_system" target="_blank">Diskless System</a></li>
+      <li><a href="https://wiki.archlinux.org/title/Mkinitcpio" target="_blank">mkinitcpio</a></li>
+      <li><a href="https://wiki.archlinux.org/title/Pacstrap" target="_blank">Pacstrap</a></li>
+    </ul>
+
+    <hr>
+    <footer>
+      <p>Posted on: <b>September 29, 2025</b></p>
+    </footer>
+  </main>
+</body>
+</html>
+
