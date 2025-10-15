@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Slow Animated Wave</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  <div id="wave-plot" style="width:800px;height:400px;"></div>
+
+  <script>
+    const v = 1.0;
+    const x = [];
+    const N = 500;
+    for(let i=0;i<N;i++){ x.push(10*i/(N-1)); }
+
+    function f(xi){ return Math.sin(2*Math.PI*xi); }
+    function g(xi){ return 0.5*Math.cos(2*Math.PI*xi); }
+
+    function u(t){
+      return x.map(xi => f(xi - v*t) + g(xi + v*t));
+    }
+
+    const trace = {
+      x: x,
+      y: u(0),
+      mode: 'lines',
+      line: {color:'blue'}
+    };
+
+    Plotly.newPlot('wave-plot', [trace], {
+      xaxis:{title:'x'},
+      yaxis:{title:'u(x,t)', range: [-1.6, 1.6]}
+    });
+
+    let t = 0;
+    const dt = 0.01;        // smaller time step
+    const interval = 50;    // ms between frames
+
+    function animate(){
+      t += dt;
+      Plotly.update('wave-plot', {y:[u(t)]}, {}, [0]);
+      setTimeout(animate, interval);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
+
