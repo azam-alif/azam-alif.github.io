@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Mechanics Axioms 1–5</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+
+  <!-- KaTeX JS -->
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" 
+          onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+<style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; max-width: 900px; margin: auto; }
+    div.equation { border:1px solid #ccc; padding:6px 10px; background:#f9f9f9; font-family:monospace; font-size:1.1em; overflow-x:auto; white-space:nowrap; margin:10px 0; }
+    hr { margin: 30px 0; }
+    footer { margin-top: 40px; font-size: 0.9em; color: #555; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>The Fundamental Axioms of Quantum Mechanics</h1>
+    <nav>
+      <a href="../index.html">Home</a>&nbsp;
+      <a href="../topics.html">Blog Topics</a>&nbsp;
+      <a href="../contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <p>
+      Quantum mechanics is built on a few simple yet profound <b>axioms</b>. 
+      These axioms describe how quantum systems behave and how we connect mathematics to physical measurements.
+    </p>
+    <hr>
+
+    <h2>Axiom 1: The State Axiom</h2>
+    <p>
+      A quantum system is fully described by its <b>wave function</b> <span>$\psi(\mathbf{r},t)$</span>, a complex function of position and time:
+    </p>
+    <div class="equation">
+      $$i\hbar \frac{\partial \psi(\mathbf{r}, t)}{\partial t} = \left[-\frac{\hbar^2}{2m}\nabla^2 + V(\mathbf{r}, t)\right]\psi(\mathbf{r}, t)$$
+    </div>
+    <p>
+      It encodes the <b>probability amplitude</b> of finding a particle at a point and evolves according to the Schrödinger equation.
+      <br><b>Example:</b> A free particle along the x-axis:
+    </p>
+    <div class="equation">
+      $$\psi(x,t) = A e^{i(kx - \omega t)}$$
+    </div>
+
+    <h2>Axiom 2: Linear Superposition Principle</h2>
+    <p>
+      If a system can exist in states <span>$\psi_1$</span> and <span>$\psi_2$</span>, 
+      it can also exist in any <b>linear combination</b>:
+    </p>
+    <div class="equation">
+      $$\psi = c_1 \psi_1 + c_2 \psi_2$$
+    </div>
+    <p>
+      This explains phenomena like <b>interference</b>. The system can be in “both states” until measured.
+      <br><b>Example:</b> Electron through a double slit forms an interference pattern because it is in a superposition of “slit 1” and “slit 2” states.
+    </p>
+
+    <h2>Axiom 3: Observable–Operator Correspondence</h2>
+    <p>
+      Every measurable quantity corresponds to a <b>linear operator</b>:
+    </p>
+    <ul>
+      <li>Position: <span>$\hat{\mathbf{r}} = \mathbf{r}$</span></li>
+      <li>Momentum: <span>$\hat{\mathbf{p}} = -i\hbar\nabla$</span></li>
+    </ul>
+    <p>
+      Any function of observables <span>$F(\mathbf{r},\mathbf{p})$</span> becomes an operator:
+    </p>
+    <div class="equation">
+      $$\hat{F} = F(\mathbf{r}, -i\hbar\nabla)$$
+    </div>
+
+    <h2>Axiom 4: Expectation-Value Axiom</h2>
+    <p>
+      The <b>average value</b> of an observable <span>$A$</span> in a state <span>$\psi$</span> is:
+    </p>
+    <div class="equation">
+      $$\langle A \rangle = \int \psi^*(\mathbf{r}, t) \hat{A} \psi(\mathbf{r}, t) \, d^3r$$
+    </div>
+    <p>
+      This is the quantum analogue of classical averages and connects operators with measurable outcomes.
+    </p>
+
+    <h2>Axiom 5: Expansion Postulate</h2>
+    <p>
+      For a Hermitian operator <span>$\hat{A}$</span>, its eigenfunctions 
+      <span>$\psi_1, \psi_2, \dots$</span> form a <b>complete orthonormal set</b>. Any state can be written as:
+    </p>
+    <div class="equation">
+      $$\psi = \sum_n c_n \psi_n$$
+    </div>
+    <p>
+      Coefficients <span>$c_n$</span> give the probability amplitudes for each eigenvalue. 
+      This is a structured decomposition into measurement-relevant basis states.
+    </p>
+
+    <h2>Summary of Quantum Axioms</h2>
+    <ul>
+      <li><b>State Axiom:</b> Wave function defines the system.</li>
+      <li><b>Superposition:</b> States can combine linearly.</li>
+      <li><b>Observables ↔ Operators:</b> Measurable quantities have operator counterparts.</li>
+      <li><b>Expectation Value:</b> Average measurements from wave functions.</li>
+      <li><b>Expansion Postulate:</b> Any state can be expressed in terms of eigenstates.</li>
+    </ul>
+
+    <hr>
+    <footer>
+      <p>Posted on: <b>October 18, 2025</b></p>
+    </footer>
+  </main>
+
+</body>
+</html>
+
