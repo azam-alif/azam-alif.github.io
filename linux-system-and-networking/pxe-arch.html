@@ -8,7 +8,7 @@
 </head>
 <body>
   <header>
-    <h1>Setting Up an Arch PXE Server - a straightforward way</h1>
+    <h1>Setting Up an Arch PXE Server (serving the iso image)</h1>
     <nav>
       <a href="../index.html">Home</a>&nbsp;
       <a href="../topics.html">Blog Topics</a>&nbsp;
@@ -79,7 +79,7 @@ TFTPD_ARGS="--address 192.168.144.1:69 --secure /srv/tftp"
 
     <h2>5. Share NFS Root Filesystem</h2>
     <p>Export the mounted Arch Linux ISO via NFS so clients can use it as their root filesystem. Replace the IP range with your network subnet(file: <code>/etc/exports</code>):</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>/srv/archlinux 192.168.144.0/24(ro,no_subtree_check)  #replace with your subnet</code></pre>
+    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>/srv/archlinux 192.168.144.0/24(ro,no_subtree_check,no_root_squash)  #replace with your subnet</code></pre>
     <p>This allows multiple clients to boot from the same central location over the network.</p>
 
     <h2>6. Start All Services</h2>
