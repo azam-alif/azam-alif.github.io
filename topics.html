@@ -3,29 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Topics</title>
+    <title>Alif Azam | Blog Topics</title>
     <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Blog Topics</h1>
-        <nav>
-            <a href="index.html">Home</a>&nbsp;
-            <a href="topics.html">Blog Topics</a>&nbsp;
-            <a href="contact.html">Contacts</a>
-        </nav>
-    </header>
-    <main>
-        <ul>
-		<li><a href="linux-system-and-networking/index.html">Linux Systems & Networking</a></li>
-		<li><a href="command-line-tools/index.html">Command-Line Tools & Utilities</a></li>
-		<li><a href="programming-concepts/index.html">Programming Concepts</a></li>
-            <li><a href="quantum-mechanics/index.html">Quantum Mechanics</a></li>
-            <li><a href="neovim/index.html">Vim/Neovim</a></li>
-	    <li><a href="python-data-analysis/index.html">Python and Data Analysis</a></li>
-	    <li><a href="random-posts/index.html">Random Posts</a></li>
-	    <li><a href="projects/index.html">Projects</a></li>
-        </ul>
-    </main>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <main class="main-content">
+            <nav>
+                <a href="index.html">Home</a>&nbsp;
+                <a href="topics.html">Blog Topics</a>&nbsp;
+            </nav>
+            <h2>Blog Topics</h2>
+            <div class="topic-card-container">
+                <a href="linux-system-and-networking/index.html" class="topic-card">
+                    <img src="images/linux.webp" alt="Linux Icon">
+                    <span>Linux Systems & Networking</span>
+                </a>
+                <a href="command-line-tools/index.html" class="topic-card">
+                    <img src="images/command-line.png" alt="Terminal Icon">
+                    <span>Command-Line Tools & Utilities</span>
+                </a>
+                <a href="programming-concepts/index.html" class="topic-card">
+                    <img src="images/programming.png" alt="Code Icon">
+                    <span>Programming Concepts</span>
+                </a>
+                <a href="quantum-mechanics/index.html" class="topic-card">
+                    <img src="images/quantum- mechanics.png" alt="Atom Icon">
+                    <span>Quantum Mechanics</span>
+                </a>
+                <a href="neovim/index.html" class="topic-card">
+                    <img src="images/neovim.jpg" alt="Vim Icon">
+                    <span>Vim/Neovim</span>
+                </a>
+                <a href="python-data-analysis/index.html" class="topic-card">
+                    <img src="images/python.png" alt="Python Icon">
+                    <span>Python and Data Analysis</span>
+                </a>
+                <a href="random-posts/index.html" class="topic-card">
+                    <img src="images/random-post.png" alt="Question Mark Icon">
+                    <span>Random Posts</span>
+                </a>
+                <a href="projects/index.html" class="topic-card">
+                    <img src="images/project.png" alt="Gears Icon">
+                    <span>Projects</span>
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

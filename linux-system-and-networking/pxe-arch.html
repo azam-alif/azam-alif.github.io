@@ -4,52 +4,69 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Arch PXE Server Setup</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-  <header>
-    <h1>Setting Up an Arch PXE Server (serving the iso image)</h1>
-    <nav>
-      <a href="../index.html">Home</a>&nbsp;
-      <a href="../topics.html">Blog Topics</a>&nbsp;
-      <a href="../contact.html">Contact</a>
-    </nav>
-  </header>
-  <main>
+  <!-- Particles.js background -->
+  <div id="particles-js"></div>
 
-    <h2>What is a PXE Server</h2>
-    <p>A PXE (Preboot Execution Environment) server allows client machines to boot a complete operating system from the network without any local storage. This is particularly useful for diskless workstations, automated installations, or testing multiple systems consistently from a central server. Using Arch Linux for a PXE server provides a lightweight, flexible, and highly customizable environment, ideal for IT labs, data centers, or home labs where you want to quickly boot and manage multiple machines.</p>
+  <div class="container">
+    <main class="main-content">
+      <header>
+        <h1>Setting Up an Arch PXE Server (serving the iso image)</h1>
+        <nav>
+              <a href="../index.html">Home</a>&nbsp;
+              <a href="../topics.html">Blog Topics</a>&nbsp;
+            </nav>      </header>
+      
+      <h2>What is a PXE Server</h2>
+      <p>A PXE (Preboot Execution Environment) server allows client machines to boot a complete operating system from the network without any local storage. This is particularly useful for diskless workstations, automated installations, or testing multiple systems consistently from a central server. Using Arch Linux for a PXE server provides a lightweight, flexible, and highly customizable environment, ideal for IT labs, data centers, or home labs where you want to quickly boot and manage multiple machines.</p>
 
-    <hr>
+      <hr>
 
-    <h2>1. Download Arch Linux ISO and Install Required Packages</h2>
-    <p>Download the Arch Linux ISO from the official site: <a href="https://archlinux.org/download/">https://archlinux.org/download/</a>. Then mount it to <code>/srv/archlinux</code>:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkdir -p /srv/archlinux
+      <h2>1. Download Arch Linux ISO and Install Required Packages</h2>
+      <p>Download the Arch Linux ISO from the official site: <a href="https://archlinux.org/download/">https://archlinux.org/download/</a>. Then mount it to <code>/srv/archlinux</code>:</p>
+      <div class="code-block-container">
+        <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+        <pre><code>sudo mkdir -p /srv/archlinux
 sudo mount --mkdir -o loop,ro archlinux-release_date-x86_64.iso /srv/archlinux</code></pre>
-    <p>Then install the necessary packages for pxe boot. </p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo pacman -S dhcp nfs-utils syslinux tftp-hpa</code></pre>
-    <p>These packages provide: DHCP for IP assignment, NFS for sharing files, TFTP for initial boot files, and Syslinux as the bootloader.</p>
+      </div>
+      <p>Then install the necessary packages for pxe boot. </p>
+      <div class="code-block-container">
+        <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+        <pre><code>sudo pacman -S dhcp nfs-utils syslinux tftp-hpa</code></pre>
+      </div>
+      <p>These packages provide: DHCP for IP assignment, NFS for sharing files, TFTP for initial boot files, and Syslinux as the bootloader.</p>
 
-    <h2>2. Configure DHCP Server</h2>
-    <p>Edit the DHCP configuration file at <code>/etc/dhcpd.conf</code> to define the PXE boot parameters. Replace <code>192.168.144.1</code> with your PXE server’s IP:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>subnet 192.168.144.0 netmask 255.255.255.0 {
+      <h2>2. Configure DHCP Server</h2>
+      <p>Edit the DHCP configuration file at <code>/etc/dhcpd.conf</code> to define the PXE boot parameters. Replace <code>192.168.144.1</code> with your PXE server’s IP:</p>
+      <div class="code-block-container">
+        <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+        <pre><code>subnet 192.168.144.0 netmask 255.255.255.0 {
   range 192.168.144.101 192.168.144.200;
   option routers 192.168.144.1;
   option domain-name-servers 8.8.8.8, 8.8.4.4;
   filename "lpxelinux.0";
   next-server 192.168.144.1;#replace with your server IP
 }</code></pre>
-    <p>This configuration tells client machines where to find the PXE bootloader when they request a network boot.</p>
+      </div>
+      <p>This configuration tells client machines where to find the PXE bootloader when they request a network boot.</p>
 
-    <h2>3. Prepare TFTP Directory</h2>
-    <p>Create the TFTP directory and copy the required bootloader and kernel files. These files will be served to clients during network boot:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkdir -p /srv/tftp/pxelinux.cfg
+      <h2>3. Prepare TFTP Directory</h2>
+      <p>Create the TFTP directory and copy the required bootloader and kernel files. These files will be served to clients during network boot:</p>
+      <div class="code-block-container">
+        <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+        <pre><code>sudo mkdir -p /srv/tftp/pxelinux.cfg
 sudo cp /srv/archlinux/arch/boot/x86_64/vmlinuz-linux /srv/tftp/
 sudo cp /srv/archlinux/arch/boot/x86_64/initramfs-linux.img /srv/tftp/
 sudo cp /srv/archlinux/boot/syslinux/ldlinux.c32 /srv/tftp/
 sudo cp /srv/archlinux/boot/syslinux/lpxelinux.0 /srv/tftp/</code></pre>
-    <p>Next, create the PXE boot menu file <code>/srv/tftp/pxelinux.cfg/default</code> with the following content. Replace the <code>archiso_nfs_server</code> IP with your server IP:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>DEFAULT linux
+      </div>
+      <p>Next, create the PXE boot menu file <code>/srv/tftp/pxelinux.cfg/default</code> with the following content. Replace the <code>archiso_nfs_server</code> IP with your server IP:</p>
+      <div class="code-block-container">
+        <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+        <pre><code>DEFAULT linux
 PROMPT 0
 TIMEOUT 50
 
@@ -57,46 +74,61 @@ LABEL linux
     MENU LABEL ^Arch Linux NFS
     KERNEL vmlinuz-linux
     APPEND initrd=initramfs-linux.img ip=dhcp archisobasedir=arch archiso_nfs_srv=192.168.144.1:/srv/archlinux cms_verify=y</code></pre>
-    <p>This configuration tells Syslinux to boot the Arch Linux kernel over NFS using DHCP, and points to the correct NFS share.</p>
+      </div>
+      <p>This configuration tells Syslinux to boot the Arch Linux kernel over NFS using DHCP, and points to the correct NFS share.</p>
 <h4>Verify TFTP Directory Structure</h2>
 <p>Check that the files are correctly organized under <code>/srv/tftp</code>:</p>
-<pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>/srv/tftp
+<div class="code-block-container">
+  <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+  <pre><code>/srv/tftp
 ├── initramfs-linux.img
 ├── lpxelinux.0
 ├── ldlinux.c32
 ├── vmlinuz-linux
 └── pxelinux.cfg
     └── default</code></pre>
+</div>
 <p>This structure ensures that the PXE bootloader can locate the kernel, initramfs, and boot menu for clients.</p>
 
-    <h2>4. Configure TFTP Server</h2>
-    <p>Adjust your TFTP configuration to serve files from <code>/srv/tftp</code>. The key is that the bootloader and kernel are accessible to clients on the network. Edit the TFTP configuration file at <code>/etc/conf.d/tftpd</code> to define the PXE boot parameters.</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>TFTP_DIRECTORY="/srv/tftp"
+      <h2>4. Configure TFTP Server</h2>
+      <p>Adjust your TFTP configuration to serve files from <code>/srv/tftp</code>. The key is that the bootloader and kernel are accessible to clients on the network. Edit the TFTP configuration file at <code>/etc/conf.d/tftpd</code> to define the PXE boot parameters.</p>
+      <div class="code-block-container">
+        <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+        <pre><code>TFTP_DIRECTORY="/srv/tftp"
 TFTP_ADDRESS="192.168.144.1:69"
 TFTP_OPTIONS=""
 TFTPD_ARGS="--address 192.168.144.1:69 --secure /srv/tftp"
 </code></pre>
+      </div>
 
-    <h2>5. Share NFS Root Filesystem</h2>
-    <p>Export the mounted Arch Linux ISO via NFS so clients can use it as their root filesystem. Replace the IP range with your network subnet(file: <code>/etc/exports</code>):</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>/srv/archlinux 192.168.144.0/24(ro,no_subtree_check,no_root_squash)  #replace with your subnet</code></pre>
-    <p>This allows multiple clients to boot from the same central location over the network.</p>
+      <h2>5. Share NFS Root Filesystem</h2>
+      <p>Export the mounted Arch Linux ISO via NFS so clients can use it as their root filesystem. Replace the IP range with your network subnet(file: <code>/etc/exports</code>):</p>
+      <div class="code-block-container">
+        <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+        <pre><code>/srv/archlinux 192.168.144.0/24(ro,no_subtree_check,no_root_squash)  #replace with your subnet</code></pre>
+      </div>
+      <p>This allows multiple clients to boot from the same central location over the network.</p>
 
-    <h2>6. Start All Services</h2>
-    <p>Finally, start all required services for PXE boot:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo ip link set enp2s0 up  #change if you are using different network interface
+      <h2>6. Start All Services</h2>
+      <p>Finally, start all required services for PXE boot:</p>
+      <pre><code>sudo ip link set enp2s0 up  #change if you are using different network interface
 sudo ip addr add 192.168.144.1/24 dev enp2s0  
 sudo dhcpd -4 -cf /etc/dhcpd.conf enp2s0
 sudo systemctl start tftpd
 sudo exportfs -rav
 sudo systemctl start nfs-server</code></pre>
-    <p>After starting these services, client machines on your network can boot via PXE using the setup you configured.</p>
+      <p>After starting these services, client machines on your network can boot via PXE using the setup you configured.</p>
 
-    <hr>
-    <footer>
-      <p>Posted on: <b>August 20, 2025</b></p>
-    </footer>
-  </main>
+      <hr>
+      <footer>
+        <p>Posted on: <b>August 20, 2025</b></p>
+      </footer>
+    </main>
+  </div>
+  
+  <!-- Scripts for particles.js -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
 </body>
 </html>
 

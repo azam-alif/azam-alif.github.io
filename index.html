@@ -4,73 +4,93 @@
     <meta name="google-site-verification" content="AJ7hkbfyHeguHrF3Yjkxr9uPrTyB_pByMI69U4ZS53M" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alif Azam</title>
+    <title>Alif Azam | Physics & Tech</title>
     <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Congratulations! You found me.</h1>
-        <nav>
-            <a href="index.html">Home</a>&nbsp;
-            <a href="topics.html">Blog Topics</a>&nbsp;
-            <a href="contact.html">Contacts</a>
-        </nav>
-    </header>
-    <main>
-        <img src="Alif-Azam.jpg" alt="Alif Azam" width="250" style="display: block; margin: 0 auto;">
-        
-        <p>
-            Hello! I’m <b>Alif Azam</b>, an undergraduate Physics student at Shahjalal University of Science and Technology, Sylhet. 
-            My academic focus lies in <b>computational physics and high-performance computing (HPC)</b>, where I work with Linux systems, 
-            parallel computing frameworks, and cluster maintenance.  
-        </p>
-        
-        <p>
-            I specialize in <b>computational approaches to physics</b>, combining numerical simulation techniques with 
-            high-performance computing on optimized Linux systems. My current work involves exploring HPC cluster design and build, as well as exploring system-level performance and memory management to solve large-scale physics problems efficiently.  
-        </p>
-        
-        <p>
-Beyond academics, I enjoy reading books and playing chess.
-        </p>
-        <p>
-With a strong foundation in physics and computation, I aim to bridge rigorous theoretical understanding with advanced computational tools to tackle challenging problems in science.
-	</p>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
 
-        <h3><b>My Skills</b></h3>
-        <ul>
-            <li><b>Languages:</b> Python, C, Bash Scripting</li>
-            <li><b>Packages and Libraries:</b> NumPy, Pandas, Matplotlib, Scikit-learn, cuML</li>
-            <li><b>Tools:</b> git, GitHub, CLI</li>
-            <li><b>Operating Systems:</b> Linux, Windows</li>
-        </ul>
+    <div class="container">
+        <!-- Left Column: Profile + Contacts -->
+        <div class="left-column">
+            <aside class="profile-card">
+                <img src="Alif-Azam.jpg" alt="Alif Azam">
+                <h1>Alif Azam</h1>
+                <p>Undergraduate Physics Student <br> Focused on High-Performance Computing (HPC)</p>
+                <a href="AlifAzam_resume.pdf" target="_blank" class="resume-button">View Resume</a>
+            </aside>
+<!--            <aside class="profile-card">
+                <h3>My Skills</h3>
+                <ul>
+                    <li><span class="skill-category">Languages:</span> Python, C, Bash Scripting</li>
+                    <li><span class="skill-category">Packages and Libraries:</span> NumPy, Pandas, Matplotlib, Scikit-learn, cuML</li>
+                    <li><span class="skill-category">Tools:</span> git, GitHub, CLI</li>
+                    <li><span class="skill-category">Operating Systems:</span> Linux, Windows</li>
+                </ul>
+</aside> -->
+            <aside class="contact-card">
+                <h3>Contact Me</h3>
+                <ul>
+                    <li><a href="https://www.linkedin.com/in/alif-azam/" target="_blank">LinkedIn</a></li>
+                    <li><a href="https://github.com/azam-alif" target="_blank">GitHub</a></li>
+                    <li><a href="https://scholar.google.com/citations?user=pfFqJJEAAAAJ&hl=en" target="_blank">Google Scholar</a></li>
+                    <li><a href="https://www.researchgate.net/profile/Alif-Azam-2" target="_blank">ResearchGate</a></li>
+                    <li><a href="https://www.facebook.com/alifazam2003" target="_blank">Facebook</a></li>
+                    <li>Gmail: <span id="email-address">azamalif483@gmail.com</span> <button onclick="copyEmail()" class="copy-button">Copy</button></li>
+                </ul>
+            </aside>
+        </div>
 
-	<a href="AlifAzam_resume.pdf" target="_blank" style="display: block; margin: 20px auto; width: fit-content;">
-    <button>My Resume</button>
-	</a>
+        <!-- Right-side Main Content -->
+        <main class="main-content">
+            <nav>
+                <a href="index.html">Home</a>&nbsp;
+                <a href="topics.html">Blog Topics</a>&nbsp;
+            </nav>
+            
+            <h2>About Me</h2>
+            <p>
+                Hello! I’m an undergraduate Physics student at Shahjalal University of Science and Technology, Sylhet. 
+                My academic focus lies in <b>computational physics and high-performance computing (HPC)</b>, where I work with Linux systems, 
+                parallel computing frameworks, and cluster maintenance.
+            </p>
+            <p>
+                I specialize in <b>computational approaches to physics</b>, combining numerical simulation techniques with 
+                high-performance computing on optimized Linux systems. My current work involves exploring HPC cluster design and build, as well as exploring system-level performance and memory management to solve large-scale physics problems efficiently.
+            </p>
+            <p>
+                Beyond academics, I enjoy reading books and playing chess. With a strong foundation in physics and computation, I aim to bridge rigorous theoretical understanding with advanced computational tools to tackle challenging problems in science.
+            </p>
 
-        <hr>
-        <h3>Recent Posts</h3>
-        <ul>	
-		<li>
-                <a href="linux-system-and-networking/pxe-arch-rootfs.html">
-			Setting Up an Arch PXE Server (serving the root filesystem)</a>
-                <small> - November 15, 2025</small>
-            </li>
+            <h3>Recent Posts</h3>
+            <ul>
+                <li>
+                    <a href="linux-system-and-networking/pxe-arch-rootfs.html">
+                        Setting Up an Arch PXE Server (serving the root filesystem)
+                    </a>
+                    <small> - November 15, 2025</small>
+                </li>
+                <li>
+                    <a href="linux-system-and-networking/useradd.html">
+                        How useradd Works in Linux
+                    </a>
+                    <small> - October 22, 2025</small>
+                </li>
+                <li>
+                    <a href="linux-system-and-networking/initrd-generation.html">
+                        Generating an Initial Ramdisk with NFSv4 Support in Arch Linux
+                    </a>
+                    <small> - September 29, 2025</small>
+                </li>
+            </ul>
+        </main>
+    </div>
 
-		<li>
-                <a href="linux-system-and-networking/useradd.html">
-			How useradd Works in Linux
-                </a>
-                <small> - October 22, 2025</small>
-            </li>
-		<li>
-                <a href="linux-system-and-networking/initrd-generation.html">
-                    Generating an Initial Ramdisk with NFSv4 Support in Arch Linux
-                </a>
-                <small> - September 29, 2025</small>
-        </ul>
-    </main>
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
 
