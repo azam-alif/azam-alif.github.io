@@ -285,9 +285,10 @@ nav a:hover {
 @media (max-width: 768px) {
     body { padding: 10px; }
     .container { flex-direction: column; }
-    .left-column { order: 2; } /* Move left column to the bottom on mobile */
-    .main-content { order: 1; } /* Main content comes first */
-    .profile-card, .main-content, .contact-card {
+    .left-column { order: 1; } /* Move left column to the bottom on mobile */
+    .profile-card { order: 1; }
+    .contact-card { order: 2; }
+    .main-content { order: 2; } /* Main content comes first */    .profile-card, .main-content, .contact-card {
         width: auto;
         margin-bottom: 10px;
     }
