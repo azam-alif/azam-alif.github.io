@@ -285,11 +285,12 @@ nav a:hover {
 @media (max-width: 768px) {
     body { padding: 10px; }
     .container { flex-direction: column; }
-    .left-column { order: 1; } /* Move left column to the bottom on mobile */
+    .left-column { display: contents; }
     .profile-card { order: 1; }
-    .contact-card { order: 2; }
-    .main-content { order: 2; } /* Main content comes first */    .profile-card, .main-content, .contact-card {
+    .main-content { order: 2; }
+    .contact-card { order: 3; }
+    .profile-card, .main-content, .contact-card {
         width: auto;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
     }
 }
