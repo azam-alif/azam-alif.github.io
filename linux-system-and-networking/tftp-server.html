@@ -4,73 +4,83 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TFTP Server Setup</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-  <header>
-    <h1>How To Set Up a TFTP Server</h1>
-    <nav>
-      <a href="../index.html">Home</a>&nbsp;
-      <a href="../topics.html">Blog Topics</a>&nbsp;
-    </nav>
-  </header>
-  <main>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
 
-    <h2>What is TFTP?</h2>
-    <p>Trivial File Transfer Protocol (TFTP) is a very simple file transfer protocol that works over UDP port 69. It has no authentication, no encryption, and minimal features, making it extremely lightweight. Linux enthusiasts often use TFTP for network booting, firmware updates, and embedded systems because of its speed and simplicity.</p>
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>How To Set Up a TFTP Server</h1>
+                <nav>
+                  <a href="../index.html">Home</a>&nbsp;
+                  <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+            <main>
+                <h2>What is TFTP?</h2>
+                <p>Trivial File Transfer Protocol (TFTP) is a very simple file transfer protocol that works over UDP port 69. It has no authentication, no encryption, and minimal features, making it extremely lightweight. Linux enthusiasts often use TFTP for network booting, firmware updates, and embedded systems because of its speed and simplicity.</p>
 
-    <h2>Why Use TFTP?</h2>
-    <p>TFTP is ideal when you need to transfer files quickly with minimal setup. It’s often used in PXE boot servers, router firmware flashing, or transferring configs to network devices. The lack of overhead makes it faster and easier to set up than FTP or SCP in controlled networks.</p>
+                <h2>Why Use TFTP?</h2>
+                <p>TFTP is ideal when you need to transfer files quickly with minimal setup. It’s often used in PXE boot servers, router firmware flashing, or transferring configs to network devices. The lack of overhead makes it faster and easier to set up than FTP or SCP in controlled networks.</p>
 
-    <h2>Where to Use TFTP?</h2>
-    <p>TFTP is common in labs, embedded development, network device maintenance, and cluster or PXE boot environments. It’s best suited for secure, isolated networks where simplicity and speed matter more than security. Public networks should avoid TFTP unless secured by other means.</p>
+                <h2>Where to Use TFTP?</h2>
+                <p>TFTP is common in labs, embedded development, network device maintenance, and cluster or PXE boot environments. It’s best suited for secure, isolated networks where simplicity and speed matter more than security. Public networks should avoid TFTP unless secured by other means.</p>
 
-    <hr>
+                <hr>
 
-    <p>Follow these steps to set up a tftp server on Linux.</p>
-    
-    <h2>1. Install tftp-hpa</h2>
-    <ul>
-      <li>Arch Linux:</li>
-    </ul>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo pacman -S tftp-hpa</code></pre>
+                <p>Follow these steps to set up a tftp server on Linux.</p>
+                
+                <h2>1. Install tftp-hpa</h2>
+                <ul>
+                  <li>Arch Linux:</li>
+                </ul>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo pacman -S tftp-hpa</code></pre></div>
 
-    <h2>2. Create the TFTP Directory</h2>
-    <p>Create a directory to store your files:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkdir -p /srv/tftp</code></pre>
-    <p>Then put the files in that folder that you want to share with your tftp server.</p>    
-    
-    <h4>Set Permissions</h4>
-    <p>Change ownership and permissions:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo chown -R nobody:nobody /srv/tftp
-sudo chmod -R 755 /srv/tftp</code></pre>
+                <h2>2. Create the TFTP Directory</h2>
+                <p>Create a directory to store your files:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo mkdir -p /srv/tftp</code></pre></div>
+                <p>Then put the files in that folder that you want to share with your tftp server.</p>    
+                
+                <h4>Set Permissions</h4>
+                <p>Change ownership and permissions:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo chown -R nobody:nobody /srv/tftp
+sudo chmod -R 755 /srv/tftp</code></pre></div>
 
-    <h2>3. Configure TFTP</h2>
-    <p>Edit the configuration file:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo vim /etc/conf.d/tftpd</code></pre>
-    <p>Write there</p>	
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>TFTP_USERNAME="tftp"
+                <h2>3. Configure TFTP</h2>
+                <p>Edit the configuration file:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo vim /etc/conf.d/tftpd</code></pre></div>
+                <p>Write there</p>	
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>TFTP_USERNAME="tftp"
 TFTP_DIRECTORY="/srv/tftp"
 TFTP_ADDRESS="0.0.0.0:69"
 TFTP_OPTIONS="--secure"
-</code></pre>
+</code></pre></div>
 
-    <h2>4. Start the TFTP Service</h2>
-    <p>Enable and start TFTP:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo systemctl enable tftpd
-sudo systemctl start tftpd</code></pre>
+                <h2>4. Start the TFTP Service</h2>
+                <p>Enable and start TFTP:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo systemctl enable tftpd
+sudo systemctl start tftpd</code></pre></div>
 
-    <h2>5. Test the TFTP Server</h2>
-    <p>On the client machine, you can test with the IP address of your server. If you don't have another machine, you can test on your own:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>tftp localhost</code></pre>
-    <p>This will open the TFTP CLI.</p>
-    <p><b>Congratulations!</b> You have successfully created and entered into the TFTP server. Type <code>quit</code> to exit from the TFTP terminal.</p>
+                <h2>5. Test the TFTP Server</h2>
+                <p>On the client machine, you can test with the IP address of your server. If you don't have another machine, you can test on your own:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>tftp localhost</code></pre></div>
+                <p>This will open the TFTP CLI.</p>
+                <p><b>Congratulations!</b> You have successfully created and entered into the TFTP server. Type <code>quit</code> to exit from the TFTP terminal.</p>
 
-    <hr>
-    <footer>
-      <p>Last updated on: <b>August 12, 2025</b></p>
-    </footer>
-  </main>
+                <hr>
+                <footer>
+                  <p>Last updated on: <b>August 12, 2025</b></p>
+                </footer>
+            </main>
+        </main>
+    </div>
+
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>
-

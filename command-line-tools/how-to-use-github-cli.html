@@ -4,71 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Using GitHub from the Terminal with GitHub CLI</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-    <header>
-        <h1>Master GitHub from the Terminal with GitHub CLI</h1>
-<nav>
-      <a href="../index.html">Home</a>&nbsp;
-      <a href="../topics.html">Blog Topics</a>&nbsp;
-    </nav>
-    </header>
-    <main>
-        <p>Why click around in a browser when you can control GitHub like a true Linux wizard?  
-        The <b>GitHub CLI</b> lets you create repos, push code, and manage pull requests — all without leaving the terminal.  
-        Follow these steps to set it up and make your workflow faster.</p>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
 
-        <h2>1. Install Git and GitHub CLI</h2>
-        <p>For Arch-based systems:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo pacman -S git github-cli</code></pre>
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>Master GitHub from the Terminal with GitHub CLI</h1>
+                <nav>
+                      <a href="../index.html">Home</a>&nbsp;
+                      <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+            <p>Why click around in a browser when you can control GitHub like a true Linux wizard?  
+            The <b>GitHub CLI</b> lets you create repos, push code, and manage pull requests — all without leaving the terminal.  
+            Follow these steps to set it up and make your workflow faster.</p>
 
-        <h2>2. Configure Git with Your GitHub Identity</h2>
-        <p>Replace <code>name</code> and <code>email</code> with your actual GitHub username and email:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>git config --global user.name "name"
-git config --global user.email "email"</code></pre>
-        <p>Verify settings:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>git config --global --list</code></pre>
+            <h2>1. Install Git and GitHub CLI</h2>
+            <p>For Arch-based systems:</p>
+            <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo pacman -S git github-cli</code></pre></div>
 
-        <h2>3. Authenticate with GitHub</h2>
-        <p>Run the login command:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>gh auth login</code></pre>
-        <p>Choose:</p>
-        <ul>
-            <li><b>GitHub.com</b></li>
-            <li><b>HTTPS</b></li>
-            <li><b>Login with a web browser</b></li>
-        </ul>
-        <p>You’ll see an 8-digit code. Copy it, press <b>Enter</b>, and follow the GitHub page in your browser to approve access.</p>
-        <p>Check login status:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>gh auth status</code></pre>
+            <h2>2. Configure Git with Your GitHub Identity</h2>
+            <p>Replace <code>name</code> and <code>email</code> with your actual GitHub username and email:</p>
+            <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>git config --global user.name "name"
+git config --global user.email "email"</code></pre></div>
+            <p>Verify settings:</p>
+            <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>git config --global --list</code></pre></div>
 
-        <h2>4. Initialize Git in Your Project</h2>
-        <p>Navigate to your project folder and initialize git:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>cd /path/to/project
-git init</code></pre>
+            <h2>3. Authenticate with GitHub</h2>
+            <p>Run the login command:</p>
+            <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>gh auth login</code></pre></div>
+            <p>Choose:</p>
+            <ul>
+                <li><b>GitHub.com</b></li>
+                <li><b>HTTPS</b></li>
+                <li><b>Login with a web browser</b></li>
+            </ul>
+            <p>You’ll see an 8-digit code. Copy it, press <b>Enter</b>, and follow the GitHub page in your browser to approve access.</p>
+            <p>Check login status:</p>
+            <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>gh auth status</code></pre></div>
 
-        <h2>5. Create a GitHub Repository from Terminal</h2>
-        <p>Replace <code>repo_name</code> with your preferred repository name:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>gh repo create repo_name --public --source=.</code></pre>
+            <h2>4. Initialize Git in Your Project</h2>
+            <p>Navigate to your project folder and initialize git:</p>
+            <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>cd /path/to/project
+git init</code></pre></div>
 
-        <h2>6. Link Your Local Repo to Remote</h2>
-        <p>Replace <code>your-github-account</code> and <code>repo_name</code>:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>git remote set-url origin https://github.com/your-github-account/repo_name</code></pre>
+            <h2>5. Create a GitHub Repository from Terminal</h2>
+            <p>Replace <code>repo_name</code> with your preferred repository name:</p>
+            <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>gh repo create repo_name --public --source=.</code></pre></div>
 
-        <h2>7. Push Your Code to GitHub</h2>
-        <p>Run the commands in order:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>git add .
+            <h2>6. Link Your Local Repo to Remote</h2>
+            <p>Replace <code>your-github-account</code> and <code>repo_name</code>:</p>
+            <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>git remote set-url origin https://github.com/your-github-account/repo_name</code></pre></div>
+
+            <h2>7. Push Your Code to GitHub</h2>
+            <p>Run the commands in order:</p>
+            <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>git add .
 git commit -m "first commit"
 git branch -M main
-git push -u origin main</code></pre>
+git push -u origin main</code></pre></div>
 
-        <hr>
-        <p><b>Done!</b> You now have a fully working GitHub setup — powered entirely from the terminal.  
-        No mouse clicks, no distractions — just pure CLI productivity.</p>
-        <footer>
-            <p>Last updated: <b>August 12, 2025</b></p>
-        </footer>
-    </main>
+            <hr>
+            <p><b>Done!</b> You now have a fully working GitHub setup — powered entirely from the terminal.  
+            No mouse clicks, no distractions — just pure CLI productivity.</p>
+            <footer>
+                <p>Last updated: <b>August 12, 2025</b></p>
+            </footer>
+        </main>
+    </div>
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>
-

@@ -1,66 +1,79 @@
-<!DOCTYPE html
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ftp-server</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-    <header>
-        <h1>How To Setup a FTP Server for Home or Lab Use.</h1>
-<nav>
-      <a href="../index.html">Home</a>&nbsp;
-      <a href="../topics.html">Blog Topics</a>&nbsp;
-    </nav>
-    </header>
-    <main>
-        <p>FTP sever is a very common phrase in tech world. Especially when you want to download something faster than any internet server. But, can you believe that you can setup your very own ftp server in your local network? In this blog, I am going to tell you step by step how you can set up a ftp server at home. </p>
-        <p>First, you need to install vsftpd. For that:
-        <ul>
-            <li>arch: <br/><code>sudo pacman -S vsftpd</code></li>
-            <li>ubuntu: <br/><code>sudo apt install vsftpd</code></li>
-        </ul>
-        After the installtion, you need to create an ftp user. So, run this command: </br>
-        <ul>
-            <li>arch: </br><code>sudo useradd -m -s /bin/bash username</code></li>
-            <li>ubuntu: </br><code>sudo adduser -m -s /bin/bash username</code></li>
-        </ul>
-        Here, -m will create a home directory for the user. Which we are going to acces from another pc. 
-        Then, type: 
-        <ul>
-            <li><code>sudo passwd username</code></li>
-        </ul>
-        and set the password for the new user. 
-        </p>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
 
-        <p>
-        Now, we need to configure the config file for vsftpd to use the ftp server on our accordingly. Type in your termianl:
-        <u><code>sudo vim /etc/vsftpd.conf</code></u> and uncomment(remove # from the starting of each line) these 3 lines:
-        <ol>
-            <li>write_enable=YES</li>
-            <li>local_enable=YES</li>
-            <li>chroot_local_user=YES</li>
-        </ol>
-        And add this line at last: </br>
-        <ol>
-            <li>allow_writable_chroot=YES</li>
-        </ol>
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>How To Setup a FTP Server for Home or Lab Use.</h1>
+                <nav>
+                      <a href="../index.html">Home</a>&nbsp;
+                      <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+            <main>
+                <p>FTP sever is a very common phrase in tech world. Especially when you want to download something faster than any internet server. But, can you believe that you can setup your very own ftp server in your local network? In this blog, I am going to tell you step by step how you can set up a ftp server at home. </p>
+                <p>First, you need to install vsftpd. For that:
+                <ul>
+                    <li>arch: <br/><code>sudo pacman -S vsftpd</code></li>
+                    <li>ubuntu: <br/><code>sudo apt install vsftpd</code></li>
+                </ul>
+                After the installtion, you need to create an ftp user. So, run this command: </br>
+                <ul>
+                    <li>arch: </br><code>sudo useradd -m -s /bin/bash username</code></li>
+                    <li>ubuntu: </br><code>sudo adduser -m -s /bin/bash username</code></li>
+                </ul>
+                Here, -m will create a home directory for the user. Which we are going to acces from another pc. 
+                Then, type: 
+                <ul>
+                    <li><code>sudo passwd username</code></li>
+                </ul>
+                and set the password for the new user. 
+                </p>
 
-        Now, you are all set. Just enable and start the vsftpd. </br>
-        <ul>
-            <li><code>sudo systemctl enable vsftpd</code></li>
-            <li><code>sudo systemctl start vsftpd</code></li>
-        </ul>
-        Now you can access your server from any computer withing your local network. But, remember one thing, this will only work if you connect your pc with ehternet cable to your router. Otherwise, you may fall in some fierwall related issue. </p>
+                <p>
+                Now, we need to configure the config file for vsftpd to use the ftp server on our accordingly. Type in your termianl:
+                <u><code>sudo vim /etc/vsftpd.conf</code></u> and uncomment(remove # from the starting of each line) these 3 lines:
+                <ol>
+                    <li>write_enable=YES</li>
+                    <li>local_enable=YES</li>
+                    <li>chroot_local_user=YES</li>
+                </ol>
+                And add this line at last: </br>
+                <ol>
+                    <li>allow_writable_chroot=YES</li>
+                </ol>
 
-        <p>To access on the client machine, you need ip address of your server. to know that type <u><code>ip addr show</code></u> in the terminal and rememberthe ip address. Then on the client machine terminal: </br>
-        Type <u><code>ftp server_ip</code></u>, this will promt you provide username and password you set. Once you provided all the informations correctly, you will be logged in to the server. </br>
-        <img src="ftp_login_successful.jpeg" alt="ftp_login_promt" width="800" style="display: block; margin: 0 auto;">
-        Since, you are connected to the server. You can now download and upload any files locally with high speed. 
-        <hr>
-        <footer>
-            <p>Last updated on: <b>May 15, 2025</b></p>
-        </footer>
-    </main>
+                Now, you are all set. Just enable and start the vsftpd. </br>
+                <ul>
+                    <li><code>sudo systemctl enable vsftpd</code></li>
+                    <li><code>sudo systemctl start vsftpd</code></li>
+                </ul>
+                Now you can access your server from any computer withing your local network. But, remember one thing, this will only work if you connect your pc with ehternet cable to your router. Otherwise, you may fall in some fierwall related issue. </p>
+
+                <p>To access on the client machine, you need ip address of your server. to know that type <u><code>ip addr show</code></u> in the terminal and rememberthe ip address. Then on the client machine terminal: </br>
+                Type <u><code>ftp server_ip</code></u>, this will promt you provide username and password you set. Once you provided all the informations correctly, you will be logged in to the server. </br>
+                <img src="ftp_login_successful.jpeg" alt="ftp_login_promt" width="800" style="display: block; margin: 0 auto;">
+                Since, you are connected to the server. You can now download and upload any files locally with high speed. 
+                <hr>
+                <footer>
+                    <p>Last updated on: <b>May 15, 2025</b></p>
+                </footer>
+            </main>
+        </main>
+    </div>
+
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>

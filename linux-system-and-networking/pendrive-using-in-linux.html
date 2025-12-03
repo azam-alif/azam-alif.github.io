@@ -4,69 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mount and Use a USB Drive in Linux</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-    <header>
-        <h1>Mounting and Using a USB Drive on Linux – Step by Step</h1>
-<nav>
-      <a href="../index.html">Home</a>&nbsp;
-      <a href="../topics.html">Blog Topics</a>&nbsp;
-    </nav>
-    </header>
-    <main>
-        <p>If you’re a Linux user, chances are you’ve plugged in a USB drive and wondered, “Now what?”.  
-        Whether it’s a flash drive, SSD, HDD, or MMC card, the process is almost the same.  
-        Below is a clean walkthrough for detecting, formatting, mounting, and even auto-mounting your drive.</p>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
 
-        <p><b>Follow these steps to get it working like a pro:</b></p>
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>Mounting and Using a USB Drive on Linux – Step by Step</h1>
+                <nav>
+                      <a href="../index.html">Home</a>&nbsp;
+                      <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+            <main>
+                <p>If you’re a Linux user, chances are you’ve plugged in a USB drive and wondered, “Now what?”.  
+                Whether it’s a flash drive, SSD, HDD, or MMC card, the process is almost the same.  
+                Below is a clean walkthrough for detecting, formatting, mounting, and even auto-mounting your drive.</p>
 
-        <h2>1. Check if Your System Detects the Device</h2>
-        <p>Plug in the USB and check if it’s recognized:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>lsblk</code></pre>
-        <p>This lists all drives and partitions. Look for something like <code>sdx</code> (where x is a letter).</p>
+                <p><b>Follow these steps to get it working like a pro:</b></p>
 
-        <h2>2. Wipe and Format the Drive</h2>
-        <p><b>Warning:</b> This erases everything on it.</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkfs.ext4 /dev/sdx</code></pre>
-        <p>Replace <code>x</code> with your drive letter.</p>
+                <h2>1. Check if Your System Detects the Device</h2>
+                <p>Plug in the USB and check if it’s recognized:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>lsblk</code></pre></div>
+                <p>This lists all drives and partitions. Look for something like <code>sdx</code> (where x is a letter).</p>
 
-        <h2>3. Create a Partition Table</h2>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo fdisk /dev/sdx</code></pre>
-        <ul>
-            <li>Press <b>g</b> → GPT partition table</li>
-            <li>Press <b>n</b> → New partition</li>
-            <li>Press <b>Enter</b> for all defaults</li>
-            <li>Press <b>w</b> → Save and exit</li>
-        </ul>
+                <h2>2. Wipe and Format the Drive</h2>
+                <p><b>Warning:</b> This erases everything on it.</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo mkfs.ext4 /dev/sdx</code></pre></div>
+                <p>Replace <code>x</code> with your drive letter.</p>
 
-        <h2>4. Format the New Partition</h2>
-        <p>After fdisk, you should see something like <code>/dev/sdx1</code>:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkfs.ext4 /dev/sdx1</code></pre>
+                <h2>3. Create a Partition Table</h2>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo fdisk /dev/sdx</code></pre></div>
+                <ul>
+                    <li>Press <b>g</b> → GPT partition table</li>
+                    <li>Press <b>n</b> → New partition</li>
+                    <li>Press <b>Enter</b> for all defaults</li>
+                    <li>Press <b>w</b> → Save and exit</li>
+                </ul>
 
-        <h2>5. Create a Mount Point</h2>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mkdir -p /mnt/usb</code></pre>
+                <h2>4. Format the New Partition</h2>
+                <p>After fdisk, you should see something like <code>/dev/sdx1</code>:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo mkfs.ext4 /dev/sdx1</code></pre></div>
 
-        <h2>6. Mount the Drive</h2>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mount /dev/sdx1 /mnt/usb</code></pre>
-        <p>Run <code>lsblk</code> to confirm it’s mounted under <code>/mnt/usb</code>.</p>
+                <h2>5. Create a Mount Point</h2>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo mkdir -p /mnt/usb</code></pre></div>
 
-        <h2>7. Auto-Mount on Boot</h2>
-        <p>Get the UUID of your partition:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo blkid /dev/sdx1</code></pre>
-        <p>Copy the UUID and open <code>/etc/fstab</code>:</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo vim /etc/fstab</code></pre>
-        <p>Add this line (replace <code>xxxx</code> with your UUID):</p>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>UUID=xxxx  /mnt/usb  ext4  defaults 0 2</code></pre>
+                <h2>6. Mount the Drive</h2>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo mount /dev/sdx1 /mnt/usb</code></pre></div>
+                <p>Run <code>lsblk</code> to confirm it’s mounted under <code>/mnt/usb</code>.</p>
 
-        <h2>8. Test the Setup</h2>
-        <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo mount -a</code></pre>
-        <p>If no errors appear, the USB will mount automatically on boot.</p>
+                <h2>7. Auto-Mount on Boot</h2>
+                <p>Get the UUID of your partition:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo blkid /dev/sdx1</code></pre></div>
+                <p>Copy the UUID and open <code>/etc/fstab</code>:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo vim /etc/fstab</code></pre></div>
+                <p>Add this line (replace <code>xxxx</code> with your UUID):</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>UUID=xxxx  /mnt/usb  ext4  defaults 0 2</code></pre></div>
 
-        <hr>
-        <footer>
-            <p>Last updated: <b>May 17, 2025</b></p>
-        </footer>
-    </main>
+                <h2>8. Test the Setup</h2>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo mount -a</code></pre></div>
+                <p>If no errors appear, the USB will mount automatically on boot.</p>
+
+                <hr>
+                <footer>
+                    <p>Last updated: <b>May 17, 2025</b></p>
+                </footer>
+            </main>
+        </main>
+    </div>
+
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>
-

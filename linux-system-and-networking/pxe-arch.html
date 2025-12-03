@@ -111,12 +111,15 @@ TFTPD_ARGS="--address 192.168.144.1:69 --secure /srv/tftp"
 
       <h2>6. Start All Services</h2>
       <p>Finally, start all required services for PXE boot:</p>
-      <pre><code>sudo ip link set enp2s0 up  #change if you are using different network interface
+      <div class="code-block-container">
+        <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+        <pre><code>sudo ip link set enp2s0 up  #change if you are using different network interface
 sudo ip addr add 192.168.144.1/24 dev enp2s0  
 sudo dhcpd -4 -cf /etc/dhcpd.conf enp2s0
 sudo systemctl start tftpd
 sudo exportfs -rav
 sudo systemctl start nfs-server</code></pre>
+      </div>
       <p>After starting these services, client machines on your network can boot via PXE using the setup you configured.</p>
 
       <hr>

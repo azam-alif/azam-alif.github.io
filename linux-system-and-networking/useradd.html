@@ -4,67 +4,77 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Understanding useradd in Linux</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-  <header>
-    <h1>How <code>useradd</code> Works in Linux — Explained Step by Step</h1>
-    <nav>
-      <a href="../index.html">Home</a>&nbsp;
-      <a href="../topics.html">Blog Topics</a>&nbsp;
-    </nav>
-  </header>
-  <main>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
 
-    <h2>1. Creating a Basic User</h2>
-    <p>When you run:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo useradd azam</code></pre>
-    <p>This adds user entries into system databases:</p>
-    <ul>
-      <li><b>/etc/passwd</b> → general user info (username, UID, GID, shell, etc.)</li>
-      <li><b>/etc/group</b> → new group for the user (<i>a group is a collection of users that share permissions on files or resources</i>)</li>
-      <li><b>/etc/shadow</b> → password info (initially empty)</li>
-    </ul>
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>How <code>useradd</code> Works in Linux — Explained Step by Step</h1>
+                <nav>
+                  <a href="../index.html">Home</a>&nbsp;
+                  <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+            <main>
+                <h2>1. Creating a Basic User</h2>
+                <p>When you run:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo useradd azam</code></pre></div>
+                <p>This adds user entries into system databases:</p>
+                <ul>
+                  <li><b>/etc/passwd</b> → general user info (username, UID, GID, shell, etc.)</li>
+                  <li><b>/etc/group</b> → new group for the user (<i>a group is a collection of users that share permissions on files or resources</i>)</li>
+                  <li><b>/etc/shadow</b> → password info (initially empty)</li>
+                </ul>
 
-    <p>Check with:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>grep azam /etc/passwd</code></pre>
-    <p>Example output:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>azam:x:1001:1001::/home/azam:/bin/sh</code></pre>
+                <p>Check with:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>grep azam /etc/passwd</code></pre></div>
+                <p>Example output:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>azam:x:1001:1001::/home/azam:/bin/sh</code></pre></div>
 
-    <p>Here’s what each field means:</p>
-    <ul>
-      <li><b>azam</b> → Username</li>
-      <li><b>x</b> → Password placeholder (actual password stored in <code>/etc/shadow</code>)</li>
-      <li><b>1001</b> → User ID (UID)</li>
-      <li><b>1001</b> → Group ID (GID)</li>
-      <li><b></b> → Comment or description (optional)</li>
-      <li><b>/home/azam</b> → User’s home directory</li>
-      <li><b>/bin/sh</b> → Default shell</li>
-    </ul>
+                <p>Here’s what each field means:</p>
+                <ul>
+                  <li><b>azam</b> → Username</li>
+                  <li><b>x</b> → Password placeholder (actual password stored in <code>/etc/shadow</code>)</li>
+                  <li><b>1001</b> → User ID (UID)</li>
+                  <li><b>1001</b> → Group ID (GID)</li>
+                  <li><b></b> → Comment or description (optional)</li>
+                  <li><b>/home/azam</b> → User’s home directory</li>
+                  <li><b>/bin/sh</b> → Default shell</li>
+                </ul>
 
-    <h2>2. Setting Password and Verifying</h2>
-    <p>Now, set the password for the user:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo passwd azam</code></pre>
-    <p>After setting the password “azam”, an entry appears in <code>/etc/shadow</code>:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>azam:$6$rounds=656000$F7hT1WGrlBkOVnYx$eZQ5qQ4cWEtfKpo0k6AcMZ8KUp7yB4uAK/JK4rj4PqQqAVn9dc4psgXhHuF0QoB8IEkF3GvklvZpZfDH2ULZZ.:19914:0:99999:7:::</code></pre>
-    <p><b>$6$</b> indicates SHA-512 hashing. The long string after it is the salt and encrypted password hash.</p>
+                <h2>2. Setting Password and Verifying</h2>
+                <p>Now, set the password for the user:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo passwd azam</code></pre></div>
+                <p>After setting the password “azam”, an entry appears in <code>/etc/shadow</code>:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>azam:$6$rounds=656000$F7hT1WGrlBkOVnYx$eZQ5qQ4cWEtfKpo0k6AcMZ8KUp7yB4uAK/JK4rj4PqQqAVn9dc4psgXhHuF0QoB8IEkF3GvklvZpZfDH2ULZZ.:19914:0:99999:7:::</code></pre></div>
+                <p><b>$6$</b> indicates SHA-512 hashing. The long string after it is the salt and encrypted password hash.</p>
 
-    <h2>3. How Logging In Works</h2>
-    <p>When you try to log in as <b>azam</b> using <code>ssh</code> or <code>login</code>, Linux performs these steps:</p>
-    <ol>
-      <li>Checks <code>/etc/passwd</code> for the username and default shell.</li>
-      <li>Retrieves the hashed password from <code>/etc/shadow</code>.</li>
-      <li>Hashes the entered password using the same algorithm and salt.</li>
-      <li>Compares the hash with the stored hash; if they match, login succeeds.</li>
-      <li>Sets the user environment, changes to <code>/home/azam</code>, and launches the shell.</li>
-    </ol>
-    <p>This is why having entries in <code>/etc/passwd</code> and <code>/etc/shadow</code> is crucial for authentication and environment setup.</p>
+                <h2>3. How Logging In Works</h2>
+                <p>When you try to log in as <b>azam</b> using <code>ssh</code> or <code>login</code>, Linux performs these steps:</p>
+                <ol>
+                  <li>Checks <code>/etc/passwd</code> for the username and default shell.</li>
+                  <li>Retrieves the hashed password from <code>/etc/shadow</code>.</li>
+                  <li>Hashes the entered password using the same algorithm and salt.</li>
+                  <li>Compares the hash with the stored hash; if they match, login succeeds.</li>
+                  <li>Sets the user environment, changes to <code>/home/azam</code>, and launches the shell.</li>
+                </ol>
+                <p>This is why having entries in <code>/etc/passwd</code> and <code>/etc/shadow</code> is crucial for authentication and environment setup.</p>
 
-    <hr>
-    <footer>
-      <p>Posted on: <b>October 22, 2025</b></p>
-    </footer>
-  </main>
+                <hr>
+                <footer>
+                  <p>Posted on: <b>October 22, 2025</b></p>
+                </footer>
+            </main>
+        </main>
+    </div>
+
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>
-

@@ -4,109 +4,118 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Setting Up a Chrony NTP Server and Client</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-  <header>
-    <h1>Setting Up a Chrony NTP Server and Client</h1>
-    <nav>
-      <a href="../index.html">Home</a>&nbsp;
-      <a href="../topics.html">Blog Topics</a>&nbsp;
-    </nav>
-  </header>
-  <main>
-    <h2>What is Chrony</h2>
-    <p>Chrony is a versatile Network Time Protocol (NTP) implementation used to synchronize system clocks over a network. It is lightweight, accurate, and ideal for servers, clusters, or any system where precise timekeeping is crucial. Chrony works well even on systems with intermittent network connections, making it perfect for HPC clusters, lab setups, or home networks.</p>
-    
-    <hr>
-    
-    <h2>1. Install Chrony on Server</h2>
-    <p>Install Chrony on the server machine:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo pacman -S chrony</code></pre>
-    
-    <h2>2. Configure the Chrony Server</h2>
-    <p>Edit <code>/etc/chrony/chrony.conf</code> on the server:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>server time.google.com iburst
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>Setting Up a Chrony NTP Server and Client</h1>
+                <nav>
+                  <a href="../index.html">Home</a>&nbsp;
+                  <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+            <main>
+                <h2>What is Chrony</h2>
+                <p>Chrony is a versatile Network Time Protocol (NTP) implementation used to synchronize system clocks over a network. It is lightweight, accurate, and ideal for servers, clusters, or any system where precise timekeeping is crucial. Chrony works well even on systems with intermittent network connections, making it perfect for HPC clusters, lab setups, or home networks.</p>
+                
+                <hr>
+                
+                <h2>1. Install Chrony on Server</h2>
+                <p>Install Chrony on the server machine:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo pacman -S chrony</code></pre></div>
+                
+                <h2>2. Configure the Chrony Server</h2>
+                <p>Edit <code>/etc/chrony/chrony.conf</code> on the server:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>server time.google.com iburst
 allow 192.168.144.0/24
 driftfile /var/lib/chrony/drift
-local stratum 10</code></pre>
-    <ul>
-      <li><b>server time.google.com iburst</b>: Synchronizes the server’s clock with an external NTP source. <code>iburst</code> speeds up initial synchronization.</li>
-      <li><b>allow 192.168.144.0/24</b>: Permits clients from this subnet to query the server for time.</li>
-      <li><b>driftfile /var/lib/chrony/drift</b>: Stores the system clock’s drift rate to improve accuracy across reboots.</li>
-      <li><b>local stratum 10</b>: Declares this server as a local time source if external servers are unreachable, with low priority (stratum 10).</li>
-    </ul>
+local stratum 10</code></pre></div>
+                <ul>
+                  <li><b>server time.google.com iburst</b>: Synchronizes the server’s clock with an external NTP source. <code>iburst</code> speeds up initial synchronization.</li>
+                  <li><b>allow 192.168.144.0/24</b>: Permits clients from this subnet to query the server for time.</li>
+                  <li><b>driftfile /var/lib/chrony/drift</b>: Stores the system clock’s drift rate to improve accuracy across reboots.</li>
+                  <li><b>local stratum 10</b>: Declares this server as a local time source if external servers are unreachable, with low priority (stratum 10).</li>
+                </ul>
 
-    <h2>3. Start Chrony Services on Server</h2>
-    <p>Enable and start Chrony on the server:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo systemctl enable chronyd
-sudo systemctl start chronyd</code></pre>
+                <h2>3. Start Chrony Services on Server</h2>
+                <p>Enable and start Chrony on the server:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo systemctl enable chronyd
+sudo systemctl start chronyd</code></pre></div>
 
-    <h2>4. Verify Server Synchronization</h2>
-    <p>Check that the server is correctly synchronized with external time sources:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>chronyc tracking
+                <h2>4. Verify Server Synchronization</h2>
+                <p>Check that the server is correctly synchronized with external time sources:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>chronyc tracking
 chronyc sources -v
-timedatectl status</code></pre>
-    <ul>
-      <li><b>chronyc tracking</b>: Shows server’s clock offset, stratum, and estimated error.</li>
-      <li><b>chronyc sources -v</b>: Lists all external NTP sources and their status. <code>*</code> marks the active source.</li>
-      <li><b>timedatectl status</b>: Confirms the system clock is synchronized (look for <code>NTP synchronized: yes</code>).</li>
-    </ul>
+timedatectl status</code></pre></div>
+                <ul>
+                  <li><b>chronyc tracking</b>: Shows server’s clock offset, stratum, and estimated error.</li>
+                  <li><b>chronyc sources -v</b>: Lists all external NTP sources and their status. <code>*</code> marks the active source.</li>
+                  <li><b>timedatectl status</b>: Confirms the system clock is synchronized (look for <code>NTP synchronized: yes</code>).</li>
+                </ul>
 
-    <h2>5. Install Chrony on Client</h2>
-    <p>Before configuring the client, install Chrony on the client machine:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo pacman -S chrony</code></pre>
+                <h2>5. Install Chrony on Client</h2>
+                <p>Before configuring the client, install Chrony on the client machine:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo pacman -S chrony</code></pre></div>
 
-    <h2>6. Configure the Chrony Client</h2>
-    <p>Edit <code>/etc/chrony/chrony.conf</code> on the client:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>server 192.168.144.1 iburst
+                <h2>6. Configure the Chrony Client</h2>
+                <p>Edit <code>/etc/chrony/chrony.conf</code> on the client:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>server 192.168.144.1 iburst
 driftfile /var/lib/chrony/drift
-makestep 1 3</code></pre>
-    <ul>
-      <li><b>server 192.168.144.1 iburst</b>: Points the client to the local Chrony server for time synchronization. <code>iburst</code> ensures faster initial sync.</li>
-      <li><b>driftfile /var/lib/chrony/drift</b>: Keeps the local clock’s drift rate for precise adjustments.</li>
-      <li><b>makestep 1 3</b>: Allows Chrony to immediately correct the clock if it is off by more than 1 second during the first 3 updates.</li>
-    </ul>
+makestep 1 3</code></pre></div>
+                <ul>
+                  <li><b>server 192.168.144.1 iburst</b>: Points the client to the local Chrony server for time synchronization. <code>iburst</code> ensures faster initial sync.</li>
+                  <li><b>driftfile /var/lib/chrony/drift</b>: Keeps the local clock’s drift rate for precise adjustments.</li>
+                  <li><b>makestep 1 3</b>: Allows Chrony to immediately correct the clock if it is off by more than 1 second during the first 3 updates.</li>
+                </ul>
 
-    <h2>7. Start Chrony on Client</h2>
-    <p>Enable and start the Chrony service on the client machine:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>sudo systemctl enable chronyd
-sudo systemctl start chronyd</code></pre>
+                <h2>7. Start Chrony on Client</h2>
+                <p>Enable and start the Chrony service on the client machine:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo systemctl enable chronyd
+sudo systemctl start chronyd</code></pre></div>
 
-    <h2>8. Verify Client Synchronization</h2>
-    <p>Check that the client is receiving time from the server and synchronized:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>chronyc tracking
+                <h2>8. Verify Client Synchronization</h2>
+                <p>Check that the client is receiving time from the server and synchronized:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>chronyc tracking
 chronyc sources -v
-timedatectl status</code></pre>
-    <ul>
-      <li><b>chronyc tracking</b>: Confirms the client’s clock offset, stratum, and synchronization status.</li>
-      <li><b>chronyc sources -v</b>: Shows the server as the active source with a <code>*</code>.</li>
-      <li><b>timedatectl status</b>: Ensures <code>NTP synchronized: yes</code> and displays the accurate current time.</li>
-    </ul>
+timedatectl status</code></pre></div>
+                <ul>
+                  <li><b>chronyc tracking</b>: Confirms the client’s clock offset, stratum, and synchronization status.</li>
+                  <li><b>chronyc sources -v</b>: Shows the server as the active source with a <code>*</code>.</li>
+                  <li><b>timedatectl status</b>: Ensures <code>NTP synchronized: yes</code> and displays the accurate current time.</li>
+                </ul>
 
-    <h2>9. Optional: Quick Sync Check</h2>
-    <p>To quickly verify synchronization without verbose output:</p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>chronyc -n tracking</code></pre>
-    <p>This shows numeric offsets and stratum in a compact form, useful for scripts or fast verification.</p>
-
-    <p><b>Sample output:</b></p>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><code>
+                <h2>9. Optional: Quick Sync Check</h2>
+                <p>To quickly verify synchronization without verbose output:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>chronyc -n tracking</code></pre></div>
+                <p><b>Sample output:</b></p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>
 Reference ID    : D8EF230C (216.239.35.12)
 Stratum         : 2
 System time     : 0.001029140 seconds slow of NTP time
 Last offset     : -0.000090224 seconds
 Frequency       : 10.089 ppm fast
 Leap status     : Normal
-    </code></pre>
-    <p>Here client is synchronized with the NTP server. Stratum 2 indicates one hop away from a primary source. The system time is very close to the correct time (only ~1 ms off). Frequency shows a minor adjustment being applied. Leap status normal means there are no leap second issues.</p>
+    </code></pre></div>
+                <p>Here client is synchronized with the NTP server. Stratum 2 indicates one hop away from a primary source. The system time is very close to the correct time (only ~1 ms off). Frequency shows a minor adjustment being applied. Leap status normal means there are no leap second issues.</p>
 
-    <p>If the output shows <code>Stratum 16</code>, large offsets, or <code>Leap status: Alarm</code>, it indicates the client is not synchronized, there is a network/server problem, or the local clock has a large error.</p>
+                <p>If the output shows <code>Stratum 16</code>, large offsets, or <code>Leap status: Alarm</code>, it indicates the client is not synchronized, there is a network/server problem, or the local clock has a large error.</p>
 
-    <hr>
-    <footer>
-      <p>Posted on: <b>November 21, 2025</b></p>
-    </footer>
-  </main>
+                <hr>
+                <footer>
+                  <p>Posted on: <b>November 21, 2025</b></p>
+                </footer>
+            </main>
+        </main>
+    </div>
+
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>
-

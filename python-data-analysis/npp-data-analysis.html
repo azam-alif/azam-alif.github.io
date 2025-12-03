@@ -4,34 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NPP-data-analysis</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-    <header>
-        <h1>Nuclear Power Plant-data analysis.</h1>
-<nav>
-      <a href="../index.html">Home</a>&nbsp;
-      <a href="../topics.html">Blog Topics</a>&nbsp;
-    </nav>
-    </header>
-    <main>
-        <p>Nuclear power plant is considered one of the finest way of green energy. Recently, Bangladesh started this journey in Nuclear world by <b>Rooppur Nuclear Power Plant</b> in Pabna. <br />
-        However, local people first opposed this project due to the misconception about Nuclear Power plant. Concern raise from potential harm to crop production to various human diseases. <br />
-        That's why, my friends and I wanted to evaluate basic environmental parameters before and after establishing nuclear power plant. We choose <b>Kudan Kulam Nuclear Power Plant</b> in Tamil Nadu, India for inspecting. </p>
-        <p>We evaluated environmental parameters like 
-        <ul>
-            <li>Temperature</li>
-            <li>Pressure</li>
-            <li>CO<sub>2</sub> density</li> 
-            <li>Precipitation</li>
-        </ul>
-        </p>
-        <p>We Collected our data from the era5 hourly data. To know about data downloading from era5, follow this <a href="../python-data-analysis/download-netCDF-era5.html" target="_blank">blog</a>. Dataset from era5 is in netCDF format. To know about netCDF dataset, read <a href="../python-data-analysis/download-netCDF-era5.html" target="_blank">this</a>. Our findings are given below: </p>
-        <img src="npp-data-analysis-images/sp.png" alt="Surface Pressure" width="800" style="display: block; margin: 0 auto;">
-        <img src="npp-data-analysis-images/sst.png" alt="Sea Surface Tempeature" width="800" style="display: block; margin: 0 auto;">
-        <img src="npp-data-analysis-images/t2m.png" alt="2m above Sea Surface Temperature" width="800" style="display: block; margin: 0 auto;">
-        <img src="npp-data-analysis-images/tp.png" alt="Total Pressure" width="800" style="display: block; margin: 0 auto;">
-        <img src="npp-data-analysis-images/co2.png" alt="Carbon DiOxide Density" width="800" style="display: block; margin: 0 auto;">
-        <p>Source code is available <a href="https://github.com/azam-alif/NuclearPowerPlant-data-analysis" target="_blank">here</a>. There you will know how to use python for data analysis. Feel free to use and share. </p>
-    </main>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>Nuclear Power Plant-data analysis.</h1>
+                <nav>
+                      <a href="../index.html">Home</a>&nbsp;
+                      <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+            <main>
+                <p>Nuclear power plant is considered one of the finest way of green energy. Recently, Bangladesh started this journey in Nuclear world by <b>Rooppur Nuclear Power Plant</b> in Pabna. <br />
+                However, local people first opposed this project due to the misconception about Nuclear Power plant. Concern raise from potential harm to crop production to various human diseases. <br />
+                That's why, my friends and I wanted to evaluate basic environmental parameters before and after establishing nuclear power plant. We choose <b>Kudan Kulam Nuclear Power Plant</b> in Tamil Nadu, India for inspecting. </p>
+                <p>We evaluated environmental parameters like 
+                <ul>
+                    <li>Temperature</li>
+                    <li>Pressure</li>
+                    <li>CO<sub>2</sub> density</li> 
+                    <li>Precipitation</li>
+                </ul>
+                </p>
+                <p>We Collected our data from the era5 hourly data. To know about data downloading from era5, follow this <a href="../python-data-analysis/download-netCDF-era5.html" target="_blank">blog</a>. Dataset from era5 is in netCDF format. To know about netCDF dataset, read <a href="../python-data-analysis/download-netCDF-era5.html" target="_blank">this</a>. Our findings are given below: </p>
+                <img src="npp-data-analysis-images/sp.png" alt="Surface Pressure" width="800" style="display: block; margin: 0 auto;">
+                <img src="npp-data-analysis-images/sst.png" alt="Sea Surface Tempeature" width="800" style="display: block; margin: 0 auto;">
+                <img src="npp-data-analysis-images/t2m.png" alt="2m above Sea Surface Temperature" width="800" style="display: block; margin: 0 auto;">
+                <img src="npp-data-analysis-images/tp.png" alt="Total Pressure" width="800" style="display: block; margin: 0 auto;">
+                <img src="npp-data-analysis-images/co2.png" alt="Carbon DiOxide Density" width="800" style="display: block; margin: githube.com/azam-alif/NuclearPowerPlant-data-analysis" target="_blank">here</a>. There you will know how to use python for data analysis. Feel free to use and share. </p>
+            </main>
+        </main>
+    </div>
+
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>

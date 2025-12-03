@@ -4,64 +4,57 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Arch PXE Server Setup (Serving a Root Filesystem)</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-  <header>
-    <h1>Setting Up an Arch PXE Server (serving the root filesystem)</h1>
-    <nav>
-      <a href="../index.html">Home</a>&nbsp;
-      <a href="../topics.html">Blog Topics</a>&nbsp;
-    </nav>
-  </header>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
 
-  <main>
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>Setting Up an Arch PXE Server (serving the root filesystem)</h1>
+                <nav>
+                  <a href="../index.html">Home</a>&nbsp;
+                  <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+            <main>
+                <p>This guide is the follow-up to the <a href="pxe-arch.html">previous post</a> where we served the Arch Linux ISO directly over PXE. In this blog, we configure the PXE server to boot machines from a complete <b>root filesystem</b> created using <code>pacstrap</code> instead of the ISO image. This approach is more flexible for clusters, labs, or diskless compute nodes because each machine boots into a full Arch system that behaves like a normal installation.</p>
 
-    <p>This guide is the follow-up to the <a href="pxe-arch.html">previous post</a> where we served the Arch Linux ISO directly over PXE. In this blog, we configure the PXE server to boot machines from a complete <b>root filesystem</b> created using <code>pacstrap</code> instead of the ISO image. This approach is more flexible for clusters, labs, or diskless compute nodes because each machine boots into a full Arch system that behaves like a normal installation.</p>
+                <hr>
 
-    <hr>
-
-    <h2>1. Create the Root Filesystem</h2>
-    <p>Create a folder where the new Arch root filesystem will live:</p>
-
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;">
-<code>sudo mkdir -p /srv/rootfs
+                <h2>1. Create the Root Filesystem</h2>
+                <p>Create a folder where the new Arch root filesystem will live:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo mkdir -p /srv/rootfs
 sudo pacstrap -K /srv/rootfs base linux linux-firmware mkinitcpio-nfs-utils vim openssh nfs-utils
-mount --bind /srv/rootfs /srv/rootfs</code></pre>
+mount --bind /srv/rootfs /srv/rootfs</code></pre></div>
+                <p>This installs a minimal Arch Linux system plus NFS utilities, SSH, and Vim. </p>
 
-    <p>This installs a minimal Arch Linux system plus NFS utilities, SSH, and Vim. </p>
+                <h2>2. Configure the System Inside the Chroot</h2>
+                <p>Chroot into the root filesystem to configure the system for PXE boot:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo arch-chroot /srv/rootfs</code></pre></div>
 
-    <h2>2. Configure the System Inside the Chroot</h2>
-    <p>Chroot into the root filesystem to configure the system for PXE boot:</p>
+                <h3>Set the root password</h3>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>passwd</code></pre></div>
+                <p>Remember this password.</p>
 
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;">
-<code>sudo arch-chroot /srv/rootfs</code></pre>
-
-    <h3>Set the root password</h3>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;">
-<code>passwd</code></pre>
-    <p>Remember this password.</p>
-
-    <h3>Enable SSH Login</h3>
-    <p>Generate host SSH keys and enable the SSH service:</p>
-
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;">
-<code>ssh-keygen -A
+                <h3>Enable SSH Login</h3>
+                <p>Generate host SSH keys and enable the SSH service:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>ssh-keygen -A
 systemctl disable sshdgenkeys.service
-systemctl enable sshd</code></pre>
+systemctl enable sshd</code></pre></div>
 
-    <h3>Exit chroot</h3>
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;">
-<code>exit</code></pre>
+                <h3>Exit chroot</h3>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>exit</code></pre></div>
 
-    <h2>3. Configure DHCP, TFTP and NFS as <a href="pxe-arch.html">Before</a></h2>
-    <p>But, instead of using the initramfs from the previous one, you need to generate one for nfs sharing the rootfs. <a href="initrd-generation.html">Here</a> you will know how can you generate a Initial Ramdisk with NFSv4 Support.</p>
+                <h2>3. Configure DHCP, TFTP and NFS as <a href="pxe-arch.html">Before</a></h2>
+                <p>But, instead of using the initramfs from the previous one, you need to generate one for nfs sharing the rootfs. <a href="initrd-generation.html">Here</a> you will know how can you generate a Initial Ramdisk with NFSv4 Support.</p>
 
-    <h2>4. Configure PXE Bootloader</h2>
-    <p>Edit the menu file at <code>/srv/tftp/pxelinux.cfg/default</code>:</p>
-
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;">
-<code>DEFAULT linux
+                <h2>4. Configure PXE Bootloader</h2>
+                <p>Edit the menu file at <code>/srv/tftp/pxelinux.cfg/default</code>:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>DEFAULT linux
 PROMPT 0
 TIMEOUT 50
 
@@ -69,43 +62,39 @@ LABEL linux
     MENU LABEL ^Arch Linux NFS RootFS
     KERNEL vmlinuz-linux
     INITRD initramfs-linux.img
-    APPEND root=/dev/nfs nfsroot=192.168.144.1:/srv/rootfs ip=dhcp</code></pre>
+    APPEND root=/dev/nfs nfsroot=192.168.144.1:/srv/rootfs ip=dhcp</code></pre></div>
+                <p>This tells the client to mount the NFS root filesystem instead of the ISO.</p>
 
-    <p>This tells the client to mount the NFS root filesystem instead of the ISO.</p>
-
-
-    <h2>5. Start All Required Services</h2>
-    <p>Bring up the PXE server interface and start DHCP, NFS, and TFTP:</p>
-
-    <pre style="border:1px solid #ccc; padding:10px; background:#f9f9f9;">
-<code>sudo ip link set enp2s0 up
+                <h2>5. Start All Required Services</h2>
+                <p>Bring up the PXE server interface and start DHCP, NFS, and TFTP:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo ip link set enp2s0 up
 sudo ip addr add 192.168.144.1/24 dev enp2s0
 
 sudo dhcpd -4 -cf /etc/dhcpd.conf enp2s0
 sudo systemctl start tftpd
 sudo exportfs -rav
-sudo systemctl start nfs-server</code></pre>
+sudo systemctl start nfs-server</code></pre></div>
+                <p>Your PXE environment is now ready to boot real Arch installations over the network.</p>
 
-    <p>Your PXE environment is now ready to boot real Arch installations over the network.</p>
+                <h2>6. Boot the Compute Node</h2>
+                <p>Power on the diskless compute node and select Network Boot (PXE).  
+                When the system boots, log in using:</p>
+                <ul>
+                  <li><b>Username:</b> root</li>
+                  <li><b>Password:</b> the password you set inside the chroot</li>
+                </ul>
+                <p>The node now runs a complete Arch Linux system over NFS, suitable for HPC clusters or diskless labs.</p>
 
+                <hr>
+                <footer>
+                  <p>Posted on: <b>November 15, 2025</b></p>
+                </footer>
+            </main>
+        </main>
+    </div>
 
-    <h2>6. Boot the Compute Node</h2>
-    <p>Power on the diskless compute node and select Network Boot (PXE).  
-    When the system boots, log in using:</p>
-
-    <ul>
-      <li><b>Username:</b> root</li>
-      <li><b>Password:</b> the password you set inside the chroot</li>
-    </ul>
-
-    <p>The node now runs a complete Arch Linux system over NFS, suitable for HPC clusters or diskless labs.</p>
-
-    <hr>
-    <footer>
-      <p>Posted on: <b>November 15, 2025</b></p>
-    </footer>
-
-  </main>
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>
-
