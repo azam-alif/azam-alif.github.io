@@ -299,6 +299,29 @@ nav a:hover {
     font-size: 1.1em;
 }
 
+.main-content ul li.blog-post-item {
+    display: flex; /* Make it a flex container */
+    justify-content: space-between; /* Space out title and date */
+    align-items: center; /* Vertically align items */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    margin-bottom: 15px; /* Increase bottom margin for better separation */
+    padding: 10px 15px; /* Adjust padding */
+    border: 1px solid var(--border-color); /* Add a subtle border */
+}
+
+.main-content ul li.blog-post-item a {
+    flex-grow: 1; /* Allow the link to take up available space */
+    margin-right: 10px; /* Add some space between title and date */
+    font-size: 1.1em; /* Slightly larger font for titles */
+}
+
+.main-content ul li.blog-post-item small {
+    white-space: nowrap; /* Prevent date from wrapping */
+    font-size: 0.9em; /* Slightly smaller font for dates */
+    color: var(--text-color); /* Use general text color for better visibility */
+    font-weight: normal; /* Ensure it's not bold by default */
+}
+
 
 /*-- Responsive design --*/
 @media (max-width: 768px) {
