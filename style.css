@@ -299,6 +299,44 @@ nav a:hover {
     font-size: 1.1em;
 }
 
+.post-card {
+    background-color: var(--card-bg-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 32px 0 var(--shadow-color);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    text-decoration: none;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.post-card:hover {
+    box-shadow: 0 0 25px var(--glow-color);
+    transform: translateY(-5px);
+    color: var(--accent-color-hover);
+}
+
+.post-card span {
+    font-weight: bold;
+    font-size: 1.1em;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.post-card .date {
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 15px;
+}
+
 
 /*-- Responsive design --*/
 @media (max-width: 768px) {
