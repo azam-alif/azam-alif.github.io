@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dnsmasq Setup Guide</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>How To Set Up dnsmasq on Linux</h1>
+                <nav>
+                    <a href="../index.html">Home</a>&nbsp;
+                    <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+
+            <main>
+                <h2>What is dnsmasq?</h2>
+                <p>dnsmasq is a lightweight and simple tool that provides DNS caching, DHCP server, TFTP server, and PXE boot support—all from a single program. Because it is fast, minimal, and easy to configure, it’s extremely popular for home networks, labs, embedded systems, and cluster environments.</p>
+
+
+
+                <p>Follow these steps to install and configure dnsmasq on Linux.</p>
+
+                <h2>1. Install dnsmasq</h2>
+                <ul><li>Arch Linux:</li></ul>
+                <div class="code-block-container">
+                    <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+<pre><code>sudo pacman -S dnsmasq</code></pre>
+                </div>
+
+
+                <div class="code-block-container">
+                    <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+<pre><code>sudo systemctl enable dnsmasq
+sudo systemctl start dnsmasq</code></pre>
+                </div>
+
+                <h2>3. Configure dnsmasq</h2>
+                <p>Edit the main configuration file:</p>
+                <div class="code-block-container">
+                    <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+<pre><code>sudo vim /etc/dnsmasq.conf</code></pre>
+                </div>
+
+                <p>Add this basic configuration block:</p>
+                <div class="code-block-container">
+                    <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+<pre><code># --- DNS Settings ---
+domain-needed
+bogus-priv
+no-resolv
+server=8.8.8.8
+server=1.1.1.1
+cache-size=1000
+
+# --- DHCP Settings ---
+interface=enp2s0
+dhcp-range=192.168.10.50,192.168.10.200,12h
+dhcp-option=3,192.168.10.1
+dhcp-option=6,8.8.8.8
+dhcp-host=aa:bb:cc:dd:ee:ff,node01,192.168.10.100
+
+# --- TFTP (Optional) ---
+enable-tftp
+tftp-root=/srv/tftp
+</code></pre>
+                </div>
+
+                <h2>4. Configure the Network Interface</h2>
+                <p>Assign a static IP to the interface dnsmasq will manage:</p>
+                <div class="code-block-container">
+                    <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+<pre><code>sudo vim /etc/systemd/network/enp2s0.network</code></pre>
+                </div>
+
+                <p>Write:</p>
+                <div class="code-block-container">
+                    <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+<pre><code>[Match]
+Name=enp2s0
+
+[Network]
+Address=192.168.144.1/24</code></pre>
+                </div>
+
+                <h2>5. Restart Network Services</h2>
+                <div class="code-block-container">
+                    <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+<pre><code>sudo systemctl restart systemd-networkd
+sudo systemctl restart dnsmasq</code></pre>
+                </div>
+
+
+            </main>
+        </main>
+    </div>
+
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>
+
