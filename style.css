@@ -200,7 +200,7 @@ nav a:hover {
 }
 
 .code-block-container .copy-code-button {
-    position: sticky;
+    position: absolute;
     top: 10px;
     right: 10px;
     background-color: var(--accent-color);
@@ -211,7 +211,6 @@ nav a:hover {
     cursor: pointer;
     font-size: 0.8em;
     transition: background-color 0.3s ease;
-    align-self: flex-start; /* Ensures it sticks to the start of the flex item if container is flex */
 }
 
 .code-block-container .copy-code-button:hover {
