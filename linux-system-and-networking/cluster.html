@@ -7,100 +7,139 @@
   <link rel="icon" type="image/png" href="../favicon.png">
   <link rel="stylesheet" href="../style.css">
 </head>
+
 <body>
-    <!-- Particles.js background -->
-    <div id="particles-js"></div>
+  <div id="particles-js"></div>
 
-    <div class="container">
-        <main class="main-content">
-            <header>
-                <h1>How To Set Up a Cluster Server</h1>
-                <nav>
-                      <a href="../index.html">Home</a>&nbsp;
-                      <a href="../topics.html">Blog Topics</a>&nbsp;
-                </nav>
-            </header>
-            <main>
-                <h2>What is DHCP?</h2>
-                <p>Dynamic Host Configuration Protocol (DHCP) is a network protocol used to automatically assign IP addresses and other network settings to devices. It eliminates the need for manually configuring IP addresses on each device. DHCP works on a client-server model, where the server provides network details to clients when they join the network. The protocol uses a lease system, where IP addresses are assigned for a limited time and can be reused. It operates over UDP using ports 67 (server) and 68 (client). DHCP greatly simplifies network management, especially in environments with many devices.</p>
+  <div class="container">
+    <main class="main-content">
+      <header>
+        <h1>Building a Full Diskless Linux Cluster</h1>
+        <nav>
+          <a href="../index.html">Home</a>&nbsp;
+          <a href="../topics.html">Blog Topics</a>&nbsp;
+        </nav>
+      </header>
 
-                <h2>Why Use DHCP?</h2>
-                <p>DHCP reduces administrative workload by automating IP allocation and avoiding IP conflicts. It allows devices to connect to the network without manual setup, making it ideal for dynamic and frequently changing networks. With DHCP, reconfiguring networks or adding new devices becomes faster. It also ensures that IP addresses are reused efficiently. Additionally, DHCP can distribute other settings like DNS and gateway addresses automatically. This leads to a more reliable and scalable network setup.</p>
+      <main>
 
-                <h2>Where to Use DHCP?</h2>
-                <p>DHCP is used in home networks, corporate offices, data centers, and public Wi-Fi hotspots. It is essential in large organizations where hundreds or thousands of devices connect and disconnect regularly. DHCP is also useful in lab environments where network configurations change frequently. Internet Service Providers (ISPs) use DHCP to assign IP addresses to customer routers. In cloud environments, DHCP helps in managing virtual machine networking. Essentially, DHCP is applicable anywhere IP address management needs to be efficient and automatic.</p>
+        <!-- ================= PART 1 ================= -->
 
-                <hr>
+        <h2>Part 1: How a Diskless Cluster Works</h2>
 
-                <p>A DHCP server automatically assigns IP addresses to devices in your network. Follow these steps to set up a DHCP server on Linux.</p>
+        <p>
+          <img src="images/cluster-overview.png" alt="Diskless cluster overview">
+        </p>
 
-                <h2>1. Install DHCP Server</h2>
-                <ul>
-                  <li>Arch Linux:</li>
-                </ul>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo pacman -S dhcp</code></pre></div>
+        <p>
+          A diskless cluster consists of two types of machines: a <b>Master Node</b> and multiple
+          <b>Compute Nodes</b>. Compute nodes have no storage devices. They rely entirely on the master
+          node to boot, authenticate, and operate.
+        </p>
 
-                <h2>2. Create a Network Interface File</h2>     
-                <p>First, you need to check your network interface name. Using:</p>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>ip addr show</code></pre></div>
-                <p>You will see something like this: </p>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>1. lo: ....
-2. enp2s0: ...</code></pre></div>
-                <p>Check which interface is showing after "2. ". Here in the example my interface is <code>enp2s0</code>. Remember your interface name. </p>
-                <p>Now create a directory:</p>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo mkdir -p /etc/systemd/network</code></pre></div>
-                <p>Edit the network configuration file with the name of your network interface:</p>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo vim /etc/systemd/network/enp2s0.network</code></pre></div>
-                <p>Example configuration:</p>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>[Match]
-Name=enp2s0
+        <p>
+          <img src="images/master-node-services.png" alt="Master node services">
+        </p>
 
-[Network]
-Address=192.168.10.10/24
-</code></pre></div>
+        <p>
+          The master node is not a single-purpose machine. It acts as a combined server providing
+          <b>DHCP</b>, <b>TFTP</b>, <b>NFS</b>, <b>SSH</b>, <b>MUNGE</b>, and <b>SLURM</b>.
+        </p>
 
-                <h2>3. Enable and Start systemd-networkd</h2>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo systemctl enable systemd-networkd
-sudo systemctl start systemd-networkd</code></pre></div>
-                <p>Check your IP address:</p>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>ip addr show</code></pre></div>
+        <p>
+          When a compute node powers on with <b>PXE boot</b> set as the first boot option, it broadcasts
+          a DHCP request. The master node responds by assigning an IP address and pointing the node to
+          the bootloader file <code>pxelinux.0</code>.
+        </p>
 
-                <h2>4. Configure DHCP</h2>
-                <p>Edit the DHCP configuration file:</p>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo vim /etc/dhcpd.conf</code></pre></div>
-                <p>Example configuration:</p>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>subnet 192.168.10.0 netmask 255.255.255.0 {
-  range 192.168.10.100 192.168.10.200;
-  option routers 192.168.10.10;
-  option domain-name-servers 8.8.8.8, 8.8.4.4;
-  default-lease-time 600;
-  max-lease-time 7200;
-}</code></pre></div>
-                <p>This configuration will make your device IP <code>192.168.10.10</code> in that interface. And provide the connected devices an IP address within the range <code>192.168.10.100</code> to <code>192.168.10.200</code>.</p>
-                <h4>Optional:</h4>
-                <p>To make any computer IP address fixed, add these lines in <code>/etc/dhcpd.conf</code> file:</p>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>host node1 { 
-  hardware ethernet B0:83:FE:A3:80:18; #MAC address of the client computer network interface
-  fixed-address 192.168.10.160;
-}
-</code></pre></div>
+        <p>
+          The compute node then downloads <b>pxelinux.0</b> via TFTP. Based on its configuration, the
+          node fetches the Linux kernel and the initial RAM filesystem (initramfs) from the master
+          node, again using TFTP.
+        </p>
 
-                <h2>5. Start the DHCP Service</h2>
-                <p>Start DHCP manually:</p>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo dhcpd -4 -cf /etc/dhcpd.conf enp2s0</code></pre></div>
+        <p>
+          After the kernel starts, the compute node mounts its <b>root filesystem over NFS</b> from
+          the master node. At this point, the node is running a full Linux system without any local
+          disk.
+        </p>
 
-                <p><b>Congratulations!</b> You have successfully configured a DHCP server on your own. Connect one or two computers to test the server. Best of luck.</p>
+        <p>
+          Once booted, compute nodes are fully usable. Users can run software, compile code, and
+          execute parallel jobs exactly like a normal Linux system.
+        </p>
 
-                <hr>
-                <footer>
-                  <p>Last updated on: <b>December 28, 2025</b></p>
-                </footer>
-            </main>
-        </main>
-    </div>
+        <p>
+          For cluster computation, <b>SLURM</b> is used as the workload manager. Password-based SSH
+          logins are inefficient, so <b>MUNGE</b> is deployed to provide secure, credential-free
+          authentication between nodes. With SLURM and MUNGE running on all nodes, the cluster becomes
+          a functional HPC system.
+        </p>
 
-    <!-- Scripts for particles.js -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="../script.js"></script>
+        <!-- ================= PART 2 ================= -->
+
+        <hr>
+        <h2>Part 2: Diskless Cluster Setup Roadmap</h2>
+
+        <p>
+          In this section, each service is configured step by step. Detailed commands are not repeated
+          here; instead, each setup links to its dedicated guide.
+        </p>
+
+        <ol>
+  <li>
+    Configure the <b><a href="dhcp-server.html">DHCP server</a></b> on the master node.
+  </li>
+
+  <li>
+    Configure the <b><a href="tftp-server.html">TFTP server</a></b> to serve
+    <code>pxelinux.0</code>, the Linux kernel, and the initramfs.
+  </li>
+
+  <li>
+    Build the <b><a href="initrd-generation.html">root filesystem</a></b> for compute nodes, including networking, SSH,
+    MUNGE, and SLURM client components. Here you will get the initramfs for step 2 too. 
+  </li>
+
+  <li>
+    Configure the <b>NFS server</b> and export the root filesystem to compute nodes.
+  </li>
+
+  <li>
+    Set up <b><a href="munge-setup.html">MUNGE</a></b> on the master and all compute nodes for secure authentication.
+  </li>
+
+  <li>
+    Configure <b><a href="slurm-setup.html">SLURM</a></b> on the master node and register all compute nodes for job scheduling.
+  </li>
+</ol>
+
+<h3>Additional Help</h3>
+
+<ul>
+  <li>
+    <a href="dnsmasq.html">DNSMasq setup</a> – lightweight DHCP/DNS/TFTP alternative for small clusters.
+  </li>
+
+  <li>
+    <a href="pxe-arch.html">PXE boot with Arch Linux</a> – PXE configuration and bootloader setup.
+  </li>
+
+  <li>
+    <a href="pxe-arch-rootfs.html">Arch Linux PXE root filesystem</a> – building and exporting the NFS rootfs.
+  </li>
+</ul>
+
+        <hr>
+        <footer>
+          <p>Last updated on: <b>December 28, 2025</b></p>
+        </footer>
+
+      </main>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
 </body>
 </html>
