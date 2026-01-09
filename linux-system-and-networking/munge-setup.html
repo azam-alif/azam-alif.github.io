@@ -40,10 +40,11 @@
         <p>The key must be identical on all nodes. Create it only on the master.</p>
         <div class="code-block-container">
           <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
-<pre><code>sudo create-munge-key</code></pre>
+<pre><code>sudo mungekey</code></pre>
         </div>
 
         <h3>1.3 Set Permissions</h3>
+	<p>Munge service will only run for munge user. Other user like root or anyone can not run munge. So, ownership is cruicial here. </p>
         <div class="code-block-container">
           <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
 <pre><code>sudo chown munge:munge /etc/munge/munge.key
