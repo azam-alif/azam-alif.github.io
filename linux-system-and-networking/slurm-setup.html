@@ -38,6 +38,7 @@
         </div>
 
         <h3>1.2 Create SLURM User</h3>
+	<p>This slurm user will be used to maintain ownership of the files and directories used for SLURM.
         <div class="code-block-container">
           <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
 <pre><code>sudo useradd -r -s /usr/bin/nologin slurm</code></pre>
@@ -52,16 +53,10 @@ SlurmctldHost=archlinux
 
 ProctrackType=proctrack/linuxproc
 ReturnToService=1
-
-SlurmctldPidFile=/var/run/slurmctld.pid
 SlurmctldPort=6817
-
-SlurmdPidFile=/var/run/slurmd.pid
 SlurmdPort=6818
-SlurmdSpoolDir=/var/spool/slurmd
-
 SlurmUser=slurm
-
+SlurmdSpoolDir=/var/spool/slurmd
 StateSaveLocation=/var/spool/slurmctld
 
 TaskPlugin=task/affinity,task/cgroup
@@ -70,21 +65,31 @@ SchedulerType=sched/backfill
 SelectType=select/cons_tres
 
 SlurmctldDebug=info
-SlurmctldLogFile=/var/log/slurmctld.log
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
 SlurmdDebug=info
-SlurmdLogFile=/var/log/slurmd.log
+SlurmdLogFile=/var/log/slurm/slurmd.log
 
-NodeName=node1 NodeAddr=192.168.144.199 CPUs=4 RealMemory=3300
-NodeName=node2 NodeAddr=192.168.144.102 CPUs=4 RealMemory=3300
+NodeName=node1 NodeAddr=192.168.144.132 CPUs=2 RealMemory=3500 Sockets=1 CoresPerSocket=2 ThreadsPerCore=1 State=UNKNOWN
+NodeName=node2 NodeAddr=192.168.144.175 CPUs=2 RealMemory=3500 Sockets=1 CoresPerSocket=2 ThreadsPerCore=1 State=UNKNOWN
 
 PartitionName=debug Nodes=node[1-2] Default=YES MaxTime=INFINITE State=UP</code></pre>
         </div>
+	<p>Save this file to /etc/slurm-llnl/slurm.conf
 
         <h3>1.4 Controller Directories</h3>
+	<p>Now, to run SLURM smoothly, you need two directories.
+	<ul>
+		<li>/var/spool --> for saving live state + recovery </li>
+		<li>/var/log --> for history + debugging </li>
+	</ul>
         <div class="code-block-container">
           <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
-<pre><code>sudo mkdir -p /var/spool/slurmctld
-sudo chown slurm:slurm /var/spool/slurmctld</code></pre>
+<pre><code>sudo mkdir -p /var/log/slurm
+sudo mkdir -p /var/spool/slurmctld
+sudo touch /var/log/slurm/slurmctld.log
+sudo chown -R slurm:slurm /var/spool/slurmctld /var/log/slurm
+sudo chmod 750 /var/log/slurm /var/spool/slurmctld
+sudo chmod 640 /var/log/slurm/*.log</code></pre>
         </div>
 
         <h3>1.5 Start slurmctld</h3>
@@ -104,11 +109,15 @@ sudo systemctl start slurmctld</code></pre>
 <pre><code>sudo cp /etc/slurm-llnl/slurm.conf /srv/nfsroot/etc/slurm-llnl/slurm.conf</code></pre>
         </div>
 
-        <h3>2.2 Create slurmd Spool</h3>
+        <h3>2.2 Create compute node directories</h3>
         <div class="code-block-container">
           <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
 <pre><code>sudo mkdir -p /srv/nfsroot/var/spool/slurmd
-sudo chown slurm:slurm /srv/nfsroot/var/spool/slurmd</code></pre>
+sudo mkdir -p /srv/nfsroot/var/log/slurm
+sudo touch /srv/nfsroot/var/log/slurm/slurmd.log
+sudo chown -R slurm:slurm /srv/nfsroot/var/spool/slurmd /srv/nfsroot/var/log/slurm
+sudo chmod 750 /srv/nfsroot/var/spool/slurmd /srv/nfsroot/var/log/slurm
+sudo chmod 640 /srv/nfsroot/var/log/slurm/*.log</code></pre>
         </div>
 
         <h3>2.3 Start slurmd</h3>
@@ -121,7 +130,8 @@ sudo systemctl start slurmd</code></pre>
         <h3>2.4 Verify Cluster</h3>
         <div class="code-block-container">
           <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
-<pre><code>sinfo
+<pre><code>sudo scontrol update NodeName=node[1-2] State=RESUME
+sinfo
 scontrol show nodes</code></pre>
         </div>
 
