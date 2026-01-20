@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setting Up LAMMPS with MPI on Arch Linux</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>LAMMPS setup with MPI</h1>
+                <nav>
+                  <a href="../index.html">Home</a>&nbsp;
+                  <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+            <main>
+                <p>LAMMPS (Large-scale Atomic/Molecular Massively Parallel Simulator) is a classical molecular dynamics (MD) simulator designed for modeling atomic, polymeric, and coarse-grained systems. It is open-source and highly parallelized, making it suitable for running on high-performance computing clusters. Its versatility allows researchers to simulate a wide range of materials and phenomena, from simple liquids to complex biological molecules, under various physical conditions.</p>
+                <p>This guide shows how to build and run <b>LAMMPS</b> on Arch Linux using <b>OpenMPI</b>. It includes checking prerequisites, building from source, verifying MPI support, and running a sample simulation.</p>
+
+                <hr>
+
+                <h2>1. Install Required Tools</h2>
+                <p>LAMMPS requires <code>openmpi</code> and <code>cmake</code>. First, verify if they are installed:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>which openmpi
+which mpicxx
+which cmake</code></pre></div>
+                <p>If any are missing, install via pacman:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo pacman -S openmpi cmake git</code></pre></div>
+
+                <h2>2. Clone LAMMPS Repository</h2>
+                <p>Get the latest LAMMPS source code:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>git clone https://github.com/lammps/lammps.git
+cd lammps</code></pre></div>
+
+                <h2>3. Build LAMMPS with MPI Support</h2>
+                <p>Create a build directory and configure with CMake:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>mkdir build && cd build
+cmake ../cmake -D BUILD_MPI=YES 
+make -j$(nproc)</code></pre></div>
+                <p>This builds LAMMPS using all available CPU cores. And you will get a lmp named executable file which will be used in all LAMMPS calculations.</p>
+
+                <h2>4. Verify MPI Support</h2>
+                <p>Check if the built LAMMPS binary has MPI enabled:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>cd ~/lammps/build/
+./lmp -h | grep MPI</code></pre></div>
+                <p>If MPI is listed, your LAMMPS build is ready for parallel execution.</p>
+
+                <h2>5. Run a Sample Simulation</h2>
+                <p>Test LAMMPS on a simple Lennard-Jones system using 2 MPI processes:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>mpirun -np 2 ./lmp -in ../examples/UNITS/in.ar.lj</code></pre></div>
+                <p>This command will start the simulation and output the trajectory, which can later be visualized using <code>VMD</code>.</p>
+
+                <hr>
+                <footer>
+                  <p>Posted on: <b>January 20, 2026</b></p>
+                </footer>
+            </main>
+        </main>
+    </div>
+
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>
+
