@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OVITO Setup on Linux</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <main class="main-content">
+      <header>
+        <h1>OVITO setup on Linux</h1>
+        <nav>
+          <a href="../index.html">Home</a>&nbsp;
+          <a href="../topics.html">Blog Topics</a>&nbsp;
+        </nav>
+      </header>
+
+      <main>
+        <p>
+          OVITO (Open Visualization Tool) is widely used to visualize and analyze
+          atomistic simulation data, especially from LAMMPS. This is a minimal,
+          tarball-based setup guide for Linux.
+        </p>
+
+        <hr>
+
+        <h2>1. Download OVITO</h2>
+        <p>
+          Download the Linux tarball from the official site:
+        </p>
+        <p>
+          <a href="https://www.ovito.org/#download" target="_blank">
+            https://www.ovito.org/#download
+          </a>
+        </p>
+
+        <h2>2. Extract the Tar File</h2>
+        <div class="code-block-container">
+          <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+          <pre><code>tar -xvf ovito-basic-*.tar.gz
+cd ovito-basic-*</code></pre>
+        </div>
+
+        <h2>3. Run OVITO</h2>
+        <div class="code-block-container">
+          <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+          <pre><code>./bin/ovito</code></pre>
+        </div>
+        <p>
+          If the GUI opens, OVITO is ready to use.
+        </p>
+
+        <h2>4. Fix Missing Dependencies (If It Fails)</h2>
+        <p>
+          If OVITO does not start, the terminal will list missing shared libraries
+          (commonly Qt/XCB related). Install whatever it complains about.
+          Example for Arch Linux:
+        </p>
+        <div class="code-block-container">
+          <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+          <pre><code>sudo pacman -S libxkbcommon xcb-util xcb-util-keysyms xcb-util-wm</code></pre>
+        </div>
+        <p>Re-run <code>./bin/ovito</code> after installing them.</p>
+
+        <hr>
+
+        <h2>5. Load a LAMMPS Dump File</h2>
+        <p>
+          To visualize LAMMPS output, load a <code>dump.lammpstrj</code> file.
+        </p>
+        <ol>
+          <li>Open OVITO.</li>
+          <li>Click <b>File → Load File</b>.</li>
+          <li>Select your <code>dump.lammpstrj</code> file.</li>
+        </ol>
+        <p>
+          OVITO will automatically detect the LAMMPS dump format.
+        </p>
+
+        <hr>
+        <footer>
+          <p>Posted on: <b>January 23, 2026</b></p>
+        </footer>
+      </main>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
+
