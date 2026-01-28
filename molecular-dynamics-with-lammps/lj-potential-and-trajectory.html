@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lennard-Jones Potential and Trajectory</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body);"></script>
+</head>
+
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <main class="main-content">
+      <header>
+        <h1>Lennard-Jones Potential in Molecular Dynamics</h1>
+        <nav>
+          <a href="../index.html">Home</a>&nbsp;
+          <a href="../topics.html">Blog Topics</a>&nbsp;
+        </nav>
+      </header>
+
+      <main>
+        <h2>Understanding Lennard-Jones Potential</h2>
+        <p>
+          Molecular dynamics simulations rely on interatomic potentials to describe particle interactions. 
+          One of the most common is the <b>Lennard-Jones (LJ) potential</b>, which accounts for both
+          repulsion and attraction between atoms.
+          \[
+          V(r) = 4 \, \epsilon \underbrace{\left(\frac{\sigma}{r}\right)^{12}}_{\text{repulsion}} - 4 \, \epsilon \underbrace{\left(\frac{\sigma}{r}\right)^6}_{\text{attraction}}
+          \]   
+          Here, \(\sigma\) is the distance where the potential crosses zero, and \(\epsilon\) is the depth of the potential well. 
+          The \((\sigma/r)^{12}\) term models repulsion, and the \((\sigma/r)^6\) term models attraction.
+	</p>      
+        <h3>Repulsion: Pauli Exclusion Principle</h3>
+        <p>
+          When two atoms approach each other, their electron clouds overlap. According to the
+          <b>Pauli exclusion principle</b>, electrons cannot share the same quantum state. Some electrons
+          are forced into higher energy levels, increasing potential energy. The gradient of this energy
+          produces a <b>repulsive force</b>, preventing atomic collapse.
+        </p>
+
+        <h3>Attraction: Van Der Waals Forces</h3>
+        <p>
+          Even neutral atoms can experience weak attraction via <b>instantaneous dipoles</b>. An atom's 
+          temporary dipole can induce a dipole in a neighbor, resulting in a fluctuating Coulomb 
+          interaction. Macroscopically, the sum of these interactions manifests as 
+          <b>van der Waals forces</b>.
+        </p>
+  <div class="image-container">
+  <img src="images/lj-graph.png" alt="Lennard-Jones potential graph">
+</div>
+
+        <h2>How LAMMPS Gets the Trajectory</h2>
+        <p>
+          First, we need to specify the position of each atom. The distance between two atoms is \(r\), which is used to determine the potential. 
+	  The force is the negative gradient of the potential:
+          \[
+          \mathbf{F} = -\nabla V(\mathbf{r})
+          \]       
+          Using this force we get acceleration:
+          \[\mathbf{a} = \mathbf{F}/m\]
+        </p>
+
+        <h3>Force and Velocity-Verlet Algorithm</h3>
+        <p>
+          LAMMPS updates particle positions and velocities using the <b>velocity-Verlet algorithm</b>:
+          \[
+          \mathbf{r}(t+\Delta t) = \mathbf{r}(t) + \mathbf{v}(t) \Delta t + \frac{1}{2} \frac{\mathbf{F}(t)}{m} \Delta t^2
+          \]
+          \[
+          \mathbf{v}(t+\Delta t) = \mathbf{v}(t) + \frac{1}{2} \left[ \frac{\mathbf{F}(t)}{m} + \frac{\mathbf{F}(t+\Delta t)}{m} \right] \Delta t
+          \]
+          This ensures positions and velocities are updated accurately at each timestep.
+        </p>
+
+        <h3>Example: Two-Atom 1D Simulation</h3>
+        <p>
+          Consider two argon atoms in 1D with initial positions \(x_1=1.5\) Å, \(x_2=5.5\) Å, and velocities \(v_1=v_2=0\). 
+          Using LJ parameters \(\sigma=3.4\) Å, \(\epsilon=0.238\) kcal/mol, and a small timestep \(\Delta t = 1\) fs, 
+          LAMMPS calculates forces and updates positions iteratively. Over time, atoms oscillate due to attraction and repulsion.
+        </p>
+
+
+        <hr>
+        <footer>
+          <p>Last updated on: <b>January 28, 2026</b></p>
+        </footer>
+      </main>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
+

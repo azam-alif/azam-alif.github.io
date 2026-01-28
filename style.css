@@ -351,3 +351,17 @@ nav a:hover {
         box-sizing: border-box; /* Ensures padding is included in the width */
     }
 }
+.image-container {
+  display: flex;
+  justify-content: center;  /* horizontal centering */
+  align-items: center;      /* vertical alignment if needed */
+  margin: 20px 0;           /* spacing above and below */
+}
+
+.image-container img {
+  max-width: 90%;           /* responsive width for mobile */
+  height: auto;             /* maintain aspect ratio */
+  border-radius: 8px;       /* optional: rounded corners */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* optional: subtle shadow */
+}
+
