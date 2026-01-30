@@ -6,6 +6,8 @@
   <title>Maxwell–Boltzmann Velocity Distribution</title>
   <link rel="icon" type="image/png" href="../favicon.png">
   <link rel="stylesheet" href="../style.css">
+
+  <!-- KaTeX -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
@@ -27,38 +29,107 @@
 
       <main>
         <h2>What is the Maxwell–Boltzmann Distribution?</h2>
+
         <p>
-          In classical statistical mechanics, particles in thermal equilibrium do not move with the same
-          velocity. Instead, their velocities follow the <b>Maxwell–Boltzmann (MB) distribution</b>.
-          This distribution depends only on the particle mass and system temperature.
+          Imagine placing a bunch of particles inside a box and fixing the temperature.
+          Even then, you will never find all particles moving with the same speed.
+          Some are slow, some are extremely fast, but most of them hover around a
+          typical value.
         </p>
 
         <p>
-          For a three-dimensional system, the probability density of finding a particle with speed \(v\) is
+          This simple idea, when treated properly using classical statistical mechanics,
+          leads to what we call the <b>Maxwell–Boltzmann (MB) velocity distribution</b>.
+          It describes how particle speeds are distributed when the system is in
+          thermal equilibrium. The key point is that the distribution depends only on
+          the particle mass and the temperature.
+        </p>
+
+        <p>
+          For a three-dimensional system, the probability density of finding a particle
+          with speed \(v\) is
+        </p>
+
+        <p>
           \[
           f(v) = 4\pi \left( \frac{m}{2\pi k_B T} \right)^{3/2}
-          v^2 \exp\left( -\frac{m v^2}{2 k_B T} \right)
+          v^2 \cdot \exp(-\frac{m v^2}{2 k_B T})
           \]
-          where \(m\) is the particle mass, \(T\) the temperature, and \(k_B\) the Boltzmann constant.
-        </p>
-
-        <h2>Understanding the MB Curve</h2>
-        <p>
-          The MB curve is asymmetric and peaks at the <b>most probable speed</b>.
-          Low velocities are suppressed by the \(v^2\) term, while high velocities are suppressed
-          exponentially due to thermal energy limitations.
         </p>
 
         <p>
-          As temperature increases, the curve broadens and shifts to higher velocities.
-          This behavior is a direct consequence of increased average kinetic energy.
+          Here, \(m\) is the particle mass, \(T\) is the temperature, and
+          \(k_B\) is the Boltzmann constant.
+        </p>
+
+        <h2>Understanding the Shape of the MB Curve</h2>
+
+        <p>
+          Below is the Maxwell–Boltzmann curve plotted using SI units with
+          \(m = 6.63\times10^{-26}\,\text{kg}\),
+          \(k_B = 1.38\times10^{-23}\,\text{J/K}\),
+          and \(T = 300\,\text{K}\).
         </p>
 
         <div class="image-container">
-          <img src="images/mb-theory.png" alt="Maxwell-Boltzmann theoretical distribution">
+          <img src="images/mb-graph.png"
+               alt="Maxwell–Boltzmann velocity distribution at 300 K">
         </div>
 
-        <h2>Getting Velocities from LAMMPS</h2>
+        <p>
+          The curve is clearly asymmetric. The peak corresponds to the
+          <b>most probable speed</b> — the speed that the largest number of particles have.
+        </p>
+
+        <p>
+          To see where this shape comes from, ignore the constants and focus only on
+          the structure of the equation:
+        </p>
+
+        <p>
+          \[
+          f(v) \propto v^2 e^{-v^2}
+          \]
+        </p>
+
+        <p>
+          At very low velocities, the \(v^2\) term dominates and suppresses small speeds.
+          At very high velocities, the exponential term takes over and rapidly kills
+          the probability. The competition between these two effects produces the
+          characteristic MB curve.
+        </p>
+
+        <div class="image-container">
+          <img src="images/mb-comparison-graph.png"
+               alt="Effect of v squared and exponential terms">
+        </div>
+
+        <p>
+          So low velocities are suppressed by the \(v^2\) factor, while high velocities
+          are suppressed exponentially due to thermal energy limits.
+        </p>
+
+        <h2>Effect of Temperature</h2>
+
+        <p>
+          Increasing the temperature shifts the peak of the distribution to the right
+          and makes the curve broader. Higher temperature simply means higher average
+          kinetic energy, so particles explore larger speeds.
+        </p>
+
+        <div class="image-container">
+          <img src="images/mb-temp-change.png"
+               alt="Temperature dependence of MB distribution">
+        </div>
+
+        <p>
+          One important thing never changes: the area under each curve remains the same.
+          Regardless of temperature, the total probability must always be 1.
+        </p>
+
+        <!-- LAMMPS section starts after this -->
+        
+	<h2>Getting Velocities from LAMMPS</h2>
         <p>
           In molecular dynamics, LAMMPS integrates Newton’s equations of motion and explicitly stores
           particle velocities. These velocities can be written to a dump file using:
