@@ -131,8 +131,10 @@
         
 	<h2>Getting Velocities from LAMMPS</h2>
         <p>
-          In molecular dynamics, LAMMPS integrates Newton’s equations of motion and explicitly stores
-          particle velocities. These velocities can be written to a dump file using:
+          Using LAMMPS we can get velocity in x, y, z direction in a dump file. 
+	  By processing that file we can calculate the velocity of each particle and ultimately plot 
+	  a histogram that how many particles are in a specific small velocity range.
+
         </p>
 
         <pre><code>
