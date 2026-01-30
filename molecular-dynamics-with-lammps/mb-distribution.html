@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maxwell–Boltzmann Velocity Distribution</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body);"></script>
+</head>
+
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <main class="main-content">
+      <header>
+        <h1>Maxwell–Boltzmann Velocity Distribution</h1>
+        <nav>
+          <a href="../index.html">Home</a>&nbsp;
+          <a href="../topics.html">Blog Topics</a>&nbsp;
+        </nav>
+      </header>
+
+      <main>
+        <h2>What is the Maxwell–Boltzmann Distribution?</h2>
+        <p>
+          In classical statistical mechanics, particles in thermal equilibrium do not move with the same
+          velocity. Instead, their velocities follow the <b>Maxwell–Boltzmann (MB) distribution</b>.
+          This distribution depends only on the particle mass and system temperature.
+        </p>
+
+        <p>
+          For a three-dimensional system, the probability density of finding a particle with speed \(v\) is
+          \[
+          f(v) = 4\pi \left( \frac{m}{2\pi k_B T} \right)^{3/2}
+          v^2 \exp\left( -\frac{m v^2}{2 k_B T} \right)
+          \]
+          where \(m\) is the particle mass, \(T\) the temperature, and \(k_B\) the Boltzmann constant.
+        </p>
+
+        <h2>Understanding the MB Curve</h2>
+        <p>
+          The MB curve is asymmetric and peaks at the <b>most probable speed</b>.
+          Low velocities are suppressed by the \(v^2\) term, while high velocities are suppressed
+          exponentially due to thermal energy limitations.
+        </p>
+
+        <p>
+          As temperature increases, the curve broadens and shifts to higher velocities.
+          This behavior is a direct consequence of increased average kinetic energy.
+        </p>
+
+        <div class="image-container">
+          <img src="images/mb-theory.png" alt="Maxwell-Boltzmann theoretical distribution">
+        </div>
+
+        <h2>Getting Velocities from LAMMPS</h2>
+        <p>
+          In molecular dynamics, LAMMPS integrates Newton’s equations of motion and explicitly stores
+          particle velocities. These velocities can be written to a dump file using:
+        </p>
+
+        <pre><code>
+dump 1 all custom 100 vel.dump id type x y z vx vy vz
+        </code></pre>
+
+        <p>
+          After the system reaches equilibrium (typically under an NVT ensemble),
+          the velocities stored in the dump file should follow the Maxwell–Boltzmann distribution.
+        </p>
+
+        <h2>Velocity Histogram from Simulation</h2>
+        <p>
+          From the dump file, the speed of each particle is computed as
+          \[
+          v = \sqrt{v_x^2 + v_y^2 + v_z^2}
+          \]
+          A histogram of these speeds is then plotted and normalized to form a probability density.
+        </p>
+
+        <p>
+          When overlaid with the theoretical MB curve (using the same temperature and mass),
+          the histogram should match closely. Any deviation usually indicates insufficient
+          equilibration or incorrect unit conversion.
+        </p>
+
+        <div class="image-container">
+          <img src="images/mb-histogram.png" alt="LAMMPS velocity histogram vs MB distribution">
+        </div>
+
+        <h2>Key Takeaway</h2>
+        <p>
+          The agreement between the LAMMPS velocity histogram and the Maxwell–Boltzmann curve
+          confirms that the simulation is thermally equilibrated and that temperature control
+          is working correctly. This is one of the simplest and most reliable sanity checks
+          in molecular dynamics.
+        </p>
+
+        <hr>
+        <footer>
+          <p>Last updated on: <b>January 30, 2026</b></p>
+        </footer>
+      </main>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
+
