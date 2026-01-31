@@ -20,7 +20,7 @@
   <div class="container">
     <main class="main-content">
       <header>
-        <h1>Maxwell–Boltzmann Velocity Distribution</h1>
+        <h1>Maxwell–Boltzmann Velocity Distribution for LAMMPS</h1>
         <nav>
           <a href="../index.html">Home</a>&nbsp;
           <a href="../topics.html">Blog Topics</a>&nbsp;
@@ -127,56 +127,39 @@
           Regardless of temperature, the total probability must always be 1.
         </p>
 
-        <!-- LAMMPS section starts after this -->
-        
-	<h2>Getting Velocities from LAMMPS</h2>
-        <p>
-          Using LAMMPS we can get velocity in x, y, z direction in a dump file. 
-	  By processing that file we can calculate the velocity of each particle and ultimately plot 
-	  a histogram that how many particles are in a specific small velocity range.
+       <h2>LAMMPS Velocity</h2>
+<p>
+  Using LAMMPS, we can extract the velocities in the x, y, and z directions from a dump file.
+  By processing this data, we can calculate the speed of each particle:
+  \[
+    v = \sqrt{v_x^2 + v_y^2 + v_z^2}
+  \]
+  and plot a histogram showing how many particles fall within small velocity ranges.
+</p>
 
-        </p>
+<div class="image-container">
+  <img src="images/lammps-initial-velocity-distribution.png"
+       alt="LAMMPS velocity distribution">
+</div>
 
-        <pre><code>
-dump 1 all custom 100 vel.dump id type x y z vx vy vz
-        </code></pre>
+<p>
+  From the plot, we can see that the histograms at 300 K and 500 K both follow the
+  Maxwell–Boltzmann theoretical distribution closely. Increasing the temperature
+  shifts the most probable velocity to the right, as expected.
+</p>
 
-        <p>
-          After the system reaches equilibrium (typically under an NVT ensemble),
-          the velocities stored in the dump file should follow the Maxwell–Boltzmann distribution.
-        </p>
+<p>
+  Overlaying the histogram with the theoretical MB curve using the same mass and
+  temperature shows a strong agreement, confirming that the simulation is
+  thermally equilibrated.
+</p>
+<p>All the essential code (LAMMPS and python) are available at <a href="https://github.com/azam-alif/classical-molecular-dynamics" target="_blank">github</a>
 
-        <h2>Velocity Histogram from Simulation</h2>
-        <p>
-          From the dump file, the speed of each particle is computed as
-          \[
-          v = \sqrt{v_x^2 + v_y^2 + v_z^2}
-          \]
-          A histogram of these speeds is then plotted and normalized to form a probability density.
-        </p>
-
-        <p>
-          When overlaid with the theoretical MB curve (using the same temperature and mass),
-          the histogram should match closely. Any deviation usually indicates insufficient
-          equilibration or incorrect unit conversion.
-        </p>
-
-        <div class="image-container">
-          <img src="images/mb-histogram.png" alt="LAMMPS velocity histogram vs MB distribution">
-        </div>
-
-        <h2>Key Takeaway</h2>
-        <p>
-          The agreement between the LAMMPS velocity histogram and the Maxwell–Boltzmann curve
-          confirms that the simulation is thermally equilibrated and that temperature control
-          is working correctly. This is one of the simplest and most reliable sanity checks
-          in molecular dynamics.
-        </p>
-
-        <hr>
-        <footer>
-          <p>Last updated on: <b>January 30, 2026</b></p>
-        </footer>
+<hr>
+<footer>
+  <p>Last updated on: <b>January 31, 2026</b></p>
+</footer>
+ 
       </main>
     </main>
   </div>
