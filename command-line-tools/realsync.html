@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Home Directory Sync on Linux</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>Real-Time Directory Sync on Linux</h1>
+                <nav>
+                  <a href="../index.html">Home</a>&nbsp;
+                  <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+            <main>
+                <p>In this guide, we set up a system to mirror directory (`/home`) to another directory (`/srv/nfsroot/home`) in real-time. 
+		This is useful for clusters, multi-node setups, or ensuring your data is always backed up.</p>
+
+                <hr>
+
+                <h2>1. Install Required Packages</h2>
+                <p>We need <code>inotify-tools</code> to monitor file changes and <code>rsync</code> to efficiently sync files:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo pacman -S inotify-tools rsync</code></pre></div>
+
+                <h2>2. Create the Sync Script</h2>
+                <p>Create a script that watches your home folder and syncs any changes:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo vim /usr/local/bin/homesync.sh</code></pre></div>
+                <p>Paste the following:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>#!/bin/bash
+SRC="/home/"
+DST="/srv/nfsroot/home/"
+
+mkdir -p "$DST"
+
+# Infinite watch loop
+while inotifywait -r -e modify,create,delete,move "$SRC"; do
+    rsync -a --delete "$SRC" "$DST"
+done</code></pre></div>
+			<p>Ensure that both directories exist.</p>
+                <p>Make it executable:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo chmod +x /usr/local/bin/homesync.sh</code></pre></div>
+
+                <h2>3. Create a systemd Service</h2>
+                <p>Run the sync script as a background service that starts on boot:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo vim /etc/systemd/system/homesync.service</code></pre></div>
+                <p>Paste this configuration:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>[Unit]
+Description=Real-time local /home sync
+
+[Service]
+ExecStart=/usr/local/bin/homesync.sh
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target</code></pre></div>
+
+                <h2>4. Enable and Start the Service</h2>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo systemctl daemon-reload
+sudo systemctl enable homesync.service
+sudo systemctl start homesync.service</code></pre></div>
+
+                <h2>5. Verify the Service</h2>
+                <p>Check if it’s running:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>systemctl status homesync.service</code></pre></div>
+                <p>It should show <b>active (running)</b>. Any changes in <code>/home/pritom</code> will now automatically mirror to <code>/srv/nfsroot/home/pritom</code>.</p>
+
+                <h2>Optional: Quick One-Liner Version</h2>
+                <p>If you prefer, you can run a background sync immediately without systemd:</p>
+                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>nohup bash -c 'while inotifywait -r -e modify,create,delete,move /home; do rsync -a --delete /home/ /srv/nfsroot/home/; done' &</code></pre></div>
+
+                <hr>
+                <footer>
+                  <p>Posted on: <b>February 2, 2026</b></p>
+                </footer>
+            </main>
+        </main>
+    </div>
+
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>
+
