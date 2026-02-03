@@ -27,7 +27,7 @@
                 <hr>
 
                 <h2>1. Install Required Packages</h2>
-                <p>We need <code>inotify-tools</code> to monitor file changes and <code>rsync</code> to efficiently sync files:</p>
+                <p>We need <code>inotify-tools</code> to monitor file changes and <code>rsync</code> to efficiently sync files. Both are free and open-source.</p>
                 <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>sudo pacman -S inotify-tools rsync</code></pre></div>
 
                 <h2>2. Create the Sync Script</h2>
@@ -71,15 +71,11 @@ sudo systemctl start homesync.service</code></pre></div>
                 <h2>5. Verify the Service</h2>
                 <p>Check if it’s running:</p>
                 <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>systemctl status homesync.service</code></pre></div>
-                <p>It should show <b>active (running)</b>. Any changes in <code>/home/pritom</code> will now automatically mirror to <code>/srv/nfsroot/home/pritom</code>.</p>
-
-                <h2>Optional: Quick One-Liner Version</h2>
-                <p>If you prefer, you can run a background sync immediately without systemd:</p>
-                <div class="code-block-container"><button class="copy-code-button" onclick="copyCode(this)">Copy</button><pre><code>nohup bash -c 'while inotifywait -r -e modify,create,delete,move /home; do rsync -a --delete /home/ /srv/nfsroot/home/; done' &</code></pre></div>
+                <p>It should show <b>active (running)</b>. Any changes in <code>/home</code> will now automatically mirror to <code>/srv/nfsroot/home</code>.</p>
 
                 <hr>
                 <footer>
-                  <p>Posted on: <b>February 2, 2026</b></p>
+                  <p>Posted on: <b>February 3, 2026</b></p>
                 </footer>
             </main>
         </main>
