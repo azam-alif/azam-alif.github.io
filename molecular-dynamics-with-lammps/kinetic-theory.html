@@ -67,7 +67,8 @@ KE_\text{theoretical} = \frac{3}{2} k_B T
 \]
 </p>
 <p>
-For 100 particles at 300 K, the total kinetic energy is
+  Here, \(k_B\) is the Boltzmann constant, \(T\) is the absolute temperature, and \(N\)
+  denotes the total number of molecules in the system. The total kinetic energy of the gas is
 </p>
 <p>
 \[
@@ -88,31 +89,31 @@ The <b>simulated kinetic energy</b> is computed using the particle velocities ex
 \[
 v = \sqrt{v_x^2 + v_y^2 + v_z^2}
 \]
-and sum over all particles:
+and sum over all particles where i is placeholder for atom index at any timestep:
 \[
 KE_\text{sim} = \frac{1}{2} m \sum_i (v_{x,i}^2 + v_{y,i}^2 + v_{z,i}^2)
 \]
 </p>
+<div class="image-container">
+          <img src="kinetic-theory-images/ke_vs_timestep.png" alt="Particle motion in simulation box">
+        </div>
+
 
 <p>
 For this simulation, the kinetic energy we found is <b>3.83 eV</b>. Since this is an ideal gas with no intermolecular attractions, the total energy of the system is just the kinetic energy.
 </p>
 
-        <p>
-          These plots demonstrate how temperature governs the average particle speed and kinetic energy,
-          illustrating KMT visually and quantitatively.
-        </p>
 
 	<h2>Conclusion</h2>
 <p> This simulation demonstrates the core ideas of the Kinetic Molecular Theory (KMT):</p>
 <p><b>•</b> Particles move in constant velocity in a straight line.</p>
 <p><b>•</b> Particles collide elastically with the walls of the simulation box.</p>
 <p><b>•</b> Kinetic energies of particles are consistent with the system temperature.</p>
-<p>Using LAMMPS and Python, we can visualize particle motion, compute kinetic energies, and compare simulation results with theoretical predictions.</p>
+<p>So, using LAMMPS and Python, we can visualize particle motion, compute kinetic energies, and compare simulation results with theoretical predictions.</p>
 
 <p>
   All the code for this simulation is available at
-  <a href="https://github.com/azam-alif/classical-molecular-dynamics" target="_blank">GitHub</a>.
+  <a href="https://github.com/azam-alif/classical-molecular-dynamics/tree/main/kinetic-theory" target="_blank">GitHub</a>.
 </p>
 
         <hr>
