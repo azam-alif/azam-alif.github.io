@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kinetic Molecular Theory with LAMMPS</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body);"></script>
+</head>
+
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <main class="main-content">
+      <header>
+        <h1>Kinetic Molecular Theory Illustrated with LAMMPS</h1>
+        <nav>
+          <a href="../index.html">Home</a>&nbsp;
+          <a href="../topics.html">Blog Topics</a>&nbsp;
+        </nav>
+      </header>
+
+      <main>
+        <h2>Introduction</h2>
+        <p>
+          The <b>Kinetic Molecular Theory (KMT)</b> explains the motion of gas particles
+          and how this motion relates to macroscopic properties like temperature and pressure.
+          To illustrate KMT, we simulate an ideal gas inside a cubic box using <b>LAMMPS</b>.
+          The simulation tracks particle positions and velocities under perfectly elastic
+          reflections at the walls, allowing us to visualize particle motion and compute
+          kinetic energies.
+        </p>
+
+        <h2>Simulation Setup</h2>
+        <p>
+          The simulation uses a cubic box of size 100 × 100 × 100 with 100 argon-like particles.
+          Periodic boundary conditions are replaced by fixed reflecting walls in all directions.
+          Particles are initially assigned velocities corresponding to 300 K using a random seed.
+          We evolve the system with the NVE ensemble (constant number of particles, volume, and energy).
+        </p>
+
+        <h2>Visualization</h2>
+        <p>
+          The trajectory from the LAMMPS dump file can be converted using OVITO into a GIF to
+          illustrate particle motion over time. Below is an example of how the particles
+          move inside the box, reflecting off the walls elastically.
+        </p>
+
+        <div class="image-container">
+          <img src="kinetic-theory-images/argon-ideal-300K.gif" alt="Particle motion in simulation box">
+        </div>
+
+	<h2>Kinetic Energy: Theory vs Simulation</h2>
+<p>
+  According to KMT, the <b>theoretical kinetic energy</b> per particle in 3D is
+</p>
+<p>
+\[
+KE_\text{theoretical} = \frac{3}{2} k_B T
+\]
+</p>
+<p>
+For 100 particles at 300 K, the total kinetic energy is
+</p>
+<p>
+\[
+KE_\text{total,theory} = \frac{3}{2} N k_B T
+\]
+</p>
+<p>
+Using \(k_B = 8.617\times10^{-5}\,\text{eV/K}\), \(N = 100\), and \(T = 300\,\text{K}\), we find:
+</p>
+<p>
+\[
+KE_\text{total,theory} = \frac{3}{2} \cdot 100 \cdot (8.617\times10^{-5}\,\text{eV/K}) \cdot 300\,\text{K} \approx 3.88\,\text{eV}
+\]
+</p>
+
+<p>
+The <b>simulated kinetic energy</b> is computed using the particle velocities extracted from the LAMMPS dump file. For each particle, we calculate
+\[
+v = \sqrt{v_x^2 + v_y^2 + v_z^2}
+\]
+and sum over all particles:
+\[
+KE_\text{sim} = \frac{1}{2} m \sum_i (v_{x,i}^2 + v_{y,i}^2 + v_{z,i}^2)
+\]
+</p>
+
+<p>
+For this simulation, the kinetic energy we found is <b>3.83 eV</b>. Since this is an ideal gas with no intermolecular attractions, the total energy of the system is just the kinetic energy.
+</p>
+
+        <p>
+          These plots demonstrate how temperature governs the average particle speed and kinetic energy,
+          illustrating KMT visually and quantitatively.
+        </p>
+
+	<h2>Conclusion</h2>
+<p> This simulation demonstrates the core ideas of the Kinetic Molecular Theory (KMT):</p>
+<p><b>•</b> Particles move in constant velocity in a straight line.</p>
+<p><b>•</b> Particles collide elastically with the walls of the simulation box.</p>
+<p><b>•</b> Kinetic energies of particles are consistent with the system temperature.</p>
+<p>Using LAMMPS and Python, we can visualize particle motion, compute kinetic energies, and compare simulation results with theoretical predictions.</p>
+
+<p>
+  All the code for this simulation is available at
+  <a href="https://github.com/azam-alif/classical-molecular-dynamics" target="_blank">GitHub</a>.
+</p>
+
+        <hr>
+        <footer>
+          <p>Last updated on: <b>February 4, 2026</b></p>
+        </footer>
+      </main>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
+
