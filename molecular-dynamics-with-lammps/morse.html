@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morse Potential and Trajectory</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body);"></script>
+</head>
+
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <main class="main-content">
+      <header>
+        <h1>Morse Potential</h1>
+        <nav>
+          <a href="../index.html">Home</a>&nbsp;
+          <a href="../topics.html">Blog Topics</a>&nbsp;
+        </nav>
+      </header>
+
+      <main>
+
+        <h2>Understanding Morse Potential</h2>
+        <p>
+	In molecular dynamics simulations, interatomic potentials define how atoms influence one another.
+The Lennard–Jones potential is adequate for noble gases, where no true chemical bonding occurs.
+However, modeling real chemical bonds demands a more physically accurate description.
+The <b>Morse potential</b> models chemical bonds more realistically, including how they stretch and eventually break.
+          \[
+          V(r) = D_e \left( 1 - e^{-a(r - r_e)} \right)^2
+          \]
+          Here, \(D_e\) is the bond dissociation energy (depth of the well),
+          \(r_e\) is the equilibrium bond distance, and \(a\) controls the
+          width and stiffness of the potential.
+        </p>
+
+        <h3>Physical Meaning of Parameters</h3>
+        <p>
+          At \(r = r_e\), the potential reaches its minimum value.
+          When \(r > r_e\), the exponential term decreases and the bond stretches.
+          As \(r \to \infty\), the potential approaches \(D_e\), meaning the bond
+          breaks with finite energy — unlike Lennard-Jones which approaches zero.
+          The parameter \(a\) determines how steep the potential rises near equilibrium,
+          effectively controlling bond stiffness.
+        </p>
+
+        <h3>Bond Formation and Anharmonicity</h3>
+        <p>
+          Real chemical bonds are <b>anharmonic</b>. 
+          Near equilibrium, the Morse potential behaves approximately like a harmonic spring:
+          \[
+          V(r) \approx \frac{1}{2} k (r - r_e)^2
+          \]
+          But unlike a simple harmonic oscillator, the Morse potential becomes asymmetric.
+          Stretching the bond weakens it gradually, while compression increases energy sharply.
+          This asymmetry correctly models bond breaking.
+        </p>
+
+        <div class="image-container">
+          <img src="images/morse-graph.png" alt="Morse potential graph">
+        </div>
+
+
+        <hr>
+        <footer>
+          <p>Last updated on: <b>February 18, 2026</b></p>
+        </footer>
+
+      </main>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
+
