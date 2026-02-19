@@ -32,14 +32,33 @@
 	In molecular dynamics simulations, interatomic potentials define how atoms influence one another.
 The Lennard–Jones potential is adequate for noble gases, where no true chemical bonding occurs.
 However, modeling real chemical bonds demands a more physically accurate description.
-The <b>Morse potential</b> models chemical bonds more realistically, including how they stretch and eventually break.
-          \[
-          V(r) = D_e \left( 1 - e^{-a(r - r_e)} \right)^2
-          \]
-          Here, \(D_e\) is the bond dissociation energy (depth of the well),
-          \(r_e\) is the equilibrium bond distance, and \(a\) controls the
-          width and stiffness of the potential.
-        </p>
+	</p>
+	<p>
+	The <b>Morse potential</b> models chemical bonds more realistically, including how they stretch and eventually break. 
+	Here, a bond can be thought of as a spring connecting two atoms.
+\[
+V(r) = D_e \bigl( 1 - e^{-a(r - r_e)} \bigr)^2
+\]
+       </p>
+
+<p>
+The parameter <b>r<sub>e</sub></b> represents the equilibrium bond distance,
+meaning the spring is at its natural length — neither stretched nor compressed.
+</p>
+
+<p>
+The parameter <b>a</b> controls the stiffness of the bond, similar to how thick or thin
+(hard or soft) a spring is. A higher value of <b>a</b> means a stiffer spring,
+so the force increases rapidly when the atoms move away from equilibrium.
+A lower value of <b>a</b> means a softer spring, and the force increases more gradually.
+</p>
+
+<p>
+Here, <b>D<sub>e</sub></b> is the bond dissociation energy.
+It represents the energy required to break the spring — that is, to completely
+separate the two atoms.
+</p>
+
 
         <h3>Physical Meaning of Parameters</h3>
         <p>
