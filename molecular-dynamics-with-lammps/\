@@ -41,7 +41,6 @@ V(r) = D_e \bigl( 1 - e^{-a(r - r_e)} \bigr)^2
 \]
        </p>
 
-        <h3>Physical Meaning of Parameters</h3>
 <p>
 The parameter <b>r<sub>e</sub></b> represents the equilibrium bond distance,
 meaning the spring is at its natural length — neither stretched nor compressed.
@@ -57,15 +56,19 @@ A lower value of <b>a</b> means a softer spring, and the force increases more gr
 <p>
 Here, <b>D<sub>e</sub></b> is the bond dissociation energy.
 It represents the energy required to break the spring — that is, to completely
-separate the two atoms.        
-	<div class="image-container">
-          <img src="morse-potential-images/potential-curve.png" alt="Morse potential graph">
-        </div>
-
-
+separate the two atoms.
 </p>
 
 
+        <h3>Physical Meaning of Parameters</h3>
+        <p>
+          At \(r = r_e\), the potential reaches its minimum value.
+          When \(r > r_e\), the exponential term decreases and the bond stretches.
+          As \(r \to \infty\), the potential approaches \(D_e\), meaning the bond
+          breaks with finite energy — unlike Lennard-Jones which approaches zero.
+          The parameter \(a\) determines how steep the potential rises near equilibrium,
+          effectively controlling bond stiffness.
+        </p>
 
         <h3>Bond Formation and Anharmonicity</h3>
         <p>
@@ -78,10 +81,10 @@ separate the two atoms.
           Stretching the bond weakens it gradually, while compression increases energy sharply.
           This asymmetry correctly models bond breaking.
         </p>
-	<p>
-  All the code for this simulation is available at
-  <a href="https://github.com/azam-alif/classical-molecular-dynamics/tree/main/Morse-Potential" target="_blank">GitHub</a>.
-</p>
+
+        <div class="image-container">
+          <img src="morse-potential-images/potential-curve.png" alt="Morse potential graph">
+        </div>
 
 
         <hr>
