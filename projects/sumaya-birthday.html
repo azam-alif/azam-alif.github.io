@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday Sumaya</title>
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 5;
+}
+
+h1 {
+  position: absolute;
+  font-size: 6em;
+  font-weight: bold;
+  color: #ffffff;
+  text-align: center;
+  opacity: 0;
+  transform: scale(0.5);
+  z-index: 10;
+
+  text-shadow:
+    0 0 20px #ffffff,
+    0 0 40px #ff00ff,
+    0 0 60px #00ffff;
+}
+
+@keyframes emerge {
+  0% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay"></div>
+<h1 id="text"></h1>
+<canvas id="fireworks"></canvas>
+
+<script>
+const words = ["Happy", "Birthday", "Sumaya"];
+let wordIndex = 0;
+let repeatCount = 0;
+let totalRounds = 0;
+
+const textElement = document.getElementById("text");
+
+function showWord() {
+
+  if (wordIndex >= words.length) {
+    // Final rigid message
+    textElement.style.animation = "none";
+    textElement.style.opacity = "1";
+    textElement.style.transform = "scale(1)";
+    textElement.textContent = "HAPPY BIRTHDAY SUMAYA";
+    clearInterval(interval);
+    return;
+  }
+
+  textElement.style.animation = "none";
+  void textElement.offsetWidth;
+  textElement.textContent = words[wordIndex];
+  textElement.style.animation = "emerge 2s ease-in-out forwards";
+
+  repeatCount++;
+
+  if (repeatCount === 3) {
+    repeatCount = 0;
+    wordIndex++;
+  }
+}
+
+const interval = setInterval(showWord, 2000);
+showWord();
+
+/* Fireworks */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let particles = [];
+
+function createFirework() {
+  const x = Math.random() * canvas.width;
+  const y = Math.random() * canvas.height / 2;
+
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x, y,
+      radius: 2,
+      color: `hsl(${Math.random()*360},100%,50%)`,
+      angle: Math.random() * 2 * Math.PI,
+      speed: Math.random() * 4 + 1,
+      alpha: 1
+    });
+  }
+}
+
+function updateParticles() {
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach((p, i) => {
+    p.x += Math.cos(p.angle) * p.speed;
+    p.y += Math.sin(p.angle) * p.speed;
+    p.alpha -= 0.01;
+
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (p.alpha <= 0) particles.splice(i, 1);
+  });
+
+  ctx.globalAlpha = 1;
+}
+
+function animate() {
+  updateParticles();
+  requestAnimationFrame(animate);
+}
+
+setInterval(createFirework, 800);
+animate();
+
+</script>
+
+</body>
+</html>
