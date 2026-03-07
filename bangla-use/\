@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing Bangla in LaTeX with Polyglossia</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>How to Write Bangla in LaTex-Overleaf</h1>
+                <nav>
+                    <a href="../index.html">Home</a>&nbsp;
+                    <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+
+            <p>Typing Bangla in LaTeX is now smooth and beautiful. Using <b>Polyglossia</b> and the <b>Akaash Normal</b> font, you can write Bangla natively in Overleaf without hassles. Follow these steps to set it up.</p>
+
+            <h2>1. Download Akaash Normal Font</h2>
+            <p>Download the font from <a href="https://www.dafontfree.net/akaash-normal-font/f93455.htm" target="_blank">this link</a> and unzip if needed to get the <code>akaashnormal.ttf</code> file.</p>
+
+            <h2>2. Add the TTF Font to LaTeX</h2>
+            <p>Upload the downloaded <code>akaashnormal.ttf</code> to your LaTeX project folder.</p>
+
+            <h2>3. Configure LaTeX for Bangla</h2>
+            <p>Add the following lines in your LaTeX preamble:</p>
+            <div class="code-block-container">
+                <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+                <pre><code>\usepackage{polyglossia}
+\newfontfamily\banglafont[Script=Bengali]{akaashnormal.ttf}</code></pre>
+            </div>
+
+            <h2>4. Writing Bangla Text</h2>
+            <p>Now, whenever you need to use bangla,type bangla using the command <code>\ben{}</code>. Write Bangla inside the curly braces:</p>
+            <div class="code-block-container">
+                <button class="copy-code-button" onclick="copyCode(this)">Copy</button>
+                <pre><code>\ben{সোনার বাংলা}</code></pre>
+            </div>
+
+            <h2>5. Compile with XeLaTeX</h2>
+            <p>In your editor, go to <b>Settings &gt; Compiler &gt; XeLaTeX</b>. Recompile your project and your Bangla text should appear beautifully.</p>
+
+            <hr>
+
+            <footer>
+                <p>Last updated: <b>March 7, 2026</b></p>
+            </footer>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>
