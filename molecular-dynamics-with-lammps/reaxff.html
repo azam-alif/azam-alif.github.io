@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reactive Force Field (ReaxFF)</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body);"></script>
+</head>
+
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <main class="main-content">
+      <header>
+        <h1>Reactive Force Field (ReaxFF)</h1>
+        <nav>
+          <a href="../index.html">Home</a>&nbsp;
+          <a href="../topics.html">Blog Topics</a>&nbsp;
+        </nav>
+      </header>
+
+      <main>
+
+        <h2>Understanding ReaxFF</h2>
+
+        <p>
+        In many molecular dynamics simulations, atoms interact through
+        predefined potentials such as Lennard–Jones, Morse, or Embedded Atom Method (EAM).
+        These models assume that the bonding structure between atoms does not change.
+        </p>
+
+        <p>
+        However, many physical and chemical processes involve
+        <b>chemical reactions</b>, where bonds continuously break and form.
+        Examples include combustion, catalysis, battery chemistry,
+        and polymer degradation.
+        </p>
+
+        <p>
+        The <b>Reactive Force Field (ReaxFF)</b> was developed to simulate such systems.
+        It allows atoms to dynamically create and destroy bonds during the simulation,
+        making it suitable for modeling realistic chemical processes.
+        </p>
+
+        <h3>Bond Order Concept</h3>
+
+        <p>
+        The central idea of ReaxFF is the <b>bond order</b>.
+        Instead of defining fixed bonds between atoms,
+        the strength of a bond depends continuously on the interatomic distance.
+        </p>
+
+        <p>
+        A simplified expression for bond order is
+        </p>
+
+        \[
+        BO_{ij} = e^{-p_1 r_{ij}} + e^{-p_2 r_{ij}} + e^{-p_3 r_{ij}}
+        \]
+
+        <p>
+        Here, \( r_{ij} \) is the distance between atoms \(i\) and \(j\),
+        while \(p_1\), \(p_2\), and \(p_3\) are parameters fitted to
+        quantum chemistry calculations.
+        </p>
+
+        <p>
+        When atoms move closer together, the bond order increases,
+        representing bond formation.
+        When atoms move apart, the bond order decreases,
+        eventually leading to bond breaking.
+        </p>
+
+        <div class="image-container">
+          <img src="reaxff-images/bond-order.png" alt="Bond order variation with distance in ReaxFF">
+        </div>
+
+        <h3>Total Energy in ReaxFF</h3>
+
+        <p>
+        The total potential energy in ReaxFF is composed of several terms:
+        </p>
+
+        \[
+        E_{\text{total}} =
+        E_{\text{bond}} +
+        E_{\text{angle}} +
+        E_{\text{torsion}} +
+        E_{\text{van der Waals}} +
+        E_{\text{Coulomb}}
+        \]
+
+        <p>
+        These contributions represent different physical interactions,
+        including bond stretching, angle bending, torsional rotation,
+        non-bonded interactions, and electrostatic forces.
+        </p>
+
+        <h3>Charge Transfer</h3>
+
+        <p>
+        A unique feature of ReaxFF is its ability to model
+        <b>dynamic charge transfer</b>.
+        Atomic charges are recalculated at every simulation step
+        using a charge equilibration method.
+        </p>
+
+        <p>
+        This allows ReaxFF to capture polarization effects
+        and changes in electron distribution during chemical reactions.
+        </p>
+
+        <h3>Applications in Molecular Dynamics</h3>
+
+        <p>
+        ReaxFF is widely used to simulate systems where chemical reactions
+        occur dynamically. Examples include:
+        </p>
+
+        <ul>
+          <li>Combustion and hydrocarbon reactions</li>
+          <li>Battery and electrochemical materials</li>
+          <li>Polymer degradation</li>
+          <li>Surface catalysis</li>
+          <li>Explosion and detonation simulations</li>
+        </ul>
+
+        <p>
+        Compared to traditional force fields, ReaxFF is computationally more expensive,
+        but it provides a powerful bridge between classical molecular dynamics
+        and quantum chemistry.
+        </p>
+
+        <p>
+        Example implementations and simulation codes can be found at
+        <a href="https://github.com/azam-alif/classical-molecular-dynamics" target="_blank">GitHub</a>.
+        </p>
+
+        <hr>
+
+        <footer>
+          <p>Last updated on: <b>March 7, 2026</b></p>
+        </footer>
+
+      </main>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
