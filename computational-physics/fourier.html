@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fourier Transform</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body);"></script>
+</head>
+
+<body>
+<div id="particles-js"></div>
+
+<div class="container">
+<main class="main-content">
+
+<header>
+<h1>Fourier Transform</h1>
+<nav>
+<a href="../index.html">Home</a>&nbsp;
+<a href="../topics.html">Blog Topics</a>&nbsp;
+</nav>
+</header>
+
+<main>
+
+<h2>What is Fourier Transformation?</h2>
+
+<p>
+Imagine hearing a song. Your ears receive only one complicated vibration in time,
+yet your brain can distinguish bass, drum, flute, and voice separately.
+Fourier transformation does the same mathematically. It takes a signal written in
+time or space and rewrites it in terms of frequencies. Instead of asking
+<b>what happens at time \(t\)</b>, it asks <b>what frequencies exist inside it</b>.
+</p>
+
+<p>
+The continuous Fourier transform is written as
+</p>
+
+<p>
+\[
+F(\omega)=\int_{-\infty}^{\infty} f(t)e^{-i\omega t}dt
+\]
+\[
+F(f)=\int_{-\infty}^{\infty} f(t)e^{-i \cdot2\pi  f t}dt
+\]
+</p>
+
+<p>
+And the inverse transform is
+</p>
+
+<p>
+\[
+f(t)=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(\omega)e^{i\omega t}d\omega
+\]
+</p>
+
+<p>
+The first equation moves from time domain to frequency domain.
+The second reconstructs the original signal exactly.
+</p>
+
+
+<h2>Example</h2>
+
+<p>
+Below, you will see a plot of the signal
+</p>
+
+<p>
+\[
+f(t)=\sin(2\pi \cdot 5 \cdot t)+0.5\sin(2\pi \cdot 20 \cdot t)
+\]
+</p>
+
+<p>
+in time domain and frequency domain.  At first glance, this waveform looks more complicated.
+The faster oscillation rides on top of the slower one.
+</p>
+
+<div class="image-container">
+<img src="fourier-images/mixed_signal.png" alt="Mixed signal in time domain">
+</div>
+
+<p>
+But Fourier transformation separates the ingredients immediately.
+The spectrum contains:
+</p>
+
+<p>
+\[
+5\text{ Hz component}
+\]
+\[
+20\text{ Hz component}
+\]
+</p>
+
+
+
+<h2>Mathematical Conversion: Pure Sine Wave</h2>
+
+<p>
+Consider the signal
+</p>
+
+<p>
+\[
+f(t) = \sin(10\pi \cdot t) 
+\]
+\[
+f(t) = \sin(2\pi \cdot 5 \cdot t)
+\]
+</p>
+
+<p>
+This is a clean oscillation with frequency 5 Hz.
+In time domain, the signal rises and falls smoothly forever.
+</p>
+
+<div class="image-container">
+<img src="fourier-images/pure_sine_time_domain.png" alt="Pure sine wave in time domain">
+</div>
+
+<p>
+To transform the pure sine signal into frequency space, we first rewrite the sine
+function using Euler's identities.
+</p>
+
+<p>
+\[
+e^{i\theta} = \cos\theta + i\sin\theta
+\]
+</p>
+
+<p>
+\[
+e^{-i\theta} = \cos\theta - i\sin\theta
+\]
+</p>
+
+<p>
+Subtracting the second equation from the first:
+</p>
+
+<p>
+\[
+e^{i\theta} - e^{-i\theta}
+=
+(\cos\theta + i\sin\theta)-(\cos\theta - i\sin\theta)
+\]
+</p>
+
+<p>
+\[
+e^{i\theta} - e^{-i\theta} = 2i\sin\theta
+\]
+</p>
+<p>
+Therefore,
+</p>
+
+<p>
+\[
+\sin\theta=\frac{1}{2i}\left(e^{i\theta}-e^{-i\theta}\right)
+\]
+</p>
+
+<p>
+Now for our signal,
+</p>
+
+<p>
+\[
+f(t) = \sin(10\pi \cdot t) 
+\]
+</p>
+<p>
+So,
+\[
+\theta = 10\pi t
+\]
+
+\[
+\sin(10\pi t)=\frac{1}{2i}\left(e^{i10\pi t}-e^{-i10\pi t}\right)
+\]
+</p>
+
+<p>
+Substituting this into the Fourier transform integral:
+</p>
+
+<p>
+\[
+\hat{F}(f)=\int_{-\infty}^{\infty}\sin(10\pi t)\,e^{-i2\pi ft}\,dt
+\]
+</p>
+
+<p>
+\[
+\hat{F}(f)=
+\int_{-\infty}^{\infty}
+\frac{
+e^{i2\pi \cdot 5t}
+-
+e^{-i2\pi \cdot 5t}
+}{2i}
+\,e^{-i2\pi ft}\,dt
+\]
+</p>
+
+<p>
+split the expression:
+</p>
+
+<p>
+\[
+\hat{F}(f)
+=
+\frac{1}{2i}
+\int_{-\infty}^{\infty}
+e^{i2\pi(5-f)t}\,dt
+-
+\frac{1}{2i}
+\int_{-\infty}^{\infty}
+e^{-i2\pi(5+f)t}\,dt
+\]
+</p>
+
+<p>
+using the delta identity:
+</p>
+
+<p>
+\[
+\int_{-\infty}^{\infty}
+e^{i2\pi \alpha t}\,dt
+=
+\delta(\alpha)
+\]
+</p>
+
+<p>
+Therefore,
+</p>
+
+<p>
+\[
+\boxed{
+\hat{F}(f)=
+\frac{1}{2i}
+\left[
+\delta(f-5)-\delta(f+5)
+\right]
+}
+\]
+<p>
+This form reveals that the sine wave is composed of two
+frequencies, which generate peaks at \(f=\pm 5\) Hz in frequency space.
+The negative side is always a perfect mirror — so we lose zero information by keeping only the positive frequency.
+</p>
+
+</p>
+<div class="image-container">
+<img src="fourier-images/pure_sine_frequency_domain.png" alt="Pure sine wave in frequency domain">
+</div>
+
+<h2>Use case</h2>
+
+<p>
+If we look at the night sky through a telescope.
+The light reaching us seems continuous, but Fourier methods can separate hidden
+frequencies and reveal chemical fingerprints of distant stars.
+</p>
+
+<p>
+A raw ECG signal is just voltage versus time.
+Frequency analysis can reveal rhythm irregularities, stress signatures, or hidden
+periodicity before the eye notices anything.
+</p>
+<p>
+All essential Python codes are available at
+<a href="https://github.com/azam-alif/" target="_blank">GitHub</a>
+</p>
+
+<hr>
+
+<footer>
+<p>Last updated on: <b>April 17, 2026</b></p>
+</footer>
+
+</main>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="../script.js"></script>
+
+</body>
+</html>
