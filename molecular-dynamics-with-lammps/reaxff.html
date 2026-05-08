@@ -82,16 +82,248 @@
 	<p>
 	From the graph, we can clearly see that bond formation happens gradually, no sharp peak.
 	</p>
-	<hr>
+	        <h3>Total Energy in ReaxFF</h3>
+
         <p>
-        Example implementations and simulation codes can be found at
-        <a href="https://github.com/azam-alif/classical-molecular-dynamics" target="_blank">GitHub</a>.
+        In ReaxFF, the total energy of the system is written as the sum of several
+        interaction energies. Each term represents a different physical effect
+        between atoms.
         </p>
 
-        <hr>
+        \[
+        E_{\text{system}} =
+        E_{\text{bond}} +
+        E_{\text{angle}} +
+        E_{\text{torsion}} +
+        E_{\text{vdWaals}} +
+        E_{\text{Coulomb}}
+        \]
+<h4>Bond Energy (\(E_{\text{bond}}\))</h4>
+
+<p>
+This term describes bond formation and bond breaking.
+In ReaxFF, bond energy depends nonlinearly on bond order,
+allowing smooth formation and dissociation of chemical bonds.
+</p>
+
+\[
+E_{\text{bond}} =
+- D_e \, BO_{ij}
+\exp\left[
+p_{be1}\left(1 - BO_{ij}^{p_{be2}}\right)
+\right]
+\]
+
+<p>
+Here,
+\(D_e\) is the bond dissociation energy,
+representing the strength of the bond.
+Larger \(D_e\) means a stronger bond and higher energy required for dissociation.
+Its unit is usually eV.
+</p>
+
+<p>
+\(BO_{ij}\) is the bond order between atoms \(i\) and \(j\),
+which varies continuously with distance.
+The parameters \(p_{be1}\) and \(p_{be2}\)
+control how sharply the bond energy changes
+as the bond is stretched or broken.
+</p>
+	<h4>Angle Energy (\(E_{\text{angle}}\))</h4>
+
+        <p>
+        This term keeps proper geometric angles between bonded atoms.
+        It becomes important for maintaining molecular shape and stability.
+        </p>
+
+        \[
+        E_{\text{angle}} =
+        k_\theta (\theta - \theta_0)^2
+        \]
+
+        <p>
+        Here,
+        \(k_\theta\) is the angle force constant,
+        which determines how strongly the system resists angle deformation.
+        Larger \(k_\theta\) means the angle is harder to distort.
+        Its unit is usually eV/rad\(^2\).
+        </p>
+
+        <p>
+        \(\theta\) is the instantaneous bond angle formed by three atoms during the simulation,
+        while \(\theta_0\) is the equilibrium or preferred bond angle.
+        The quantity \((\theta - \theta_0)\) measures angular deviation from equilibrium.
+        </p>
+	<p>Here, \(k_{\theta}\) and \(\theta_0\) are the constants need to provide in the input script. </p>
+
+
+	<h4>Torsion Energy (\(E_{\text{tors}}\))</h4>
+
+<p>
+Torsion energy describes rotational motion around chemical bonds.
+It becomes important in chain molecules, polymers,
+and molecular twisting processes.
+</p>
+
+\[
+E_{\text{tors}}
+=
+\frac{1}{2}
+V_1(1+\cos\phi)
++
+\frac{1}{2}
+V_2(1-\cos2\phi)
++
+\frac{1}{2}
+V_3(1+\cos3\phi)
+\]
+
+
+<p>
+Here,
+\(V_1\), \(V_2\), and \(V_3\)
+are torsional barrier coefficients.
+They represent the energy required for rotational twisting
+around a bond.
+Larger values mean stronger resistance to rotation.
+Their unit is usually eV.
+</p>
+
+<p>
+\(\phi\) is the dihedral or torsion angle
+formed by four connected atoms.
+The cosine terms create repeating energy minima
+during bond rotation.
+</p>
+
+<p>
+In ReaxFF,
+torsion energy also depends on bond order.
+If bonds weaken or break,
+the torsion interaction naturally disappears.
+</p>
+
+<h4>van der Waals Energy (\(E_{\text{vdW}}\))</h4>
+
+<p>
+In ReaxFF, the van der Waals interaction describes
+weak nonbonded attraction and strong short-range repulsion
+between atoms.
+Unlike the classical Lennard-Jones potential,
+ReaxFF uses a shielded exponential form to avoid
+unphysical singularities at very small distances.
+</p>
+
+\[
+E_{\text{vdW}}
+=
+D_{ij}
+\left[
+\exp\left(
+\alpha\left(1-\frac{r}{r_{vdW}}\right)
+\right)
+-
+2\exp\left(
+\frac{\alpha}{2}\left(1-\frac{r}{r_{vdW}}\right)
+\right)
+\right]
+\]
+<p>
+Here,
+\(D_{ij}\) represents the depth of the van der Waals potential well.
+It controls the strength of attraction between two atoms.
+Larger \(D_{ij}\) means stronger intermolecular attraction.
+Its unit is usually eV.
+</p>
+
+<p>
+\(r_{vdW}\) is the preferred van der Waals interaction distance
+between atoms.
+It determines the approximate equilibrium separation
+for nonbonded interaction.
+Its unit is usually \(\AA\).
+</p>
+
+<p>
+\(\alpha\) controls how sharply the interaction changes
+with distance.
+Larger \(\alpha\) produces steeper short-range repulsion.
+</p>
+
+<p>
+\(r\) is the distance between two atoms.
+When atoms are very close,
+the exponential repulsive term dominates strongly.
+At moderate distances,
+the attractive term becomes important.
+</p>
+
+<p>
+These constants must be written inside the input file.
+</p>
+
+        <h4>Coulomb Energy (\(E_{\text{Coulomb}}\))</h4>
+
+        <p>
+        This term represents electrostatic interaction between charged atoms.
+        Positive and negative charges attract,
+        while similar charges repel.
+        </p>
+
+        \[
+        E_{\text{Coulomb}} =
+	\frac{1}{4\pi \epsilon_0} \cdot \frac{q_i q_j}{r_{ij}}
+        \]
+
+        <p>
+        Here,
+        \(q_i\) and \(q_j\) are the charges of atoms \(i\) and \(j\).
+        Their unit is usually the elementary charge unit.
+        </p>
+
+        <p>
+        \(\epsilon_0\) is the permittivity of free space,
+        which determines the strength of electrostatic interaction in vacuum.
+        </p>
+
+        <p>
+        \(r_{ij}\) is the distance between the charged atoms.
+        Smaller distance produces stronger electrostatic interaction.
+        Opposite charges give negative energy (attraction),
+        while similar charges give positive energy (repulsion).
+        </p>
+	<p>\(\epsilon_0\) , \(q_i\) and \(q_j\) are need to be present in the input script.
+	</p>
+
+        <h3>From Energy to Trajectory</h3>
+
+        <p>
+        Once the total energy is known, forces on atoms are calculated from the
+        energy gradient.
+        </p>
+
+        \[
+        \vec{F}_i = -\nabla_i E
+        \]
+
+        <p>
+        Using Newton’s second law, acceleration, velocity, and position are updated
+        at every timestep.
+        </p>
+
+        \[
+        m_i \vec{a}_i = \vec{F}_i
+        \]
+
+        <p>
+        Repeating this process over many timesteps generates the atomic trajectory,
+        which describes how atoms move in time during the simulation.
+        </p>
+
+	<hr>
 
         <footer>
-          <p>Last updated on: <b>May 6, 2026</b></p>
+          <p>Posted on: <b>May 6, 2026</b></p>
         </footer>
 
       </main>
