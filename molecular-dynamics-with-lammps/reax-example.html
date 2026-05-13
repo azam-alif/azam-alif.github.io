@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testing ReaxFF in LAMMPS</title>
+
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body);"></script>
+</head>
+
+<body>
+
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <main class="main-content">
+
+      <header>
+        <h1>Testing ReaxFF in LAMMPS</h1>
+
+        <nav>
+          <a href="../index.html">Home</a>&nbsp;
+          <a href="../topics.html">Blog Topics</a>&nbsp;
+        </nav>
+      </header>
+
+      <main>
+
+        <h2>Introduction</h2>
+
+        <p>
+          Reactive Force Field (<b>ReaxFF</b>) is a molecular dynamics force field designed
+          for simulating chemical reactions. Unlike traditional force fields where bonding
+          remains fixed throughout the simulation, ReaxFF dynamically updates bond orders,
+          allowing bonds to continuously break and form.
+        </p>
+
+        <p>
+          In this work, a simple H–C–O system was simulated using <b>LAMMPS</b> to test the
+          ReaxFF implementation, trajectory generation, energy evolution, and species analysis.
+          The goal is not to model a realistic material, but to verify that the reactive force
+          field behaves correctly during a molecular dynamics simulation.
+        </p>
+
+        <h2>Simulation Setup</h2>
+
+        <p>
+          The simulation contains 30 atoms distributed inside a cubic simulation box of size
+        </p>
+
+        <p>
+        \[
+        25 \times 25 \times 25 \ \text{Å}^3
+        \]
+        </p>
+
+        <p>
+          consisting of:
+        </p>
+
+        <p><b>•</b> 10 Hydrogen atoms</p>
+        <p><b>•</b> 10 Carbon atoms</p>
+        <p><b>•</b> 10 Oxygen atoms</p>
+
+        <p>
+          Periodic boundary conditions were applied in all directions, and the simulation
+          used the ReaxFF CHO potential with dynamic charge equilibration.
+        </p>
+
+        <p>
+          Initial atomic velocities were assigned at 1000 K using a Gaussian distribution,
+          while the temperature was maintained using the NVT ensemble.
+        </p>
+
+        <p>
+          The simulation timestep was
+        </p>
+
+        <p>
+        \[
+        \Delta t = 0.25\ \text{fs}
+        \]
+        </p>
+
+        <p>
+          and the total simulation length was
+        </p>
+
+        <p>
+        \[
+        200000 \times 0.25\ \text{fs} = 50\ \text{ps}
+        \]
+        </p>
+
+        <h2>Energy Evolution</h2>
+
+        <p>
+          During the simulation, thermodynamic quantities such as temperature,
+          kinetic energy, potential energy, and total energy were monitored.
+        </p>
+
+        <p>
+          In ReaxFF simulations, the potential energy continuously changes because
+          the bonding environment evolves dynamically as atoms move and interact.
+          This behavior is different from classical fixed-bond molecular dynamics.
+        </p>
+
+        <div class="image-container">
+          <img src="reaxff-images/energy_plot.png" alt="Energy evolution during ReaxFF simulation">
+        </div>
+
+        <h2>Trajectory Visualization</h2>
+
+        <p>
+          Atomic trajectories were exported from LAMMPS and visualized using OVITO.
+          The trajectory animation shows atoms moving throughout the simulation box
+          while dynamically interacting under the reactive force field.
+        </p>
+
+        <div class="image-container">
+          <video controls autoplay loop muted width="100%">
+            <source src="reaxff-images/output.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+
+        <h2>Species Analysis</h2>
+
+        <p>
+          One of the most useful features of ReaxFF is automatic species analysis.
+          During the simulation, LAMMPS continuously tracks temporary molecular structures
+          formed between atoms.
+        </p>
+
+        <p>
+          Initially, the system starts with isolated groups of H, C, and O atoms.
+          However, after the simulation begins, the species analysis shows the rapid
+          formation of molecular species such as:
+        </p>
+
+        <p><b>•</b> H<sub>2</sub></p>
+        <p><b>•</b> O<sub>2</sub></p>
+        <p><b>•</b> Isolated oxygen atoms</p>
+
+        <p>
+          Interestingly, the carbon atoms largely remain grouped as a stable C<sub>10</sub>
+          cluster throughout the simulation, while hydrogen and oxygen atoms reorganize
+          into smaller molecular structures.
+        </p>
+
+        <p>
+          The species output also shows that the system rapidly stabilizes after the
+          initial reactive stage. After approximately the first few hundred timesteps,
+          the dominant molecular populations remain nearly constant, indicating that
+          the system has reached a relatively stable reactive configuration at 1000 K.
+        </p>
+
+        <div class="image-container">
+          <img src="reaxff-images/species_plot.png" alt="Species evolution during simulation">
+        </div>
+
+        <h2>Why ReaxFF is Important</h2>
+
+        <p>
+          Traditional molecular dynamics force fields assume fixed connectivity between atoms.
+          ReaxFF removes this restriction by dynamically calculating bond orders from
+          interatomic distances.
+        </p>
+
+        <p>
+          Because of this, ReaxFF can simulate:
+        </p>
+
+        <p><b>•</b> Bond breaking</p>
+        <p><b>•</b> Bond formation</p>
+        <p><b>•</b> Charge redistribution</p>
+        <p><b>•</b> Reactive chemical processes</p>
+
+        <p>
+          This makes ReaxFF useful for studying combustion, oxidation, catalysis,
+          battery chemistry, and material degradation.
+        </p>
+
+        <h2>Conclusion</h2>
+
+        <p>
+          This simple ReaxFF simulation demonstrates how reactive molecular dynamics
+          can be performed in LAMMPS using a small H–C–O system.
+        </p>
+
+        <p>
+          Using this setup, we can:
+        </p>
+
+        <p><b>•</b> Test the ReaxFF force field</p>
+        <p><b>•</b> Visualize reactive atomic motion</p>
+        <p><b>•</b> Monitor energy evolution</p>
+        <p><b>•</b> Analyze molecular species formation</p>
+
+        <p>
+          Even though this example is intentionally simple, the same workflow can
+          be extended to realistic reactive systems involving combustion,
+          catalysis, oxidation, and materials science.
+        </p>
+
+        <p>
+          All simulation files, analysis scripts, and visualization tools are available at
+          <a href="https://github.com/azam-alif/classical-molecular-dynamics" target="_blank">GitHub</a>.
+        </p>
+
+        <hr>
+
+        <footer>
+          <p>Posted on: <b>May 13, 2026</b></p>
+        </footer>
+
+      </main>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
+
+</body>
+</html>
+
