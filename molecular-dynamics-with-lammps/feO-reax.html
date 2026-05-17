@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fe–O Nanoparticle Formation Using ReaxFF</title>
+
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body);"></script>
+</head>
+
+<body>
+
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <main class="main-content">
+
+      <header>
+        <h1>Fe–O Nanoparticle Formation Using ReaxFF</h1>
+
+        <nav>
+          <a href="../index.html">Home</a>&nbsp;
+          <a href="../topics.html">Blog Topics</a>&nbsp;
+        </nav>
+      </header>
+
+      <main>
+
+        <h2>Simulation Setup</h2>
+
+        <p>
+          This simulation studies the reactive aggregation behavior of iron and
+          oxygen atoms using ReaxFF molecular dynamics in LAMMPS.
+        </p>
+
+        <p>
+          The system contains:
+	  <ul>
+		  <li>500 Iron atoms</li>
+		  <li>500 Oxygen atoms</li>
+	  </ul>
+                 distributed inside a periodic simulation box.
+        </p>
+
+        <p>
+          Initial atomic velocities were assigned at:
+
+        \(
+        T = 1000\ \text{K}
+        \)
+        </p>
+
+        <p>
+          and the simulation was performed using a timestep of:
+        
+        \(
+        \Delta t = 0.25\ \text{fs}
+        \)
+        </p>
+
+        <p>
+          for a total simulation duration of:
+               \(
+        25\ \text{ps}
+        \)
+        </p>
+
+        <h2>Trajectory Visualization</h2>
+
+        <p>
+          The atomic trajectories were visualized using OVITO.
+        </p>
+
+        <p>
+          Initially, iron and oxygen atoms are randomly distributed throughout
+          the simulation box. However, shortly after the simulation begins,
+          atoms rapidly start clustering together.
+        </p>
+
+        <p>
+          Small Fe–O aggregates form first, followed by continuous merging into
+          larger condensed structures.
+        </p>
+
+        <div class="image-container">
+          <video controls autoplay loop muted width="70%">
+            <source src="reaxff-images/feO.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+
+        <h2>Molecule Evolution</h2>
+
+        <p>
+          One of the clearest indicators of aggregation is the rapid decrease
+          in the total number of molecular fragments during the simulation.
+        </p>
+
+        <p>
+          At the beginning, the system behaves almost like an atomic gas with
+          nearly:
+        </p>
+
+        <p>
+        \[
+        \sim 1000
+        \]
+        </p>
+
+        <p>
+          individual molecular fragments.
+        </p>
+
+        <p>
+          As the simulation progresses, the number of molecules drops rapidly
+          due to reactive clustering and particle growth.
+        </p>
+
+        <p>
+	Eventually, \(Fe_{500}O_{496}\) has been formed, indicating near-complete nanoparticle formation.
+        </p>
+
+        <div class="image-container">
+          <img src="reaxff-images/species.png" width="80%">
+        </div>
+
+        <p>
+          The sharp decline in molecule count during the early stage shows that
+          aggregation occurs extremely quickly at 1000 K.
+        </p>
+
+        <h2>Why Does Iron React So Quickly with Oxygen?</h2>
+
+        <p>
+          Iron has a very strong chemical affinity for oxygen.
+        </p>
+
+        <p>
+          At high temperature, atoms possess large kinetic energy, causing
+          frequent collisions between Fe and O atoms inside the simulation box.
+        </p>
+
+        <p>
+          Once atoms come sufficiently close, strong Fe–O bonds begin forming,
+          lowering the total potential energy of the system.
+        </p>
+
+        <p>
+          This energetic stabilization drives rapid aggregation.
+        </p>
+
+        <p>
+          Instead of remaining isolated, atoms continuously combine into larger
+          oxide clusters because those structures are thermodynamically more stable.
+        </p>
+
+        <p>
+          As clusters grow larger, they effectively behave like nanoscale iron
+          oxide particles.
+        </p>
+
+        <p>
+          This is why the simulation naturally evolves from dispersed atoms into
+          condensed Fe–O nanoparticles within only a few picoseconds.
+        </p>
+
+        <p>
+          ReaxFF is particularly useful here because it dynamically forms and
+          breaks chemical bonds during the simulation without requiring any
+          predefined molecular structures.
+        </p>
+
+        <hr>
+
+        <p>
+          All simulation files, analysis scripts, and visualization tools are available at
+          <a href="https://github.com/azam-alif/classical-molecular-dynamics/tree/main/feO" target="_blank">GitHub</a>.
+        </p>
+
+        <hr>
+
+        <footer>
+          <p>Posted on: <b>May 17, 2026</b></p>
+        </footer>
+
+      </main>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
+
+</body>
+</html>
