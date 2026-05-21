@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nanoparticles</title>
+
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body);"></script>
+</head>
+
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <main class="main-content">
+
+      <header>
+        <h1>Nanoparticles</h1>
+        <nav>
+          <a href="../index.html">Home</a>&nbsp;
+          <a href="../topics.html">Blog Topics</a>&nbsp;
+        </nav>
+      </header>
+
+      <section>
+
+        <h2>What is a nanoparticle?</h2>
+
+        <p>
+          Imagine a \(1\,\text{cm}^3\) gold cube exposed to air. Only its outer surface atoms interact with the environment.
+          Now consider the same volume divided into smaller pieces. The total surface area increases significantly, even though the volume remains unchanged.
+        </p>
+
+        <div class="image-container">
+          <img src="nanoparticle-images/2d-nanoparticles.png" alt="Surface to volume ratio in nanoparticles">
+        </div>
+
+        <p>
+          Nanoparticles are materials whose characteristic size typically lies in the range of 1–100 nm.
+          They occupy the transition regime between isolated atoms and bulk matter.
+        </p>
+
+        <p>
+          At this scale, a large fraction of atoms reside on the surface rather than in the interior, leading to fundamentally different physical and chemical behavior.
+        </p>
+
+        <p>
+          As particle size decreases, the surface-to-volume ratio increases sharply. For a spherical particle:
+        </p>
+
+        \[
+        \frac{S}{V} \propto \frac{1}{r}
+        \]
+
+        <p>
+          where \(S\) is surface area, \(V\) is volume, and \(r\) is the particle radius. Smaller \(r\) implies stronger surface dominance.
+        </p>
+
+        <p>
+          Because of this, nanoparticles often show enhanced chemical reactivity and higher surface energy compared to bulk materials.
+        </p>
+
+        <p>
+          In simple terms, a nanoparticle is a material where surface effects dominate over bulk properties due to extremely small size.
+        </p>
+
+        <h3>Thermodynamic consequences</h3>
+
+        <p>
+          Surface atoms have unsatisfied bonds (dangling bonds), making them energetically less stable than interior atoms.
+        </p>
+
+        <p>
+          As particle size decreases, surface energy becomes increasingly significant, leading to size-dependent properties such as melting point reduction.
+        </p>
+
+        <p>
+          According to the Gibbs–Thomson relation:
+        </p>
+
+        \[
+        T_m(r) = T_m(\infty)\left(1 - \frac{2\gamma}{\rho L r}\right)
+        \]
+
+        <p>
+          where \(T_m(r)\) is the melting temperature of a nanoparticle and \(T_m(\infty)\) is the bulk melting temperature.
+        </p>
+
+        <p>
+          Here, \(\gamma\) is surface energy, \(\rho\) is density, \(L\) is latent heat of fusion, and \(r\) is particle radius.
+        </p>
+
+        <p>
+          This shows that smaller particles are thermodynamically less stable and tend to melt at lower temperatures.
+        </p>
+
+        <h3>Quantum consequences</h3>
+
+        <p>
+          In bulk materials, electrons occupy nearly continuous energy bands. However, when dimensions approach the electron wavelength, spatial confinement occurs.
+        </p>
+
+        <p>
+          This phenomenon is known as quantum confinement, where continuous bands split into discrete energy levels.
+        </p>
+
+        \[
+        E_n = \frac{n^2 h^2}{8mL^2}
+        \]
+
+        <p>
+          where \(n\) is the quantum number, \(h\) is Planck’s constant, \(m\) is electron mass, and \(L\) is the confinement length.
+        </p>
+
+        <p>
+          As particle size decreases, energy level spacing increases, strongly affecting optical and electronic properties.
+        </p>
+
+        <div class="image-container">
+          <img src="nanoparticle-images/quantum_confinement.png" alt="Quantum confinement in nanoparticles">
+        </div>
+
+        <p>
+          This is the basis of quantum dots, where emission color depends on particle size due to quantized energy levels.
+        </p>
+
+        <hr>
+
+        <footer>
+          <p>Posted on: <b>May 21, 2026</b></p>
+        </footer>
+
+      </section>
+
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
+
+</body>
+</html>
