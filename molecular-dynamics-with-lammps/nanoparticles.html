@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Introduction to Nanoparticles — A Physicist's Perspective</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+
+  <style>
+    :root {
+      --bg: #0a0c10;
+      --surface: #111520;
+      --surface2: #161c2e;
+      --border: rgba(100,140,255,0.12);
+      --accent: #5b8fff;
+      --accent2: #38d9a9;
+      --text: #e8eaf0;
+      --muted: #8892a4;
+      --heading: #c8d6ff;
+      --glow: rgba(91,143,255,0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Georgia', serif;
+      font-size: 17px;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* ── Canvas background ── */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.45;
+    }
+
+    /* ── Layout ── */
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 0 3rem;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.3s forwards;
+    }
+
+    .hero h1 {
+      font-family: 'Georgia', serif;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--heading);
+      letter-spacing: -0.02em;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.5s forwards;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent2);
+    }
+
+    .hero-sub {
+      margin-top: 1.4rem;
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 560px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.7s forwards;
+    }
+
+    .hero-meta {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.9s forwards;
+    }
+
+    .hero-meta span { color: var(--accent2); }
+
+    .scroll-hint {
+      margin-top: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 12px;
+      color: var(--muted);
+      opacity: 0;
+      animation: fadeUp 0.7s 1.1s forwards;
+    }
+
+    .scroll-hint::before {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 32px;
+      background: linear-gradient(to bottom, transparent, var(--accent));
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ── Scale number ── */
+    .scale-number {
+      font-family: 'Courier New', monospace;
+      font-size: clamp(4rem, 14vw, 9rem);
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(91,143,255,0.25);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      user-select: none;
+    }
+
+    /* ── Divider ── */
+    .section-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--accent);
+      margin: 3.5rem 0;
+      opacity: 0.4;
+    }
+
+    /* ── Section headings ── */
+    h2 {
+      font-family: 'Georgia', serif;
+      font-size: 1.7rem;
+      font-weight: 400;
+      color: var(--heading);
+      margin-bottom: 1.2rem;
+      letter-spacing: -0.01em;
+    }
+
+    h3 {
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 2.5rem 0 1rem;
+    }
+
+    p { margin-bottom: 1.2rem; color: var(--text); }
+
+    /* ── Pull quote ── */
+    .pull-quote {
+      border-left: 2px solid var(--accent2);
+      padding: 0.8rem 0 0.8rem 1.5rem;
+      margin: 2rem 0;
+      font-size: 1.15rem;
+      font-style: italic;
+      color: var(--accent2);
+      line-height: 1.6;
+    }
+
+    /* ── Math blocks ── */
+    .math-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.2rem 1.5rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+    }
+
+    .math-label {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    /* ── Concept cards ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+    }
+
+    .card-icon {
+      font-size: 1.6rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .card-title {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* ── Interactive slider ── */
+    .interactive-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.6rem;
+      margin: 2rem 0;
+    }
+
+    .interactive-box h4 {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 1.2rem;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .slider-row label {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      min-width: 80px;
+    }
+
+    input[type=range] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      outline: none;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+    }
+
+    .slider-val {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: var(--accent);
+      min-width: 60px;
+      text-align: right;
+    }
+
+    .viz-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    #sv-canvas {
+      border-radius: 8px;
+      background: var(--surface2);
+    }
+
+    .sv-readout {
+      flex: 1;
+    }
+
+    .sv-stat {
+      margin-bottom: 0.8rem;
+    }
+
+    .sv-stat-label {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .sv-stat-val {
+      font-family: 'Courier New', monospace;
+      font-size: 1.4rem;
+      color: var(--accent2);
+    }
+
+    /* ── Comparison table ── */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+    }
+
+    .compare-table th {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-align: left;
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .compare-table td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid rgba(100,140,255,0.06);
+      color: var(--text);
+    }
+
+    .compare-table tr:hover td { background: var(--surface2); }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .badge-blue { background: rgba(91,143,255,0.15); color: var(--accent); }
+    .badge-green { background: rgba(56,217,169,0.12); color: var(--accent2); }
+
+    /* ── Quantum dot canvas ── */
+    #qd-canvas {
+      display: block;
+      border-radius: 10px;
+      background: #07090f;
+      margin: 1.5rem 0;
+      width: 100%;
+    }
+
+    .qd-legend {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 0.6rem;
+    }
+
+    .qd-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── Footer ── */
+    .post-footer {
+      margin-top: 5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .post-footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; }
+      50%       { opacity: 1; }
+    }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .viz-row { flex-direction: column; }
+      #sv-canvas { width: 100%; height: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="wrap">
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="scale-number">10⁻⁹</div>
+    <div class="hero-eyebrow">Condensed Matter Physics · Nanoscience</div>
+    <h1>Introduction to<br><em>Nanoparticles</em></h1>
+    <p class="hero-sub">
+      At one billionth of a meter, the familiar rules of bulk matter quietly break down.
+      Surface energy dominates, electron wavefunctions bunch into discrete rungs,
+      and melting points shift by hundreds of degrees. This is the nanoscale.
+    </p>
+    <div class="hero-meta">
+      <span>~5 min read</span>&nbsp;·&nbsp;
+      <span>May 21, 2026</span>&nbsp;·&nbsp;
+      azam-alif.github.io
+    </div>
+    <div class="scroll-hint">scroll to explore</div>
+  </section>
+
+  <!-- ── SECTION 1: WHAT IS A NANOPARTICLE ── -->
+  <section>
+    <div class="reveal">
+      <h2>What is a nanoparticle?</h2>
+      <p>
+        A nanoparticle is any material whose characteristic dimension falls in the range of
+        <strong style="color:var(--heading)">1–100 nanometres</strong> — one to one hundred billionths of a metre.
+        This places them in the regime between isolated atoms or small molecules and bulk condensed matter,
+        a territory where neither atomic quantum chemistry nor classical thermodynamics alone gives a complete picture.
+      </p>
+      <p>
+        To appreciate why that narrow size window is special, consider what changes as you subdivide a macroscopic object.
+        Imagine a 1 cm³ gold cube. The overwhelming majority of its atoms sit deep in the interior, shielded from the
+        environment by layer upon layer of neighbours. Now divide that same volume into ever-smaller pieces.
+        The total volume stays fixed, but the total exposed surface grows — steeply, then explosively.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <div class="pull-quote">
+        "A nanoparticle is a material where surface physics has overthrown bulk physics."
+      </div>
+    </div>
+
+    <div class="reveal">
+      <p>
+        For a sphere of radius \(r\), surface area scales as \(r^2\) and volume as \(r^3\), so the surface-to-volume
+        ratio grows as \(1/r\). Reduce \(r\) by a factor of 1000 — from a millimetre grain to a nanometre particle —
+        and the ratio increases by exactly 1000. In a 5 nm gold particle, roughly
+        <strong style="color:var(--heading)">40% of all atoms reside on the surface</strong>.
+        Compare this to a 1 cm gold cube where the surface fraction is \(\sim 10^{-7}\).
+      </p>
+
+      <div class="math-block">
+        <div class="math-label">Surface-to-volume ratio · sphere</div>
+        \[
+        \frac{S}{V} = \frac{4\pi r^2}{\tfrac{4}{3}\pi r^3} = \frac{3}{r}
+        \]
+      </div>
+
+      <p>
+        This inverse dependence on radius is the single most important relationship in nanoscience.
+        Every other nano-effect — thermodynamic, electronic, optical, magnetic — is, to first approximation,
+        a consequence of this geometry.
+      </p>
+    </div>
+
+    <!-- Interactive slider -->
+    <div class="reveal">
+      <div class="interactive-box">
+        <h4>Interactive · surface-to-volume explorer</h4>
+        <div class="slider-row">
+          <label>Radius</label>
+          <input type="range" id="radius-slider" min="1" max="500" value="5" step="1">
+          <span class="slider-val" id="radius-out">5 nm</span>
+        </div>
+        <div class="viz-row">
+          <canvas id="sv-canvas" width="180" height="180"></canvas>
+          <div class="sv-readout">
+            <div class="sv-stat">
+              <div class="sv-stat-label">S/V ratio</div>
+              <div class="sv-stat-val" id="sv-ratio">0.60 nm⁻¹</div>
+            </div>
+            <div class="sv-stat">
+              <div class="sv-stat-label">Surface atoms (est.)</div>
+              <div class="sv-stat-val" id="surf-atoms">~40%</div>
+            </div>
+            <div class="sv-stat">
+              <div class="sv-stat-label">Regime</div>
+              <div class="sv-stat-val" id="regime" style="font-size:1rem">Nanoparticle</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Scale table -->
+    <div class="reveal">
+      <h3>The nanoscale in context</h3>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Object</th>
+            <th>Typical size</th>
+            <th>Regime</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Hydrogen atom</td><td>0.05 nm</td><td><span class="badge badge-blue">quantum</span></td></tr>
+          <tr><td>DNA double helix width</td><td>2 nm</td><td><span class="badge badge-blue">quantum</span></td></tr>
+          <tr><td>Quantum dot (CdSe)</td><td>2–10 nm</td><td><span class="badge badge-blue">nano</span></td></tr>
+          <tr><td>Gold nanoparticle</td><td>5–100 nm</td><td><span class="badge badge-green">nano</span></td></tr>
+          <tr><td>Virus (SARS-CoV-2)</td><td>~100 nm</td><td><span class="badge badge-green">nano</span></td></tr>
+          <tr><td>Red blood cell</td><td>~8 µm</td><td><span class="badge" style="background:rgba(180,120,255,0.12);color:#c78fff">mesoscale</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── SECTION 2: THERMODYNAMICS ── -->
+  <section>
+    <div class="reveal">
+      <h2>Thermodynamic consequences</h2>
+      <p>
+        Surface atoms sit in a fundamentally different energetic environment than interior atoms.
+        Each interior atom in an FCC metal is coordinated by 12 nearest neighbours; a surface atom
+        has only 9 (or fewer at edges and corners). Those missing bonds represent unsatisfied, higher-energy
+        states — what chemists call <em>dangling bonds</em> and physicists describe as a local increase in free energy.
+      </p>
+      <p>
+        The result is a well-defined <strong style="color:var(--heading)">surface energy</strong> \(\gamma\)
+        (energy per unit area, units J m⁻²). For a bulk object this is negligible.
+        For a nanoparticle, where the surface-to-volume ratio is enormous, surface energy becomes
+        a significant — sometimes dominant — contribution to the total free energy of the system.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <h3>Size-dependent melting · Gibbs–Thomson</h3>
+      <p>
+        The most striking thermodynamic consequence is melting point depression.
+        For bulk gold: \(T_m = 1064\,°\text{C}\).
+        For a 2 nm gold nanoparticle: experimentally observed values near \(300\,°\text{C}\) —
+        a depression of over 700 degrees.
+      </p>
+      <p>
+        The Gibbs–Thomson (or Pawlow) relation quantifies this effect.
+        At the solid-liquid transition, the free energy cost of the additional surface area
+        destabilises the solid phase, shifting the equilibrium melting temperature downward:
+      </p>
+
+      <div class="math-block">
+        <div class="math-label">Gibbs–Thomson relation</div>
+        \[
+        T_m(r) = T_m(\infty)\left(1 - \frac{2\gamma_{sl}}{\rho_s L r}\right)
+        \]
+      </div>
+
+      <p>
+        where \(\gamma_{sl}\) is the solid-liquid interfacial energy, \(\rho_s\) is the density of the solid,
+        \(L\) is the bulk latent heat of fusion, and \(r\) is the particle radius. The correction term
+        scales as \(1/r\) — consistent with the surface-to-volume picture. Smaller particle, larger surface
+        contribution, lower melting point.
+      </p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon" style="color:var(--accent)">△T</div>
+          <div class="card-title">Melting depression</div>
+          <p>Gold drops from 1064°C (bulk) to ~300°C at 2 nm — a shift of over 700 degrees.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="color:var(--accent2)">γ</div>
+          <div class="card-title">Surface energy</div>
+          <p>Unsatisfied surface bonds raise the free energy of the solid, destabilising it relative to the melt.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="color:#c78fff">∝1/r</div>
+          <div class="card-title">Scaling law</div>
+          <p>All thermodynamic nano-effects share the same \(1/r\) geometry: double the radius, halve the effect.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <h3>Sintering and coarsening</h3>
+      <p>
+        The thermodynamic instability of surfaces is also the driving force behind
+        <em>sintering</em> (nanoparticles fusing together when heated) and
+        <em>Ostwald ripening</em> (small particles dissolving and large ones growing,
+        because the higher chemical potential of small particles makes them more soluble).
+        Both processes are unwanted side-effects of surface energy minimisation in applications
+        where you need the nanoparticle distribution to remain stable over time.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── SECTION 3: QUANTUM ── -->
+  <section>
+    <div class="reveal">
+      <h2>Quantum confinement</h2>
+      <p>
+        Alongside the thermodynamic story runs a purely quantum-mechanical one.
+        In bulk metals and semiconductors, electrons occupy energy bands — quasi-continuous
+        ranges of allowed energies arising from the periodic potential of the crystal lattice
+        and the enormous number (\(\sim 10^{23}\)) of overlapping electron wavefunctions.
+      </p>
+      <p>
+        As particle size shrinks toward the electron's de Broglie wavelength
+        (\(\lambda = h/p\), typically 1–10 nm in a semiconductor), the electron is no longer
+        free to propagate in all directions. It is spatially confined, and confinement in
+        quantum mechanics always discretises the energy spectrum.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <h3>Particle in a box · the minimal model</h3>
+      <p>
+        The simplest model — an electron trapped in an infinite square well of length \(L\) —
+        already captures the essential physics:
+      </p>
+
+      <div class="math-block">
+        <div class="math-label">Energy levels · infinite square well</div>
+        \[
+        E_n = \frac{n^2 \hbar^2 \pi^2}{2 m_e L^2}, \quad n = 1, 2, 3, \ldots
+        \]
+      </div>
+
+      <p>
+        The level spacing \(\Delta E \propto 1/L^2\) — shrink \(L\) by a factor of 2, quadruple
+        the spacing between levels. For \(L \sim 5\,\text{nm}\) and a semiconductor effective mass,
+        \(\Delta E\) is large enough to produce visible-range photon emission.
+        This is the operating principle of <strong style="color:var(--heading)">quantum dots</strong>.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <h3>Quantum dots · colour from confinement</h3>
+      <p>
+        A quantum dot is a nanocrystal small enough that quantum confinement determines its
+        optical gap. Because \(\Delta E \propto 1/r^2\) (with corrections from the effective mass
+        and dielectric environment), the emission wavelength is directly tunable by changing the
+        particle size — no chemical reformulation required, just size control.
+      </p>
+    </div>
+
+    <!-- QD animation canvas -->
+    <div class="reveal">
+      <canvas id="qd-canvas" height="220"></canvas>
+      <div class="qd-legend" id="qd-legend"></div>
+      <p style="font-size:0.82rem; color:var(--muted); margin-top:0.4rem">
+        Simulated emission: each sphere pulses at its characteristic frequency.
+        Smaller particles → larger energy gap → shorter wavelength (blue-shift).
+      </p>
+    </div>
+
+    <div class="reveal">
+      <h3>Beyond the square well</h3>
+      <p>
+        Real nanoparticles are spherical, not cubic, and electrons experience a finite potential
+        barrier (not infinite) at the surface. The correct model is the <em>spherical particle in a
+        finite spherical well</em>, solved by matching Bessel function solutions inside and outside
+        the particle. The result is the same qualitative trend — discrete energy levels growing
+        further apart as \(r\) decreases — but with corrections for finite barrier height and
+        wavefunction leakage into the surrounding medium.
+      </p>
+      <p>
+        Strong confinement also mixes electron and hole states and enhances the
+        electron-hole exchange interaction, making selection rules and oscillator strengths
+        strongly size-dependent. This is why quantum dot fluorescence lifetimes,
+        quantum yields, and Stokes shifts all vary with particle size.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── SECTION 4: OTHER EFFECTS ── -->
+  <section>
+    <div class="reveal">
+      <h2>Beyond surface and quantum effects</h2>
+      <p>
+        Thermodynamics and quantum confinement are the two dominant physics stories at the nanoscale,
+        but they are not the only ones.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <h3>Plasmonics</h3>
+      <p>
+        In metallic nanoparticles (particularly gold and silver), the free electrons can oscillate
+        collectively in resonance with an incident electromagnetic wave.
+        This is the <strong style="color:var(--heading)">localised surface plasmon resonance (LSPR)</strong>.
+        For a 20 nm gold sphere, LSPR occurs near 520 nm — the familiar ruby-red colour of colloidal gold.
+        The resonance frequency, linewidth, and near-field enhancement all depend on particle size, shape, and the
+        surrounding dielectric. This is why gold nanoparticle solutions can appear red, purple, or blue
+        by varying particle size alone.
+      </p>
+
+      <div class="math-block">
+        <div class="math-label">Mie scattering · extinction cross-section (dipole term)</div>
+        \[
+        C_\text{ext} \approx 9\frac{\omega}{c}\varepsilon_m^{3/2} V
+        \frac{\varepsilon_2}{(\varepsilon_1 + 2\varepsilon_m)^2 + \varepsilon_2^2}
+        \]
+      </div>
+
+      <p>
+        where \(\varepsilon_1 + i\varepsilon_2\) is the complex dielectric function of the metal,
+        \(\varepsilon_m\) is the (real) dielectric constant of the medium, and \(V\) is the particle volume.
+        The resonance condition \(\varepsilon_1 = -2\varepsilon_m\) defines the LSPR frequency.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <h3>Superparamagnetism</h3>
+      <p>
+        Bulk ferromagnets are divided into magnetic domains — regions of uniform magnetisation
+        separated by domain walls. Forming domain walls costs energy; the equilibrium domain
+        structure balances this cost against magnetostatic energy. Below a critical particle radius
+        \(r_c \sim 10\text{–}100\,\text{nm}\) (material-dependent), it costs more energy to form
+        a domain wall than to remain single-domain.
+      </p>
+      <p>
+        In a single-domain particle, thermal fluctuations at room temperature can be enough to
+        flip the entire magnetisation direction if the anisotropy energy \(K V k_B T\) — this
+        is <em>superparamagnetism</em>. The particle behaves like a paramagnet with a giant
+        (super) magnetic moment, saturating in an applied field but retaining zero remanence
+        when the field is removed. This is the working principle behind MRI contrast agents and
+        magnetic hyperthermia for cancer treatment.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <h3>Mechanical properties</h3>
+      <p>
+        The yield strength and hardness of nanocrystalline metals (grain sizes below ~100 nm)
+        can be many times higher than their coarse-grained counterparts — a consequence of
+        grain-boundary strengthening (the Hall–Petch relation) and the suppression of dislocation
+        sources within nanoscale grains. Interestingly, at <em>very</em> small grain sizes
+        (\(<\sim 10\,\text{nm}\)), the relation inverts (inverse Hall–Petch): hardness decreases
+        because grain-boundary sliding and diffusion creep become the dominant deformation
+        mechanisms rather than dislocation glide.
+      </p>
+    </div>
+
+    <!-- Summary card grid -->
+    <div class="reveal">
+      <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-top:2rem">
+        <div class="card">
+          <div class="card-title">Thermodynamic</div>
+          <p>Melting point depression, surface energy dominance, Ostwald ripening, enhanced reactivity</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Electronic / optical</div>
+          <p>Quantum confinement, discrete energy levels, tunable bandgap, quantum dot emission</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Plasmonic</div>
+          <p>LSPR in metals, enhanced near-fields, size- and shape-tunable colour</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Magnetic</div>
+          <p>Single-domain behaviour, superparamagnetism, giant magnetoresistance</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Mechanical</div>
+          <p>Hall–Petch hardening, inverse Hall–Petch at extreme grain refinement</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 5: WHY IT MATTERS ── -->
+  <section>
+    <div class="reveal">
+      <div class="section-divider"></div>
+      <h2>Why any of this matters</h2>
+      <p>
+        The properties that make nanoparticles scientifically interesting are also what make them
+        technologically useful. A partial inventory:
+      </p>
+      <p>
+        <strong style="color:var(--heading)">Catalysis.</strong> The fraction of catalytically active surface atoms
+        scales as \(1/r\). Platinum nanoparticles in a fuel cell catalyst layer expose far more active
+        sites per gram than bulk platinum, dramatically reducing the loading (and cost) required.
+      </p>
+      <p>
+        <strong style="color:var(--heading)">Medicine.</strong> Gold nanoparticles can be functionalised
+        with antibodies or peptides to target specific cell types. Their strong LSPR absorption
+        converts near-infrared light to heat, enabling selective photothermal ablation of tumours.
+        Iron oxide nanoparticles provide contrast in MRI and, under an oscillating magnetic field,
+        deposit heat selectively in tumour tissue (magnetic hyperthermia).
+      </p>
+      <p>
+        <strong style="color:var(--heading)">Displays and lighting.</strong> Quantum dots with
+        sharp, tunable emission and near-unity quantum yields have entered commercial display technology
+        (QLED panels) and are under investigation for next-generation LED lighting.
+      </p>
+      <p>
+        <strong style="color:var(--heading)">Energy.</strong> Nanostructured electrodes increase
+        the surface area available for electrochemical reactions in batteries and supercapacitors.
+        Semiconductor nanocrystals are explored as solar cell absorbers whose bandgap can be
+        tuned to match the solar spectrum.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <div class="pull-quote">
+        Nanoparticles are not small versions of bulk materials.
+        They are a different phase of matter — one where geometry rewrites the physics.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="post-footer reveal">
+    <div>Posted <span>May 21, 2026</span> · azam-alif.github.io</div>
+    <div>
+      <a href="../topics.html">← Blog Topics</a>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ── SCRIPTS ── -->
+<script>
+// ── Background particle field ──
+(function(){
+  const c = document.getElementById('bg-canvas');
+  const ctx = c.getContext('2d');
+  let W, H, pts;
+  function resize(){
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+  function init(){
+    pts = Array.from({length: 60}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      vx: (Math.random()-0.5)*0.25, vy: (Math.random()-0.5)*0.25,
+      r: Math.random()*1.6+0.3
+    }));
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<pts.length;i++){
+      const p=pts[i];
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(91,143,255,0.7)';
+      ctx.fill();
+      for(let j=i+1;j<pts.length;j++){
+        const q=pts[j];
+        const d=Math.hypot(p.x-q.x,p.y-q.y);
+        if(d<120){
+          ctx.beginPath();
+          ctx.moveTo(p.x,p.y);
+          ctx.lineTo(q.x,q.y);
+          ctx.strokeStyle=`rgba(91,143,255,${0.08*(1-d/120)})`;
+          ctx.lineWidth=0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', ()=>{ resize(); init(); });
+  resize(); init(); draw();
+})();
+</script>
+
+<script>
+// ── S/V slider ──
+const rSlider = document.getElementById('radius-slider');
+const rOut    = document.getElementById('radius-out');
+const svRatio = document.getElementById('sv-ratio');
+const surfAt  = document.getElementById('surf-atoms');
+const regime  = document.getElementById('regime');
+const svC     = document.getElementById('sv-canvas');
+const svCtx   = svC.getContext('2d');
+
+function updateSV(){
+  const r = +rSlider.value;
+  rOut.textContent = r < 1000 ? r+' nm' : (r/1000).toFixed(1)+' µm';
+  const sv = (3/r).toFixed(4);
+  svRatio.textContent = sv+' nm⁻¹';
+  const frac = Math.min(100, Math.round(3*0.25/r*100));
+  const surfFrac = Math.min(99, Math.round(100*Math.exp(-r/8)));
+  surfAt.textContent = '~'+surfFrac+'%';
+  regime.textContent = r<=100 ? 'Nanoparticle' : r<=1000 ? 'Submicron' : 'Microparticle';
+
+  // draw sphere visualisation
+  svCtx.clearRect(0,0,180,180);
+  const cx=90, cy=90;
+  const maxR=75, drawR = Math.min(maxR, 10 + (r/500)*65);
+  // bulk fill
+  const grad = svCtx.createRadialGradient(cx-drawR*0.3, cy-drawR*0.3, 0, cx, cy, drawR);
+  grad.addColorStop(0,'rgba(56,217,169,0.3)');
+  grad.addColorStop(1,'rgba(10,20,40,0.3)');
+  svCtx.beginPath();
+  svCtx.arc(cx,cy,drawR,0,Math.PI*2);
+  svCtx.fillStyle=grad;
+  svCtx.fill();
+  // surface ring
+  const surfThick = Math.max(2, drawR * surfFrac/100 * 0.4);
+  svCtx.beginPath();
+  svCtx.arc(cx,cy,drawR,0,Math.PI*2);
+  svCtx.strokeStyle='rgba(91,143,255,0.8)';
+  svCtx.lineWidth=surfThick;
+  svCtx.stroke();
+  // label
+  svCtx.font='11px Courier New';
+  svCtx.fillStyle='rgba(136,146,164,0.8)';
+  svCtx.textAlign='center';
+  svCtx.fillText('r = '+r+' nm', cx, 170);
+}
+
+rSlider.addEventListener('input', updateSV);
+updateSV();
+</script>
+
+<script>
+// ── Quantum dot animation ──
+const qdData = [
+  { r:2,  color:'#4488ff', label:'2 nm — blue',   freq:1.8 },
+  { r:3,  color:'#44ccff', label:'3 nm — cyan',   freq:1.5 },
+  { r:4,  color:'#44ff88', label:'4 nm — green',  freq:1.2 },
+  { r:5,  color:'#aaff44', label:'5 nm — yellow', freq:1.0 },
+  { r:7,  color:'#ffcc44', label:'7 nm — amber',  freq:0.8 },
+  { r:9,  color:'#ff6644', label:'9 nm — red',    freq:0.6 },
+];
+
+const qdCvs = document.getElementById('qd-canvas');
+qdCvs.width = qdCvs.offsetWidth || 680;
+const qdCtx = qdCvs.getContext('2d');
+const W2 = qdCvs.width, H2 = 220;
+qdCvs.height = H2;
+
+// build legend
+const legend = document.getElementById('qd-legend');
+qdData.forEach(d=>{
+  const el=document.createElement('span');
+  el.innerHTML=`<span class="qd-dot" style="background:${d.color}"></span>${d.label}`;
+  legend.appendChild(el);
+});
+
+let t=0;
+function drawQD(){
+  qdCtx.clearRect(0,0,W2,H2);
+  const spacing = W2/(qdData.length+1);
+  qdData.forEach((d,i)=>{
+    const x = spacing*(i+1);
+    const cy = H2/2;
+    const pulse = Math.sin(t*d.freq)*0.35+1;
+    const drawR = (d.r*4) * pulse;
+    // glow ring
+    const g = qdCtx.createRadialGradient(x,cy,drawR*0.2,x,cy,drawR*2);
+    g.addColorStop(0, d.color+'88');
+    g.addColorStop(1, d.color+'00');
+    qdCtx.beginPath();
+    qdCtx.arc(x,cy,drawR*2,0,Math.PI*2);
+    qdCtx.fillStyle=g;
+    qdCtx.fill();
+    // core
+    qdCtx.beginPath();
+    qdCtx.arc(x,cy,drawR,0,Math.PI*2);
+    qdCtx.fillStyle=d.color;
+    qdCtx.fill();
+    // label
+    qdCtx.font='11px Courier New';
+    qdCtx.fillStyle='rgba(136,146,164,0.7)';
+    qdCtx.textAlign='center';
+    qdCtx.fillText(d.r+' nm', x, H2-12);
+  });
+  t+=0.04;
+  requestAnimationFrame(drawQD);
+}
+drawQD();
+</script>
+
+<script>
+// ── Scroll reveal ──
+const revels = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.08});
+revels.forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
