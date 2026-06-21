@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why Iron Rusts but Does Not Nitridize in Air</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body);"></script>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="container">
+    <main class="main-content">
+      <header>
+        <h1>Why Iron Rusts but Does Not React with Nitrogen</h1>
+        <nav>
+          <a href="../index.html">Home</a>&nbsp;
+          <a href="../topics.html">Blog Topics</a>&nbsp;
+        </nav>
+      </header>
+
+      <p>
+        Air is roughly 21% oxygen and 78% nitrogen. Iron sitting in this mixture reacts
+        readily with the oxygen — that's rust — but it does essentially nothing with the
+        nitrogen, even though nitrogen is four times more abundant. Why does one gas win
+        and not the other?
+      </p>
+
+      <h2>What Decides Whether a Reaction Happens on Its Own</h2>
+
+      <p>
+        A process runs spontaneously, with no external push, when the total entropy of the
+        universe increases. Packed into a single quantity at constant temperature and
+        pressure, this condition becomes the Gibbs free energy:
+      </p>
+
+      <p>$$\Delta G = \Delta H - T\Delta S$$</p>
+
+      <p>
+        \(\Delta H\) is the heat released or absorbed, \(T\) is the absolute temperature,
+        and \(\Delta S\) is the entropy change of the system. A reaction is spontaneous when
+        \(\Delta G < 0\).
+      </p>
+
+      <p>
+        The sign of each term tells you the story before you even compute a number:
+      </p>
+
+      <ul>
+        <li>
+          <b>\(\Delta H < 0\) and \(\Delta S > 0\):</b> both terms push \(\Delta G\) negative.
+          Spontaneous at every temperature.
+        </li>
+        <li>
+          <b>\(\Delta H > 0\) and \(\Delta S < 0\):</b> both terms push \(\Delta G\) positive.
+          Never spontaneous, at any temperature.
+        </li>
+        <li>
+          <b>\(\Delta H\) and \(\Delta S\) share a sign:</b> the two terms fight each other.
+          Whichever one is larger in magnitude — weighted by \(T\) — decides the outcome.
+          This is the case that actually applies to both iron reactions below.
+        </li>
+      </ul>
+
+      <h2>Iron and Oxygen: \(4\text{Fe} + 3\text{O}_2 \rightarrow 2\text{Fe}_2\text{O}_3\)</h2>
+
+      <p>
+        Here \(\Delta H\) is strongly negative — this reaction is highly exothermic, which is
+        why rusting steel wool can visibly warm up and why thermite-style Fe/O reactions are
+        violent. \(\Delta S\) for the system is <i>also negative</i>: three moles of free,
+        disordered \(\text{O}_2\) gas are locked into a rigid solid lattice. Gas turning into
+        solid is always an entropy loss for the system.
+      </p>
+
+      <p>
+        So both terms are working against the simple "always spontaneous" case — \(\Delta H\)
+        is favorable, but \(\Delta S\) is not. The reaction proceeds anyway because the
+        \(\Delta H\) term is enormous. If you draw the system boundary around just the iron
+        and oxygen, the system's own entropy drops as the gas disappears into ordered solid.
+        But the heat that reaction releases doesn't vanish — it pours into the surroundings,
+        where it sets molecules jostling more vigorously. That's an entropy gain in the
+        surroundings, and because the reaction is so exothermic, that gain is large enough to
+        outweigh the system's loss.
+      </p>
+
+      <p>$$\Delta S_{universe} = \Delta S_{system} + \Delta S_{surroundings} > 0$$</p>
+
+      <p>
+        The system becomes more ordered. The universe as a whole does not. \(\Delta G\) ends
+        up negative because \(|\Delta H|\) is large enough to dominate the \(-T\Delta S\) term
+        — rust forms.
+      </p>
+
+      <h2>Iron and Nitrogen: \(2\text{Fe} + \text{N}_2 \rightarrow 2\text{FeN}\)</h2>
+
+      <p>
+        The entropy side of the story is identical in shape: gas is again being converted
+        into an ordered solid, so \(\Delta S\) for the system is negative here too.
+      </p>
+
+      <p>
+        The difference is on the enthalpy side. \(\text{N}_2\) is held together by a nitrogen
+        triple bond, one of the strongest bonds in chemistry. Breaking it costs a large amount
+        of energy up front, and the iron–nitrogen bonds that form afterward don't release
+        nearly enough energy to pay that cost back. The net \(\Delta H\) ends up small, and
+        for iron nitride formation under ordinary conditions it isn't negative enough — in
+        practice the reaction is not favorable at room temperature.
+      </p>
+
+      <p>
+        Now the same tug-of-war runs the other way. The heat released into the surroundings is
+        too small to generate enough entropy gain there to outweigh the system's entropy loss
+        from gas-to-solid ordering:
+      </p>
+
+      <p>$$\Delta S_{surroundings} \not> |\Delta S_{system}|$$</p>
+
+      <p>
+        \(\Delta G\) stays positive. The nitrogen triple bond is simply too strong for iron to
+        casually break apart at room temperature, so no reaction occurs — despite nitrogen
+        making up nearly four-fifths of the air iron sits in.
+      </p>
+
+      <h2>The Core Difference</h2>
+
+      <p>
+        Both reactions pay the same entropy penalty — gas locked into solid. What separates
+        them is the size of the enthalpy term. Iron oxidation releases enough heat to flood
+        the surroundings with entropy and overwhelm the system's ordering. Iron nitridation
+        doesn't, because the nitrogen triple bond refuses to give up its energy that easily.
+        Same entropy story, different enthalpy budget — and that's the whole reason rust forms
+        in air while iron nitride does not.
+      </p>
+
+      <hr>
+      <footer>
+        <p>Last updated on: <b>June 21, 2026</b></p>
+      </footer>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
