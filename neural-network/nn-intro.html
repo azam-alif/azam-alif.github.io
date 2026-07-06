@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neural Network Overview</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ]
+    });"></script>
+  <style>
+    /* Small supplementary styles, kept minimal so the site theme still drives look & feel */
+    .diagram-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      text-align: center;
+    }
+    .diagram-box svg { max-width: 100%; height: auto; }
+    .step-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+    }
+    .step-table th, .step-table td {
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+    .step-table th { background: rgba(255,255,255,0.05); }
+    .note-box {
+      border-left: 3px solid #7aa2f7;
+      background: rgba(122,162,247,0.08);
+      padding: 0.75rem 1rem;
+      margin: 1.25rem 0;
+      border-radius: 4px;
+    }
+    .algo-list ol { padding-left: 1.4rem; }
+    .algo-list li { margin-bottom: 0.4rem; }
+  </style>
+</head>
+<body>
+    <!-- Particles.js background -->
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <main class="main-content">
+            <header>
+                <h1>Neural Network Overview</h1>
+                <nav>
+                  <a href="../index.html">Home</a>&nbsp;
+                  <a href="../topics.html">Blog Topics</a>&nbsp;
+                </nav>
+            </header>
+            <main>
+		<p>"Neural Network" is composed of two words: neuron, the fundamental building block, and network, the connections between neurons. Every neuron in a neural network holds a value, and based on that value, the neuron gets activated.</p>
+                <p>A neural network is, mechanically, nothing more than a chain of matrix multiplications and elementwise nonlinearities that gets tuned by gradient descent until its output matches the data. In this post I go through the <b>complete theoretical training pipeline</b>, step by step, from raw dataset to updated weights, deriving every equation involved: forward propagation, loss, backpropagation, and the weight update. </p>
+
+                <div class="note-box algo-list">
+                  <b>The pipeline I'm deriving:</b>
+                  <ol>
+                    <li>Dataset preparation</li>
+                    <li>Initialization — weight matrices, epochs, learning rate</li>
+                    <li>Activation function definitions</li>
+                    <li>Forward propagation</li>
+                    <li>Loss computation</li>
+                    <li>Backpropagation</li>
+                    <li>Complete the epoch — new weights &amp; biases become the model</li>
+                  </ol>
+                </div>
+
+                <hr>
+
+                <h2>1. Dataset Preparation</h2>
+                <p>Start with a dataset of $N$ input-output pairs:</p>
+                <p>$$ \mathcal{D} = \{ (\mathbf{x}^{i}, \mathbf{y}^{i}) \}_{i=1}^{N}$$</p>
+		<p>where $x^i$ represents a single input example and $y^i$ represents its corresponding output, together forming the dataset $\mathcal{D}$ used to train the neural network.</p>
+		<!--
+		Before training, each feature is typically standardized so the optimizer doesn't struggle with wildly different input scales:</p>
+                <p>$$ \tilde{x}_j = \frac{x_j - \mu_j}{\sigma_j} $$</p>
+                <p>where $\mu_j$ and $\sigma_j$ are the mean and standard deviation of feature $j$ across the training set. Data is usually split into training, validation, and test subsets, and grouped into mini-batches of size $m$ for stochastic gradient descent — a full pass over all batches is one <b>epoch</b>.</p>
+		-->
+	<p>Each input $x^i$ is represented as a column matrix of dimension $n \times 1$, where $n$ is the number of features in the model.</p>
+                <hr>
+
+                <h2>2. Initialization — Weights, Biases, Epochs, Learning Rate</h2>
+		<p>For a network with layers $l = 1, \dots, L$, layer $l$ has a weight matrix $\mathbf{W}^{[l]}$ and a bias vector $\mathbf{b}^{[l]}$. The weight matrix $\mathbf{W}^{[l]}$ has dimension $(n^l \times n^{l-1})$, where $n^l$ is the number of neurons in layer $l$ and $n^{l-1}$ is the number of neurons in layer $l-1$.
+		The bias vector $\mathbf{b}^{[l]}$ is a $(n^l \times 1)$ matrix. Together, this weight matrix and bias vector connect layer $l-1$ to layer $l$.
+		</p>
+		<p>
+		These are initialized randomly — never with all zeros, since that would make every neuron in a layer compute an identical gradient and update identically (a symmetry the network could never break).
+		</p>
+		<p>Two more hyperparameters are fixed before training starts:</p>
+                <table class="step-table">
+                  <tr><th>Hyperparameter</th><th>Symbol</th><th>Role</th></tr>
+                  <tr><td>Epochs (pronounced "eh-pox")</td><td>$E$</td><td>Number of full passes over the dataset</td></tr>
+                  <tr><td>Learning rate</td><td>$\eta$</td><td>Step size for each gradient descent update</td></tr>
+                </table>
+                <p>I show how these two are actually used in Sections 6 and 7.</p>
+
+                <hr>
+
+                <h2>3. Activation Functions</h2>
+                <p>If every neuron contributed equally at all times, the output would always be the same. That's why we need an activation function — it decides whether a given neuron should be activated or not. There are actually thousands of activation functions available today, and we choose one based on our use case. The most common ones are Sigmoid, Tanh, ReLU, Softmax, etc.
+		</p>
+
+                <p>The derivative of each activation is what actually gets used later during backpropagation — it's the local "sensitivity" term in the chain rule. I'll describe each activation function in detail later, at the point where I actually use it.</p>
+
+                <hr>
+
+                <h2>4. Forward Propagation</h2>
+		<p>Given an input vector $x$, the first layer is denoted $\mathbf{a}^{[0]} = \mathbf{x}$. Let $\mathbf{W}^{[1]}$ be the weight matrix between the input layer and layer 1, and $\mathbf{b}^{[1]}$ be the bias vector of layer 1. Then,</p>
+                <p>$$ \mathbf{z}^{[1]} = \mathbf{W}^{[1]} \mathbf{a}^{[0]} + \mathbf{b}^{[1]} $$
+		Passing this $z^{[1]}$ into the activation function gives $a^{[1]}$:
+                $$ \mathbf{a}^{[1]} = f\!\left(\mathbf{z}^{[1]}\right) $$
+		These are the values that the neurons of layer 1 will hold.
+	</p>
+                                <p>This repeats for $l = 1, 2, \dots, L$, and the final layer's activation is the network's prediction, $\hat{\mathbf{y}} = \mathbf{a}^{[L]}$. Every $\mathbf{z}^{[l]}$ and $\mathbf{a}^{[l]}$ is cached during this pass — they're needed again during backpropagation.</p>
+		<p>
+		So, the general equation is:
+		$$ \mathbf{z}^{[l]} = \mathbf{W}^{[l]} \mathbf{a}^{[l-1]} + \mathbf{b}^{[l]} $$</p>
+                <p>$$ \mathbf{a}^{[l]} = f^{[l]}\!\left(\mathbf{z}^{[l]}\right) $$</p>
+
+                <hr>
+
+                <h2>5. Loss Computation</h2>
+                <p>The loss $L$ measures how far the prediction $\hat{\mathbf{y}} = \mathbf{a}^{[L]}$ is from the target $\mathbf{y}$, which must be present in the dataset for training. Now you need an error function — you can choose any function you want, but for regression, mean squared error is standard:</p>
+                <p>$$ L_{\text{MSE}} = \frac{1}{n_L}\sum_{k=1}^{n_L} \left( \hat{y}_k - y_k \right)^2 $$</p>
+                <p>Over a mini-batch of size $m$, the reported loss is simply the average over examples:</p>
+                <p>$$ J = \frac{1}{m}\sum_{i=1}^{m} L^{(i)} $$</p>
+		<p>
+		Loss ($\mathcal{L}$): The error for a single training example.
+		Cost ($J$): The average error over an entire batch or the entire dataset.</p>
+                <p>Our job is to minimize $J$ as much as possible. When $J$ goes down, it means the network's average predictions are getting closer to the actual targets ($y$). $J$ is the scalar objective that gradient descent will minimize by adjusting every $\mathbf{W}^{[l]}, \mathbf{b}^{[l]}$ in the network.</p>
+
+                <hr>
+		<h2>6. Backpropagation</h2>
+
+<p>
+Backpropagation is the process of computing how much each weight and bias contributed
+to the final prediction error. It repeatedly applies the <strong>chain rule</strong> of
+calculus, propagating the error from the <strong>output layer</strong> back toward the
+<strong>input layer</strong>.
+</p>
+
+<p>
+During the forward pass, the network stores two quantities for every layer
+\(l\):
+</p>
+
+$$
+z^{[l]} = W^{[l]}a^{[l-1]} + b^{[l]}
+$$
+
+<p>the <strong>weighted input</strong>, and</p>
+
+$$
+a^{[l]} = f\!\left(z^{[l]}\right)
+$$
+
+<p>
+the <strong>activation (output)</strong> of the layer.
+These cached values are reused during backpropagation.
+</p>
+<div class="diagram-box">
+  <svg viewBox="0 0 760 380" xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+      <marker id="arrowFwd" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6 Z" fill="#7aa2f7"/>
+      </marker>
+
+      <marker id="arrowBwd" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6 Z" fill="#f78c6c"/>
+      </marker>
+    </defs>
+
+    <!-- Layer labels -->
+    <text x="70" y="30" fill="currentColor" font-size="15" text-anchor="middle">
+      Input a[0]
+    </text>
+
+    <text x="330" y="30" fill="currentColor" font-size="15" text-anchor="middle">
+      Hidden a[1]
+    </text>
+
+    <text x="590" y="30" fill="currentColor" font-size="15" text-anchor="middle">
+      Output a[L]
+    </text>
+
+    <!-- ================= Input ================= -->
+
+    <circle cx="70" cy="110" r="28" fill="none" stroke="currentColor"/>
+    <text x="70" y="115" text-anchor="middle" font-size="15" fill="currentColor">
+      a₁[0]
+    </text>
+
+    <circle cx="70" cy="180" r="28" fill="none" stroke="currentColor"/>
+    <text x="70" y="185" text-anchor="middle" font-size="15" fill="currentColor">
+      a₂[0]
+    </text>
+
+    <circle cx="70" cy="250" r="28" fill="none" stroke="currentColor"/>
+    <text x="70" y="255" text-anchor="middle" font-size="15" fill="currentColor">
+      a₃[0]
+    </text>
+
+    <!-- ================= Hidden ================= -->
+
+    <circle cx="330" cy="80" r="28" fill="none" stroke="currentColor"/>
+    <text x="330" y="85" text-anchor="middle" font-size="15" fill="currentColor">
+      a₁[1]
+    </text>
+
+    <circle cx="330" cy="145" r="28" fill="none" stroke="currentColor"/>
+    <text x="330" y="150" text-anchor="middle" font-size="15" fill="currentColor">
+      a₂[1]
+    </text>
+
+    <circle cx="330" cy="210" r="28" fill="none" stroke="currentColor"/>
+    <text x="330" y="215" text-anchor="middle" font-size="15" fill="currentColor">
+      a₃[1]
+    </text>
+
+    <circle cx="330" cy="275" r="28" fill="none" stroke="currentColor"/>
+    <text x="330" y="280" text-anchor="middle" font-size="15" fill="currentColor">
+      a₄[1]
+    </text>
+
+    <!-- ================= Output ================= -->
+
+    <circle cx="590" cy="145" r="28" fill="none" stroke="currentColor"/>
+    <text x="590" y="150" text-anchor="middle" font-size="15" fill="currentColor">
+      a₁[L]
+    </text>
+
+    <circle cx="590" cy="215" r="28" fill="none" stroke="currentColor"/>
+    <text x="590" y="220" text-anchor="middle" font-size="15" fill="currentColor">
+      a₂[L]
+    </text>
+
+    <!-- ================= Forward ================= -->
+
+    <g stroke="#7aa2f7"
+       stroke-width="1.2"
+       opacity="0.85"
+       marker-end="url(#arrowFwd)">
+
+      <!-- input -> hidden -->
+      <line x1="98" y1="110" x2="302" y2="80"/>
+      <line x1="98" y1="110" x2="302" y2="145"/>
+      <line x1="98" y1="110" x2="302" y2="210"/>
+      <line x1="98" y1="110" x2="302" y2="275"/>
+
+      <line x1="98" y1="180" x2="302" y2="80"/>
+      <line x1="98" y1="180" x2="302" y2="145"/>
+      <line x1="98" y1="180" x2="302" y2="210"/>
+      <line x1="98" y1="180" x2="302" y2="275"/>
+
+      <line x1="98" y1="250" x2="302" y2="80"/>
+      <line x1="98" y1="250" x2="302" y2="145"/>
+      <line x1="98" y1="250" x2="302" y2="210"/>
+      <line x1="98" y1="250" x2="302" y2="275"/>
+
+      <!-- hidden -> output -->
+      <line x1="358" y1="80" x2="562" y2="145"/>
+      <line x1="358" y1="80" x2="562" y2="215"/>
+
+      <line x1="358" y1="145" x2="562" y2="145"/>
+      <line x1="358" y1="145" x2="562" y2="215"/>
+
+      <line x1="358" y1="210" x2="562" y2="145"/>
+      <line x1="358" y1="210" x2="562" y2="215"/>
+
+      <line x1="358" y1="275" x2="562" y2="145"/>
+      <line x1="358" y1="275" x2="562" y2="215"/>
+
+    </g>
+
+    <!-- Forward equation 
+
+    <text
+      x="395"
+      y="55"
+      fill="#7aa2f7"
+      font-size="13"
+      text-anchor="middle">
+
+      z = Wa + b,&nbsp; a = f(z)
+
+    </text>  -->
+
+    <!-- Backward arrow -->
+
+    <path
+      d="M565,315
+         C470,350 190,350 80,315"
+      fill="none"
+      stroke="#f78c6c"
+      stroke-width="2"
+      marker-end="url(#arrowBwd)"/>
+
+    <text
+      x="330"
+      y="355"
+      fill="#f78c6c"
+      font-size="13"
+      text-anchor="middle">
+
+      backward: gradients flow right → left
+
+    </text>
+
+    <!-- Loss -->
+
+    <text
+      x="590"
+      y="372"
+      fill="currentColor"
+      font-size="13"
+      text-anchor="middle">
+
+      ŷ vs y → L
+
+    </text>
+
+  </svg>
+</div>
+<p>
+Here we compute how much error is caused by a specific neuron. Let's say I want to compute the error contribution of the $a^{[1]}_4$ node. As you can see in the figure, this node is connected to nodes $a^{[0]}_1$, $a^{[0]}_2$, $a^{[0]}_3$ with corresponding weights, and it also has its own bias, which contributes to the error as well.
+</p>
+<p><b>The Gradients (The Main Terms)</b></p>
+<p>For the bias ($b_4^{[1]}$):</p>
+$$\frac{\partial C}{\partial b_4^{[1]}} = \frac{\partial C}{\partial z_4^{[1]}}$$
+<p>For the weights (from any input neuron $a_j^{[0]}$ where $j \in \{1, 2, 3\}$):</p>
+$$\frac{\partial C}{\partial w_{4,j}^{[1]}} = \frac{\partial C}{\partial z_4^{[1]}} \cdot a_j^{[0]}$$
+                <h2>7. Completing an Epoch — the Weight Update</h2>
+		<p>The parameter update formulas, using your learning rate ($\eta$):</p>
+		<p><b>Bias update:</b></p>
+		$$b_4^{[1]\text{(new)}} = b_4^{[1]\text{(old)}} - \eta \cdot \frac{\partial C}{\partial z_4^{[1]}}$$
+		<p><b>Weight updates:</b></p>
+		$$w_{4,1}^{[1]\text{(new)}} = w_{4,1}^{[1]\text{(old)}} - \eta \cdot \frac{\partial C}{\partial z_4^{[1]}} \cdot a_1^{[0]}$$
+		$$w_{4,2}^{[1]\text{(new)}} = w_{4,2}^{[1]\text{(old)}} - \eta \cdot \frac{\partial C}{\partial z_4^{[1]}} \cdot a_2^{[0]}$$
+		$$w_{4,3}^{[1]\text{(new)}} = w_{4,3}^{[1]\text{(old)}} - \eta \cdot \frac{\partial C}{\partial z_4^{[1]}} \cdot a_3^{[0]}$$
+
+<p>With every gradient computed, each parameter takes one step of gradient descent, moving opposite the gradient direction by a step size $\eta$:</p>
+                <p>$$ \mathbf{W}^{[l]} \leftarrow \mathbf{W}^{[l]} - \eta \, \frac{\partial J}{\partial \mathbf{W}^{[l]}}, \qquad \mathbf{b}^{[l]} \leftarrow \mathbf{b}^{[l]} - \eta \, \frac{\partial J}{\partial \mathbf{b}^{[l]}} $$</p>
+                <p>This is repeated for every mini-batch until the whole dataset has been seen once — one <b>epoch</b> — and then repeated for $E$ epochs, with the loss $J$ expected to decrease over time. There is no separate "model" object distinct from this process: <b>the final set of weights and biases after training is the model</b>. Everything the network "knows" is encoded entirely in the numbers inside $\{\mathbf{W}^{[l]}, \mathbf{b}^{[l]}\}_{l=1}^{L}$.</p>
+
+                <h2>Putting It All Together</h2>
+<svg viewBox="0 0 780 860" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <marker id="arrowFwd" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#7aa2f7"/>
+    </marker>
+    <marker id="arrowBwd" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#f78c6c"/>
+    </marker>
+  </defs>
+
+  <!-- ================= Boxes ================= -->
+
+  <!-- 1. Dataset Preparation -->
+  <rect x="160" y="20" width="460" height="64" rx="10" fill="none" stroke="currentColor"/>
+  <text x="390" y="45" text-anchor="middle" font-size="15" fill="currentColor">Dataset Preparation</text>
+
+  <!-- 2. Initialization -->
+  <rect x="160" y="130" width="460" height="64" rx="10" fill="none" stroke="currentColor"/>
+  <text x="390" y="155" text-anchor="middle" font-size="15" fill="currentColor">Initialization</text>
+
+  <!-- 3. Activation Functions -->
+  <rect x="160" y="240" width="460" height="64" rx="10" fill="none" stroke="currentColor"/>
+  <text x="390" y="265" text-anchor="middle" font-size="15" fill="currentColor">Activation Functions</text>
+
+  <!-- 4. Forward Propagation -->
+  <rect x="160" y="350" width="460" height="64" rx="10" fill="none" stroke="currentColor"/>
+  <text x="390" y="375" text-anchor="middle" font-size="15" fill="currentColor">Forward Propagation</text>
+
+  <!-- 5. Loss Computation -->
+  <rect x="160" y="460" width="460" height="64" rx="10" fill="none" stroke="currentColor"/>
+  <text x="390" y="485" text-anchor="middle" font-size="15" fill="currentColor">Loss Computation</text>
+
+  <!-- 6. Backpropagation -->
+  <rect x="160" y="570" width="460" height="64" rx="10" fill="none" stroke="currentColor"/>
+  <text x="390" y="595" text-anchor="middle" font-size="15" fill="currentColor">Backpropagation</text>
+
+  <!-- 7. Weight Update -->
+  <rect x="160" y="680" width="460" height="64" rx="10" fill="none" stroke="currentColor"/>
+  <text x="390" y="705" text-anchor="middle" font-size="15" fill="currentColor">Weight Update</text>
+
+  <!-- ================= Forward arrows (sequential) ================= -->
+  <g stroke="#7aa2f7" stroke-width="1.4" marker-end="url(#arrowFwd)">
+    <line x1="390" y1="84"  x2="390" y2="130"/>
+    <line x1="390" y1="194" x2="390" y2="240"/>
+    <line x1="390" y1="304" x2="390" y2="350"/>
+    <line x1="390" y1="414" x2="390" y2="460"/>
+    <line x1="390" y1="524" x2="390" y2="570"/>
+    <line x1="390" y1="634" x2="390" y2="680"/>
+  </g>
+
+  <!-- ================= Backward loop: next mini-batch ================= -->
+  <path d="M 620,712 C 705,610 705,450 620,382"
+        fill="none" stroke="#f78c6c" stroke-width="1.6" stroke-dasharray="6,4"
+        marker-end="url(#arrowBwd)"/>
+  <text x="712" y="547" fill="#f78c6c" font-size="12" text-anchor="middle"
+        transform="rotate(90 712,547)">next mini-batch</text>
+
+  <!-- ================= Outer loop: repeat for E epochs ================= -->
+  <path d="M 160,712 C 30,560 30,190 160,52"
+        fill="none" stroke="#f78c6c" stroke-width="1.6" stroke-dasharray="6,4"
+        marker-end="url(#arrowBwd)"/>
+  <text x="65" y="382" fill="#f78c6c" font-size="12" text-anchor="middle"
+						     transform="rotate(-90 65,382)">repeat until all E epochs done</text>   
+
+  <!-- Final note -->
+  <text x="390" y="800" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">
+  After E epochs: final {W[l], b[l]}<!--&#8318;=&#8321;^L &#160;--><tspan font-weight="bold"> is</tspan>&#160; the trained model
+  </text>
+
+</svg>
+                <p>This loop is the theoretical skeleton behind essentially every neural network trained today — convolutional layers, attention layers, and normalization layers all plug into the same forward → loss → backward → update cycle, just with more elaborate versions of Sections 3 through 6. Understanding this cycle at the matrix-calculus level is what makes frameworks like PyTorch's autograd feel like a natural extension rather than a black box: autograd is simply automating the recursive $\boldsymbol{\delta}^{[l]}$ computation derived above.</p>
+
+		<h3>Additional Help</h3>
+<ul>
+  <li>
+    <a href="https://youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&si=CEEgxFKyeZWPjf0-">3Blue1Brown's Neural networks Playlist</a> – Watch this playlist. Very good for visualization
+  </li>
+</ul>
+
+                <hr>
+                <footer>
+                  <p>Posted on: <b>July 6, 2026</b></p>
+                </footer>
+            </main>
+        </main>
+    </div>
+
+    <!-- Scripts for particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>
