@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Point Spread Function (PSF)</title>
+  <meta name="description" content="An intuitive guide to the Point Spread Function — what it is, why it matters, and how it shapes every image captured by a telescope, microscope, or camera.">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body);"></script>
+</head>
+
+<body>
+<div id="particles-js"></div>
+
+<div class="container">
+<main class="main-content">
+
+<header>
+<h1>Point Spread Function</h1>
+<nav>
+<a href="../index.html">Home</a>&nbsp;
+<a href="../topics.html">Blog Topics</a>&nbsp;
+</nav>
+</header>
+
+<main>
+
+<h2>The Problem: Why Stars Look Like Blobs</h2>
+
+<p>
+Imagine pointing a powerful telescope at a distant star.
+A star is so far away that it is essentially a perfect point of light — an
+infinitely small dot in the sky. In a perfect world, your telescope should
+record exactly that: a single bright pixel on the detector.
+</p>
+
+<p>
+But that is not what happens. Instead you see a bright central spot
+surrounded by faint concentric rings. The point has been <b>spread out</b>.
+This is not a flaw of cheap equipment. Even a theoretically perfect
+telescope does this, because light is a wave and waves diffract when they
+pass through any finite opening.
+</p>
+
+<p>
+The pattern you see — the specific way a point of light gets smeared —
+is called the <b>Point Spread Function (PSF)</b>.
+</p>
+
+<div class="image-container">
+<img src="psf-images/psf_concept.jpg" alt="Point source passing through an optical system to produce a PSF">
+</div>
+
+<h2>What Is the PSF, Physically?</h2>
+
+<p>
+Think of the PSF as the <b>fingerprint of your imaging system</b>.
+It answers one simple question:
+</p>
+
+<p>
+<b>If I image a single, infinitely small point of light, what does the
+recorded image look like?</b>
+</p>
+
+<p>
+Every optical system — telescope, microscope, camera lens, even your eye —
+has its own PSF. It encodes all the imperfections and physical limitations
+of that system into a single pattern. A narrow, tight PSF means sharp
+images. A wide, spread-out PSF means blurry images.
+</p>
+
+<p>
+For a perfect circular aperture (like a telescope mirror with no defects),
+the PSF is a beautiful pattern called the <b>Airy disk</b>, named after
+the mathematician George Biddell Airy.
+</p>
+
+<div class="image-container">
+<img src="psf-images/airy_disk_2d.jpg" alt="2D Airy disk diffraction pattern">
+</div>
+
+<h2>Why Does Diffraction Happen?</h2>
+
+<p>
+Here is the key physical intuition. Light travels as a wave. When a
+wavefront arrives at a telescope aperture, only a finite portion of the
+wave passes through. According to Huygens' principle, every point on that
+wavefront acts as a new source of tiny spherical wavelets. These wavelets
+travel to the detector and overlap.
+</p>
+
+<p>
+At the center of the image, all wavelets arrive roughly in phase — their
+crests line up — so they add up constructively and produce a bright spot.
+But slightly off-center, the wavelets from different parts of the aperture
+arrive slightly out of step. At some angles they partially cancel, at
+others they reinforce, creating the alternating bright and dark rings of
+the Airy disk.
+</p>
+
+<p>
+This is diffraction. It is not a defect. It is physics. And the PSF is
+simply the mathematical description of this interference pattern.
+</p>
+
+<h2>The Airy Disk Formula</h2>
+
+<p>
+For a circular aperture of diameter \(D\), the intensity pattern on the
+focal plane is described by:
+</p>
+
+<p>
+\[
+I(\theta) = I_0 \left[\frac{2\,J_1(x)}{x}\right]^2
+\]
+</p>
+
+<p>
+where
+</p>
+
+<p>
+\[
+x = \frac{\pi\, D\, \sin\theta}{\lambda}
+\]
+</p>
+
+<p>
+Here \(J_1\) is the first-order Bessel function, \(\theta\) is the angle
+from the optical axis, and \(\lambda\) is the wavelength of light.
+</p>
+
+<p>
+Do not worry about memorizing this formula. The physical picture is what
+matters: the ratio \(D/\lambda\) controls how tight the central spot is.
+<b>Bigger aperture or shorter wavelength → narrower PSF → sharper image.</b>
+</p>
+
+<p>
+The first dark ring — where the intensity drops to zero — occurs at
+the angle:
+</p>
+
+<p>
+\[
+\sin\theta \approx 1.22\,\frac{\lambda}{D}
+\]
+</p>
+
+<p>
+This is the angular radius of the Airy disk. For small angles,
+\(\sin\theta \approx \theta\), so we often write it simply as
+\(\theta \approx 1.22\,\lambda / D\).
+</p>
+
+<h2>PSF as Convolution: How Images Are Formed</h2>
+
+<p>
+Here is the most powerful idea about the PSF. A real scene is not a
+single point — it is made of countless point sources. Each point in the
+scene produces its own copy of the PSF on the detector. The final image
+is the sum of all these overlapping PSF copies.
+</p>
+
+<p>
+Mathematically, this process is called <b>convolution</b>:
+</p>
+
+<p>
+\[
+\text{Observed Image} = \text{True Scene} * \text{PSF}
+\]
+</p>
+
+<p>
+The symbol \(*\) here means convolution, not multiplication. In simple
+language: slide the PSF over every bright point in the true scene, stamp
+down a copy weighted by that point's brightness, and add everything up.
+The result is the observed (blurred) image.
+</p>
+
+<div class="image-container">
+<img src="psf-images/convolution_concept.jpg" alt="Convolution of a sharp image with the PSF producing a blurred image">
+</div>
+
+<p>
+This is why the PSF matters so much. If you know the PSF of your system,
+you can work backward — a process called <b>deconvolution</b> — to recover
+a sharper version of the original scene. This is exactly what was done to
+fix the blurry images from the Hubble Space Telescope before its corrective
+optics were installed.
+</p>
+
+<h2>The Rayleigh Criterion: When Can You Tell Two Stars Apart?</h2>
+
+<p>
+Imagine two stars very close together in the sky. Each produces its own
+Airy disk on the detector. If the stars are far apart, the two Airy disks
+are clearly separated and you see two distinct spots. But as the stars
+get closer, the Airy disks start to overlap and eventually merge into one
+blob.
+</p>
+
+<p>
+The <b>Rayleigh criterion</b> gives a practical limit for when two
+points are "just barely resolved." It says:
+</p>
+
+<p>
+<b>Two point sources are just resolved when the central maximum of
+one falls on the first minimum of the other.</b>
+</p>
+
+<p>
+This corresponds to an angular separation of:
+</p>
+
+<p>
+\[
+\theta_{\min} = 1.22\,\frac{\lambda}{D}
+\]
+</p>
+
+<div class="image-container">
+<img src="psf-images/rayleigh_criterion.jpg" alt="Rayleigh criterion showing well resolved, just resolved, and unresolved cases">
+</div>
+
+<p>
+This formula has a direct physical message:
+to resolve finer details, either use a larger aperture \(D\) or observe at
+a shorter wavelength \(\lambda\). This is why radio telescopes (long
+wavelength) need to be enormous, while optical telescopes (short wavelength)
+can resolve the same detail with much smaller mirrors.
+</p>
+
+<h2>Beyond the Perfect Case: Real-World PSFs</h2>
+
+<p>
+Everything above assumes a perfect optical system where diffraction is
+the only source of blurring. In reality, other factors broaden the PSF:
+</p>
+
+<p>
+<b>Atmospheric turbulence</b> — for ground-based telescopes, moving
+pockets of air with different temperatures bend starlight randomly,
+smearing the PSF far beyond the Airy disk. This is why stars twinkle.
+Adaptive optics systems use deformable mirrors to correct for this in
+real time.
+</p>
+
+<p>
+<b>Optical aberrations</b> — imperfections in lens or mirror shape
+(spherical aberration, coma, astigmatism) distort the PSF into
+asymmetric or elongated patterns.
+</p>
+
+<p>
+<b>Detector effects</b> — finite pixel size, charge diffusion in CCDs,
+and motion blur each contribute their own broadening.
+</p>
+
+<p>
+The observed PSF is the combined result of all these effects. In
+practice, astronomers often measure the PSF directly from isolated stars
+in the same image, since stars are natural point sources.
+</p>
+
+<h2>PSF in Other Fields</h2>
+
+<p>
+The PSF is not limited to astronomy. In <b>fluorescence microscopy</b>,
+the PSF describes how a single fluorescent molecule appears — and
+super-resolution techniques like STORM and PALM work by fitting the PSF
+to localize molecules far below the diffraction limit.
+</p>
+
+<p>
+In <b>medical imaging</b> (CT, PET, MRI), each modality has its own PSF
+that describes spatial blurring, and deconvolution methods improve
+diagnostic image quality.
+</p>
+
+<p>
+In <b>photography</b>, the blur you see in out-of-focus regions (bokeh)
+is the PSF of the camera lens at that particular focus distance. Lens
+designers carefully shape this PSF to produce aesthetically pleasing
+background blur.
+</p>
+
+<h2>Quick Summary</h2>
+
+<p>
+The PSF tells you how a point source appears after passing through your
+imaging system. It is governed by diffraction (Airy disk for a circular
+aperture) and broadened by real-world imperfections. The observed image is
+the true scene convolved with the PSF, and knowing the PSF lets you
+deconvolve to recover sharper images. The Rayleigh criterion uses the PSF
+width to define the smallest resolvable detail: \(\theta \approx 1.22\,\lambda/D\).
+</p>
+
+<hr>
+
+<footer>
+<p>Last updated on: <b>August 3, 2026</b></p>
+</footer>
+
+</main>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="../script.js"></script>
+
+</body>
+</html>
