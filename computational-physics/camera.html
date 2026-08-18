@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How a Camera Works</title>
+  <meta name="description" content="A simple physics walkthrough of how a camera captures an image — from light entering the lens to the final photograph on the sensor.">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+<div id="particles-js"></div>
+
+<div class="container">
+<main class="main-content">
+
+<header>
+<h1>How a Camera Works</h1>
+<nav>
+<a href="../index.html">Home</a>&nbsp;
+<a href="../topics.html">Blog Topics</a>&nbsp;
+</nav>
+</header>
+
+<main>
+
+<h2>The Components</h2>
+
+<p>
+A camera is a chain of precisely positioned elements that turn light from the
+real world into a recorded image. The diagram below shows each stage in order.
+</p>
+
+<div class="image-container">
+<img src="camera-images/camera.jpeg" alt="Camera components: Object, front lens, aperture, rear lens, image sensor, and the resulting image">
+</div>
+<p style="text-align: center; font-size: 0.85em; opacity: 0.6; margin-top: -10px;">
+<i>Image generated using Google Gemini AI.</i>
+</p>
+
+<p>
+<b>Object</b> — the scene or subject reflecting light toward the camera.
+</p>
+
+<p>
+<b>Front Lens</b> — gathers incoming light and begins bending (refracting) it toward a focal point.
+</p>
+
+<p>
+<b>Aperture</b> — a variable opening inside the lens barrel that controls how much light passes through.
+</p>
+
+<p>
+<b>Rear Lens</b> — further focuses the converging light so it forms a sharp image on the sensor plane.
+</p>
+
+<p>
+<b>Image Sensor</b> — a grid of millions of photosites (pixels) that convert photons into electrical signals.
+</p>
+
+<p>
+<b>Image</b> — the final digital photograph reconstructed from those electrical signals.
+</p>
+
+<h2>The Aperture and Diffraction</h2>
+<p>Because the aperture is a finite opening, light diffracts as it passes through it. 
+As a result, a single point of light in the scene does not form an infinitely small point on the sensor. 
+Instead, it produces a characteristic intensity distribution called the <b>Point Spread Function (PSF)</b>.</p>
+</p>
+<p>
+For a detailed look at what the PSF is, how the Airy disk forms, and why it
+matters for every imaging system, see the
+<a href="psf.html">Point Spread Function</a> post.
+</p>
+
+<h3>References</h3>
+
+<ul>
+  <li>
+    <a href="https://www.khanacademy.org/computing/pixar/virtual-cameras" target="_blank">Virtual Cameras – Khan Academy / Pixar in a Box</a> – an interactive course on how virtual cameras model real camera optics.
+  </li>
+  <li>
+    <a href="https://electronics.howstuffworks.com/camera.htm" target="_blank">How Digital Cameras Work – HowStuffWorks</a> – a thorough walkthrough of every component inside a digital camera.
+  </li>
+</ul>
+
+<hr>
+
+<footer>
+<p>Last updated on: <b>August 18, 2026</b></p>
+</footer>
+
+</main>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="../script.js"></script>
+
+</body>
+</html>
