@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeBCR PINN model train and run as a service</title>
+  <meta name="description" content="starting from cloning the repo to run that model fully as a service">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+<div id="particles-js"></div>
+
+<div class="container">
+<main class="main-content">
+
+<header>
+<h1>From Light to Image: How a Camera Forms a Picture</h1>
+<nav>
+<a href="../index.html">Home</a>&nbsp;
+<a href="../topics.html">Blog Topics</a>&nbsp;
+<a href="../project.html">Projects</a>&nbsp;
+</nav>
+</header>
+
+<main>
+
+<h2>The Components</h2>
+
+<p>
+Since, an neural network for reseach work or commercial work is very much broad topic,
+we first need to understand the relation between conda, pip, tensorflow, cpu, gpu and
+package version. all things need to be compatible so that the whole project runs smoothly. 
+So, first we need to understand this layer by layer to get the full picture in our mind. 
+</p>
+
+<p>
+In our operating system, we always different kind of softwares. Usually we dont care 
+about the version of those softwares, but when we are working on something production 
+level, we must manage versions properly. And in one computer we can be working on separate
+projects that may lead to a version mismatch. So, we need a virtual environment for each 
+project. This this as a little box inside a bigger box. The bigger box is the full operating 
+system and small box is you own little project corner where you can download whatever you want
+and don't get mismatched with other things. To create and manage this little box, we are gonna 
+use <code>micromamba</code>.
+</p>
+
+<p>
+Inside this virtual environment, we need to download everything of appropriate versions. 
+Since training will happen in GPU, cuda is needed to manage nvidia gpu's. We can download 
+<code>cuda</code> in this virtual environment using <code>micromamba</code>. We will need 
+<code>tensorflow</code> since it will help us in not writing <code>cuda</code> directly. 
+And some packages like <code>numpy, matplotlib</code> of specific version can be download 
+by python package manager <code>pip</code>.
+</p>
+
+
+
+<div class="image-container">
+<img src="camera-images/camera.jpeg" alt="Camera components: Object, front lens, aperture, rear lens, image sensor, and the resulting image">
+</div>
+<p style="text-align: center; font-size: 0.85em; opacity: 0.6; margin-top: -10px;">
+<i>Image generated using Google Gemini AI.</i>
+</p>
+
+
+<h2>Train the DeBCR model</h2>
+<p>
+First clone the repository. 
+Then run <code>setup.sh</code>to download the relevent packages and dependencies, download 
+the dataset. If you get All ok message in the end, then your system is ready to train the model. 
+Then run train_local.py and the training will begin. it took 25 minutes in my NVIDIA Tesla T4 gpu. 
+</p>
+
+<h2>Run DeBCR model as a service</h2>
+
+<p>
+For a detailed look at what the PSF is, how the Airy disk forms, and why it
+matters for every imaging system, see the
+<a href="psf.html">Point Spread Function</a> post.
+</p>
+
+<h3>References</h3>
+
+<ul>
+  <li>
+    <a href="https://www.khanacademy.org/computing/pixar/virtual-cameras" target="_blank">Virtual Cameras – Khan Academy / Pixar in a Box</a> – an interactive course on how virtual cameras model real camera optics.
+  </li>
+  <li>
+    <a href="https://electronics.howstuffworks.com/camera.htm" target="_blank">How Digital Cameras Work – HowStuffWorks</a> – a thorough walkthrough of every component inside a digital camera.
+  </li>
+</ul>
+
+<hr>
+
+<footer>
+<p>Last updated on: <b>August 18, 2026</b></p>
+</footer>
+
+</main>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="../script.js"></script>
+
+</body>
+</html>
