@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Math Behind ML Regressors</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ]
+    });"></script>
+  <style>
+    /* ── Supplementary styles — site theme drives look & feel ── */
+    .diagram-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      text-align: center;
+    }
+    .diagram-box svg { max-width: 100%; height: auto; }
+
+    .step-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+    }
+    .step-table th, .step-table td {
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+    .step-table th { background: rgba(255,255,255,0.05); }
+
+    .note-box {
+      border-left: 3px solid #7aa2f7;
+      background: rgba(122,162,247,0.08);
+      padding: 0.75rem 1rem;
+      margin: 1.25rem 0;
+      border-radius: 4px;
+    }
+    .warn-box {
+      border-left: 3px solid #f78c6c;
+      background: rgba(247,140,108,0.08);
+      padding: 0.75rem 1rem;
+      margin: 1.25rem 0;
+      border-radius: 4px;
+    }
+    .good-box {
+      border-left: 3px solid #9ece6a;
+      background: rgba(158,206,106,0.08);
+      padding: 0.75rem 1rem;
+      margin: 1.25rem 0;
+      border-radius: 4px;
+    }
+    .algo-list ol { padding-left: 1.4rem; }
+    .algo-list li { margin-bottom: 0.4rem; }
+
+    /* Model section image container */
+    .model-img-container {
+      margin: 1.5rem 0;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.02);
+      text-align: center;
+    }
+    .model-img-container img {
+      width: 100%;
+      max-width: 780px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      border-radius: 10px 10px 0 0;
+    }
+    .model-img-container i {
+      display: block;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.4);
+      padding: 0.4rem 0.75rem 0.55rem;
+      background: rgba(0,0,0,0.25);
+    }
+
+    /* TOC */
+    .toc-box {
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 1rem 1.4rem;
+      margin: 1.5rem 0;
+      background: rgba(255,255,255,0.02);
+    }
+    .toc-box ul { padding-left: 1.4rem; margin: 0.4rem 0 0; }
+    .toc-box li { margin-bottom: 0.3rem; }
+    .toc-box a { color: #7aa2f7; text-decoration: none; }
+    .toc-box a:hover { text-decoration: underline; }
+
+    /* Section separators with model number badges */
+    .model-badge {
+      display: inline-block;
+      background: rgba(122,162,247,0.15);
+      border: 1px solid rgba(122,162,247,0.35);
+      border-radius: 20px;
+      padding: 0.15rem 0.7rem;
+      font-size: 0.8rem;
+      color: #7aa2f7;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Particles.js background -->
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <main class="main-content">
+      <header>
+        <h1>The Math Behind ML Regressors</h1>
+        <nav>
+          <a href="../index.html">Home</a>&nbsp;
+          <a href="../topics.html">Blog Topics</a>&nbsp;
+        </nav>
+      </header>
+      <main>
+
+        <p>
+          Five regression models — all pointing at the same goal of predicting a continuous
+          output — yet each one reaches that goal through a completely different mathematical
+          lens. In this post I walk through the core terminology, the governing equations,
+          and — most importantly — <b>why those equations make a model strong or weak for
+          particular kinds of data</b>, all without touching a single dataset or line of code.
+          The math speaks for itself.
+        </p>
+
+        <div class="toc-box">
+          <b>Models covered:</b>
+          <ul>
+            <li><a href="#dt">1. Decision Tree Regressor</a></li>
+            <li><a href="#xgb">2. XGBoost Regressor</a></li>
+            <li><a href="#knn">3. k-Nearest Neighbors (KNN)</a></li>
+            <li><a href="#svr">4. Support Vector Regression (SVR)</a></li>
+            <li><a href="#rf">5. Random Forest Regressor</a></li>
+          </ul>
+        </div>
+
+        <hr>
+
+        <!-- ═══════════════════════════════════════════
+             1. DECISION TREE REGRESSOR
+        ════════════════════════════════════════════ -->
+        <h2 id="dt"><span class="model-badge">01</span>Decision Tree Regressor</h2>
+
+        <div class="model-img-container">
+          <img src="img/decision-tree.jpg" alt="Decision Tree Regressor diagram">
+          <i>Image generated using DALL·E 3</i>
+        </div>
+
+        <h3>Key Terms</h3>
+        <table class="step-table">
+          <tr><th>Term</th><th>What it means</th></tr>
+          <tr><td>Node</td><td>A decision point that tests one feature against a threshold</td></tr>
+          <tr><td>Split</td><td>The act of dividing a node's data into two child groups based on a threshold</td></tr>
+          <tr><td>Leaf</td><td>A terminal node that holds the predicted value — no further splitting</td></tr>
+          <tr><td>Impurity / Variance</td><td>How spread-out the target values are inside a node</td></tr>
+          <tr><td>Information Gain</td><td>How much a split reduces variance — the criterion the tree maximizes</td></tr>
+          <tr><td>max_depth</td><td>Hard limit on how many levels the tree may grow</td></tr>
+          <tr><td>min_samples_split</td><td>Minimum samples a node must contain before it is allowed to split</td></tr>
+        </table>
+
+        <h3>The Mathematics</h3>
+        <p>
+          A decision tree recursively partitions the feature space $\mathcal{X} \subseteq \mathbb{R}^p$
+          into axis-aligned rectangular regions $R_1, R_2, \dots, R_M$ and assigns each region a
+          constant prediction. For regression the splitting criterion is <b>variance reduction</b>.
+        </p>
+        <p>At any node containing sample indices $\mathcal{S}$, the variance of the targets is:</p>
+        $$
+          \text{Var}(\mathcal{S}) = \frac{1}{|\mathcal{S}|} \sum_{i \in \mathcal{S}} \left(y_i - \bar{y}_\mathcal{S}\right)^2
+        $$
+        <p>where $\bar{y}_\mathcal{S}$ is the mean target in that node. A candidate split on feature $j$ at threshold $t$ divides $\mathcal{S}$ into:</p>
+        $$
+          \mathcal{S}_L = \{i \in \mathcal{S} : x_{ij} \le t\}, \qquad
+          \mathcal{S}_R = \{i \in \mathcal{S} : x_{ij} > t\}
+        $$
+        <p>The <b>variance reduction</b> (information gain for regression) achieved by this split is:</p>
+        $$
+          \Delta\text{Var} = \text{Var}(\mathcal{S})
+            - \frac{|\mathcal{S}_L|}{|\mathcal{S}|}\,\text{Var}(\mathcal{S}_L)
+            - \frac{|\mathcal{S}_R|}{|\mathcal{S}|}\,\text{Var}(\mathcal{S}_R)
+        $$
+        <p>The tree greedily picks the $(j^*, t^*)$ pair that maximises $\Delta\text{Var}$. Once a leaf $R_m$ is formed, its prediction is simply the mean of all training targets that fall into it:</p>
+        $$
+          \hat{y}(\mathbf{x}) = \frac{1}{|R_m|} \sum_{i \in R_m} y_i \quad
+          \text{for all } \mathbf{x} \in R_m
+        $$
+
+        <h3>Why This Formula Makes the Model Behave the Way It Does</h3>
+        <div class="good-box">
+          <b>Where it thrives:</b> The greedy variance-reduction split can carve out any
+          shape of decision boundary without assuming linearity, so it naturally handles
+          complex, non-linear relationships and feature interactions. It also doesn't care
+          about feature scale — no normalisation needed — and handles mixed feature types gracefully.
+        </div>
+        <div class="warn-box">
+          <b>Where it struggles:</b> The greedy, locally-optimal splits offer no global
+          guarantee. Without constraints on <em>max_depth</em>, the tree memorises the
+          training data perfectly (each leaf holds exactly one sample, $\text{Var} = 0$)
+          — a textbook case of <b>overfitting</b>. The piecewise-constant prediction also
+          means the model cannot extrapolate smoothly beyond the range it was trained on:
+          it just returns the nearest leaf mean, which is often a poor prediction far
+          from the training distribution.
+        </div>
+
+        <hr>
+
+        <!-- ═══════════════════════════════════════════
+             2. XGBOOST REGRESSOR
+        ════════════════════════════════════════════ -->
+        <h2 id="xgb"><span class="model-badge">02</span>XGBoost Regressor</h2>
+
+        <div class="model-img-container">
+          <img src="img/xgboost.jpg" alt="XGBoost ensemble of trees diagram">
+          <i>Image generated using DALL·E 3</i>
+        </div>
+
+        <h3>Key Terms</h3>
+        <table class="step-table">
+          <tr><th>Term</th><th>What it means</th></tr>
+          <tr><td>Boosting</td><td>Sequential ensemble technique where each new model corrects the residual errors of all previous models</td></tr>
+          <tr><td>Residual / Pseudo-residual</td><td>The negative gradient of the loss — what the next tree is trained on</td></tr>
+          <tr><td>Learning rate $\eta$</td><td>Shrinkage applied to each tree's contribution to prevent overcorrecting</td></tr>
+          <tr><td>Regularisation $\lambda, \gamma$</td><td>Penalties on leaf weights and tree complexity baked into XGBoost's objective</td></tr>
+          <tr><td>Gain</td><td>XGBoost's split score — information gain adjusted by regularisation terms</td></tr>
+          <tr><td>n_estimators</td><td>Number of trees (boosting rounds)</td></tr>
+          <tr><td>max_depth</td><td>Maximum depth of each individual tree (kept shallow, typically 3–6)</td></tr>
+        </table>
+
+        <h3>The Mathematics</h3>
+        <p>
+          XGBoost builds an additive model. After $K$ boosting rounds, the prediction is:
+        </p>
+        $$
+          \hat{y}_i^{(K)} = \sum_{k=1}^{K} f_k(\mathbf{x}_i)
+        $$
+        <p>where each $f_k$ is a regression tree. At round $t$, the new tree $f_t$ is found by minimising a <b>regularised second-order Taylor expansion</b> of the loss:</p>
+        $$
+          \mathcal{L}^{(t)} \approx \sum_{i=1}^{n}
+          \left[
+            g_i\, f_t(\mathbf{x}_i) + \tfrac{1}{2}\, h_i\, f_t(\mathbf{x}_i)^2
+          \right]
+          + \Omega(f_t)
+        $$
+        <p>where $g_i$ and $h_i$ are the first and second derivatives (gradient and Hessian) of the loss with respect to the current prediction $\hat{y}_i^{(t-1)}$:</p>
+        $$
+          g_i = \frac{\partial \ell(y_i,\, \hat{y}_i^{(t-1)})}{\partial \hat{y}_i^{(t-1)}},
+          \qquad
+          h_i = \frac{\partial^2 \ell(y_i,\, \hat{y}_i^{(t-1)})}{\partial (\hat{y}_i^{(t-1)})^2}
+        $$
+        <p>The regularisation term penalises tree complexity:</p>
+        $$
+          \Omega(f_t) = \gamma T + \frac{\lambda}{2}\sum_{j=1}^{T} w_j^2
+        $$
+        <p>where $T$ is the number of leaves and $w_j$ is the weight (output value) of leaf $j$. The optimal weight for leaf $j$ and the corresponding split gain are:</p>
+        $$
+          w_j^* = -\frac{\sum_{i \in R_j} g_i}{\sum_{i \in R_j} h_i + \lambda}
+        $$
+        $$
+          \text{Gain} = \frac{1}{2}
+          \left[
+            \frac{\left(\sum_{i \in \mathcal{S}_L} g_i\right)^2}{\sum_{i \in \mathcal{S}_L} h_i + \lambda}
+            + \frac{\left(\sum_{i \in \mathcal{S}_R} g_i\right)^2}{\sum_{i \in \mathcal{S}_R} h_i + \lambda}
+            - \frac{\left(\sum_{i \in \mathcal{S}} g_i\right)^2}{\sum_{i \in \mathcal{S}} h_i + \lambda}
+          \right] - \gamma
+        $$
+        <p>Each tree's contribution is then shrunk by the learning rate before being added:</p>
+        $$
+          \hat{y}_i^{(t)} = \hat{y}_i^{(t-1)} + \eta \cdot f_t(\mathbf{x}_i)
+        $$
+
+        <h3>Why This Formula Makes the Model Behave the Way It Does</h3>
+        <div class="good-box">
+          <b>Where it thrives:</b> The second-order Taylor expansion gives XGBoost a
+          much more accurate curvature estimate of the loss landscape than ordinary
+          gradient boosting — it "sees" not just the slope but also how fast the slope
+          changes, leading to better-calibrated leaf weights and faster convergence.
+          The built-in $\lambda$ and $\gamma$ regularisation directly suppress
+          overfitting at the objective level, not just as a post-hoc depth cap. This
+          combination makes XGBoost exceptionally powerful on structured tabular data
+          with complex, noisy, non-linear feature interactions. The learning rate $\eta$
+          slows down correction deliberately, allowing many shallow trees to combine
+          without overfitting. 
+        </div>
+        <div class="warn-box">
+          <b>Where it struggles:</b> Because it is still a tree ensemble, it shares
+          the decision tree's fundamental inability to extrapolate: predictions outside
+          the training range are capped at the extreme leaf values. On very small datasets,
+          even with regularisation, the many boosting rounds can overfit. It is also
+          noticeably slower to train than a random forest because trees must be built
+          sequentially — parallelism exists only within each tree, not across trees.
+        </div>
+
+        <hr>
+
+        <!-- ═══════════════════════════════════════════
+             3. K-NEAREST NEIGHBORS
+        ════════════════════════════════════════════ -->
+        <h2 id="knn"><span class="model-badge">03</span>k-Nearest Neighbors (KNN)</h2>
+
+        <div class="model-img-container">
+          <img src="img/knn.jpg" alt="K-Nearest Neighbors regression diagram">
+          <i>Image generated using DALL·E 3</i>
+        </div>
+
+        <h3>Key Terms</h3>
+        <table class="step-table">
+          <tr><th>Term</th><th>What it means</th></tr>
+          <tr><td>$k$</td><td>The number of neighbors to consider when making a prediction</td></tr>
+          <tr><td>Distance metric</td><td>Function that quantifies how "close" two data points are in feature space</td></tr>
+          <tr><td>Euclidean distance</td><td>Straight-line distance in $\mathbb{R}^p$ — the default metric</td></tr>
+          <tr><td>Manhattan distance</td><td>Sum of absolute differences along each dimension</td></tr>
+          <tr><td>Minkowski distance</td><td>General family that subsumes Euclidean ($p=2$) and Manhattan ($p=1$)</td></tr>
+          <tr><td>Lazy learner</td><td>KNN stores the entire training set and defers all computation to prediction time — there is no training phase</td></tr>
+          <tr><td>Curse of dimensionality</td><td>In high-dimensional spaces, distances between all points converge, making "nearest" meaningless</td></tr>
+        </table>
+
+        <h3>The Mathematics</h3>
+        <p>
+          KNN is a <b>non-parametric, instance-based</b> method. It stores the entire training set
+          $\mathcal{D} = \{(\mathbf{x}_i, y_i)\}_{i=1}^{N}$ and, at prediction time, finds the $k$ training
+          points closest to a query $\mathbf{x}^*$.
+        </p>
+        <p>The <b>Minkowski distance</b> of order $p$ between $\mathbf{x}^*$ and training point $\mathbf{x}_i$ is:</p>
+        $$
+          d_p(\mathbf{x}^*, \mathbf{x}_i)
+          = \left(\sum_{j=1}^{n} \left|x^*_j - x_{ij}\right|^p\right)^{1/p}
+        $$
+        <p>The <b>Euclidean</b> case ($p=2$) is the most common:</p>
+        $$
+          d(\mathbf{x}^*, \mathbf{x}_i)
+          = \sqrt{\sum_{j=1}^{n} \left(x^*_j - x_{ij}\right)^2}
+        $$
+        <p>Let $\mathcal{N}_k(\mathbf{x}^*)$ be the index set of the $k$ training points with smallest distance to $\mathbf{x}^*$. The prediction is the (optionally distance-weighted) mean of their targets:</p>
+        $$
+          \hat{y}(\mathbf{x}^*) = \frac{1}{k} \sum_{i \in \mathcal{N}_k(\mathbf{x}^*)} y_i
+          \quad \text{(uniform weights)}
+        $$
+        $$
+          \hat{y}(\mathbf{x}^*) = \frac{\displaystyle\sum_{i \in \mathcal{N}_k(\mathbf{x}^*)} \frac{y_i}{d(\mathbf{x}^*, \mathbf{x}_i)}}
+                                       {\displaystyle\sum_{i \in \mathcal{N}_k(\mathbf{x}^*)} \frac{1}{d(\mathbf{x}^*, \mathbf{x}_i)}}
+          \quad \text{(distance weights)}
+        $$
+        <p>The hyperparameter $k$ controls the bias-variance tradeoff:</p>
+        <div class="note-box">
+          $k = 1$: pure memorisation, zero training error, high variance (overfitting).
+          <br>
+          $k = N$: constant prediction equal to the global mean, maximum bias (underfitting).
+          <br>
+          Optimal $k$ lies somewhere between — typically found by cross-validation.
+        </div>
+
+        <h3>Why This Formula Makes the Model Behave the Way It Does</h3>
+        <div class="good-box">
+          <b>Where it thrives:</b> There is absolutely no assumption about the functional
+          form of the relationship — KNN's prediction boundary automatically adapts to
+          whatever local structure the data has. With a well-chosen $k$ and a meaningful
+          distance metric, it can capture highly non-linear patterns effortlessly. It also
+          has a near-zero training cost (just store the data), and adding new training
+          points does not require retraining.
+        </div>
+        <div class="warn-box">
+          <b>Where it struggles:</b> Because the distance formula treats all features
+          symmetrically, features with large numeric ranges will dominate the distance
+          computation — mandatory feature normalisation is not optional, it is required.
+          More fundamentally, the curse of dimensionality makes the Euclidean distance
+          increasingly uninformative as the number of features grows: every point becomes
+          roughly equidistant from every other point. Prediction time scales as $O(N \cdot p)$
+          per query (naive search), which is prohibitively slow for large datasets.
+        </div>
+
+        <hr>
+
+        <!-- ═══════════════════════════════════════════
+             4. SUPPORT VECTOR REGRESSION
+        ════════════════════════════════════════════ -->
+        <h2 id="svr"><span class="model-badge">04</span>Support Vector Regression (SVR)</h2>
+
+        <div class="model-img-container">
+          <img src="img/svr.jpg" alt="Support Vector Regression epsilon-tube diagram">
+          <i>Image generated using DALL·E 3</i>
+        </div>
+
+        <h3>Key Terms</h3>
+        <table class="step-table">
+          <tr><th>Term</th><th>What it means</th></tr>
+          <tr><td>Hyperplane</td><td>The regression surface $f(\mathbf{x}) = \mathbf{w}^\top \mathbf{x} + b$ — a flat affine subspace in feature space</td></tr>
+          <tr><td>$\varepsilon$-tube (insensitive zone)</td><td>A margin of width $2\varepsilon$ around the regression line — errors inside are ignored entirely</td></tr>
+          <tr><td>Support vectors</td><td>Only the training points that lie <em>on or outside</em> the tube; all others have zero influence</td></tr>
+          <tr><td>Slack variables $\xi_i, \xi_i^*$</td><td>The extra error absorbed by points that fall outside the $\varepsilon$-tube</td></tr>
+          <tr><td>Regularisation $C$</td><td>Penalty for violations of the tube — large $C$ tries harder to fit all points, small $C$ allows more violation</td></tr>
+          <tr><td>Kernel $K(\mathbf{x}_i, \mathbf{x}_j)$</td><td>Implicit feature map to a higher-dimensional space — enables non-linear regression without explicit expansion</td></tr>
+          <tr><td>Dual variables $\alpha_i, \alpha_i^*$</td><td>Lagrange multipliers from the dual problem; non-zero only for support vectors</td></tr>
+        </table>
+
+        <h3>The Mathematics</h3>
+        <p>
+          SVR seeks a function $f(\mathbf{x}) = \mathbf{w}^\top \mathbf{x} + b$ that fits the training data
+          within a tube of half-width $\varepsilon$, while being as flat as possible (small $\|\mathbf{w}\|$).
+          Flatness acts as regularisation, preventing overfitting. The primal optimisation problem is:
+        </p>
+        $$
+          \min_{\mathbf{w},\, b,\, \xi,\, \xi^*} \quad
+          \frac{1}{2}\|\mathbf{w}\|^2 + C\sum_{i=1}^{n}\left(\xi_i + \xi_i^*\right)
+        $$
+        <p>subject to the constraints:</p>
+        $$
+          y_i - \mathbf{w}^\top \mathbf{x}_i - b \;\le\; \varepsilon + \xi_i, \qquad
+          \xi_i \ge 0
+        $$
+        $$
+          \mathbf{w}^\top \mathbf{x}_i + b - y_i \;\le\; \varepsilon + \xi_i^*, \qquad
+          \xi_i^* \ge 0
+        $$
+        <p>The $\varepsilon$-<b>insensitive loss function</b> used implicitly is:</p>
+        $$
+          L_\varepsilon(y, f) =
+          \begin{cases}
+            0 & \text{if } |y - f| \le \varepsilon \\
+            |y - f| - \varepsilon & \text{otherwise}
+          \end{cases}
+        $$
+        <p>Introducing Lagrange multipliers $\alpha_i, \alpha_i^* \ge 0$, the dual problem yields the solution:</p>
+        $$
+          \mathbf{w} = \sum_{i=1}^{n} (\alpha_i - \alpha_i^*)\, \mathbf{x}_i
+        $$
+        $$
+          f(\mathbf{x}) = \sum_{i=1}^{n} (\alpha_i - \alpha_i^*)\,
+                           K(\mathbf{x}_i, \mathbf{x}) + b
+        $$
+        <p>where $K(\mathbf{x}_i, \mathbf{x}) = \phi(\mathbf{x}_i)^\top \phi(\mathbf{x})$ is the <b>kernel function</b>. Common kernels:</p>
+        <table class="step-table">
+          <tr><th>Kernel</th><th>Formula</th><th>Use case</th></tr>
+          <tr><td>Linear</td><td>$K(\mathbf{x}_i, \mathbf{x}_j) = \mathbf{x}_i^\top \mathbf{x}_j$</td><td>Linearly separable data</td></tr>
+          <tr><td>RBF / Gaussian</td><td>$K(\mathbf{x}_i, \mathbf{x}_j) = \exp\!\left(-\gamma\|\mathbf{x}_i - \mathbf{x}_j\|^2\right)$</td><td>Non-linear, smooth patterns</td></tr>
+          <tr><td>Polynomial</td><td>$K(\mathbf{x}_i, \mathbf{x}_j) = (\mathbf{x}_i^\top \mathbf{x}_j + c)^d$</td><td>Polynomial relationships</td></tr>
+        </table>
+        <p>Crucially, only the support vectors (points where $\alpha_i - \alpha_i^* \ne 0$) enter the prediction sum. The $\varepsilon$-insensitive loss ensures that the majority of training points contribute zero to this sum.</p>
+
+        <h3>Why This Formula Makes the Model Behave the Way It Does</h3>
+        <div class="good-box">
+          <b>Where it thrives:</b> The $\varepsilon$-insensitive loss makes SVR remarkably
+          robust to small perturbations and noise — data points within the tube have
+          zero influence on the boundary, so minor measurement errors are simply
+          ignored. The kernel trick allows fitting highly non-linear surfaces without
+          explicitly computing the (potentially infinite-dimensional) feature expansion.
+          Minimising $\|\mathbf{w}\|^2$ provides strong regularisation, so SVR generalises
+          well even in relatively high-dimensional spaces with limited data.
+        </div>
+        <div class="warn-box">
+          <b>Where it struggles:</b> SVR requires feature scaling — the RBF kernel is
+          purely distance-based and features with large magnitudes will dominate. The
+          three hyperparameters $C$, $\varepsilon$, and $\gamma$ (for RBF) interact in
+          subtle ways and demand thorough cross-validation to tune correctly. Solving the
+          quadratic programming dual problem scales roughly as $O(N^2)$ to $O(N^3)$ in
+          the number of training samples, making SVR impractical on large datasets
+          without approximations like Nyström kernel methods.
+        </div>
+
+        <hr>
+
+        <!-- ═══════════════════════════════════════════
+             5. RANDOM FOREST REGRESSOR
+        ════════════════════════════════════════════ -->
+        <h2 id="rf"><span class="model-badge">05</span>Random Forest Regressor</h2>
+
+        <div class="model-img-container">
+          <img src="img/random-forest.jpg" alt="Random Forest Regressor ensemble diagram">
+          <i>Image generated using DALL·E 3</i>
+        </div>
+
+        <h3>Key Terms</h3>
+        <table class="step-table">
+          <tr><th>Term</th><th>What it means</th></tr>
+          <tr><td>Bagging (Bootstrap Aggregating)</td><td>Each tree is trained on a random bootstrap sample (drawn with replacement) of the training data</td></tr>
+          <tr><td>Bootstrap sample</td><td>A sample of size $N$ drawn with replacement from the original $N$ training points — ~63% unique points per sample</td></tr>
+          <tr><td>Out-of-Bag (OOB) sample</td><td>The ~37% of training points not drawn for a given tree — used as a free validation set</td></tr>
+          <tr><td>Feature subsampling ($m_{try}$)</td><td>At each split only a random subset of $m_{try}$ features are considered — the key decorrelation step</td></tr>
+          <tr><td>n_estimators</td><td>Number of trees in the forest; more trees = lower variance, diminishing returns after a point</td></tr>
+          <tr><td>Aggregation</td><td>Final prediction = average of all individual tree predictions (regression)</td></tr>
+          <tr><td>Feature importance</td><td>Mean decrease in impurity (or permutation importance) averaged across all trees and all splits on that feature</td></tr>
+        </table>
+
+        <h3>The Mathematics</h3>
+        <p>
+          A Random Forest is a <b>bagged ensemble</b> of $B$ decorrelated decision trees. It introduces
+          two sources of randomness — bootstrap sampling and feature subsampling — to reduce the
+          variance of the ensemble without inflating bias.
+        </p>
+        <p><b>Step 1 — Bootstrap sampling:</b> For tree $b = 1, \dots, B$, draw a bootstrap dataset:</p>
+        $$
+          \mathcal{D}^{(b)} = \{(\mathbf{x}_{i_1}, y_{i_1}),\dots, (\mathbf{x}_{i_N}, y_{i_N})\}
+          \quad \text{where } i_1, \dots, i_N \overset{\text{i.i.d.}}{\sim} \text{Uniform}\{1,\dots,N\}
+        $$
+        <p><b>Step 2 — Feature subsampling:</b> At every split node within tree $b$, only a random subset of $m_{try}$ features is considered:</p>
+        $$
+          m_{try} \approx \frac{p}{3} \quad \text{(regression default)}
+        $$
+        <p>where $p$ is the total number of features. The split is then chosen to maximise variance reduction over only those $m_{try}$ candidate features.</p>
+        <p><b>Step 3 — Aggregation (averaging):</b> The forest prediction for a query $\mathbf{x}^*$ is the simple average over all $B$ trees:</p>
+        $$
+          \hat{y}_{\text{RF}}(\mathbf{x}^*) = \frac{1}{B} \sum_{b=1}^{B} f_b(\mathbf{x}^*)
+        $$
+        <p>The variance of this average over an ensemble of correlated trees with individual variance $\sigma^2$ and pairwise correlation $\rho$ is:</p>
+        $$
+          \text{Var}\!\left[\hat{y}_{\text{RF}}\right]
+          = \rho \sigma^2 + \frac{1-\rho}{B}\, \sigma^2
+        $$
+        <p>As $B \to \infty$ the second term vanishes, leaving $\rho \sigma^2$ as the irreducible ensemble variance. <b>Reducing $\rho$ between trees is exactly the job of feature subsampling</b> — it is the mathematical engine behind the forest's power.</p>
+        <p>The <b>OOB error</b> is computed without a separate validation set: for each training point $i$, only the trees for which $i$ was <em>not</em> in the bootstrap sample make a prediction:</p>
+        $$
+          \hat{y}_i^{\text{OOB}} = \frac{1}{|\mathcal{B}^{-i}|} \sum_{b \in \mathcal{B}^{-i}} f_b(\mathbf{x}_i)
+        $$
+        $$
+          \text{OOB MSE} = \frac{1}{N} \sum_{i=1}^{N} \left(y_i - \hat{y}_i^{\text{OOB}}\right)^2
+        $$
+        <p>where $\mathcal{B}^{-i}$ is the set of trees whose bootstrap sample did not include point $i$.</p>
+
+        <h3>Why This Formula Makes the Model Behave the Way It Does</h3>
+        <div class="good-box">
+          <b>Where it thrives:</b> The variance formula $\rho\sigma^2 + \frac{1-\rho}{B}\sigma^2$
+          reveals everything: by keeping the bias of each tree roughly the same as a
+          single deep tree (low bias) but dramatically reducing variance through averaging
+          and decorrelation, the forest hits an excellent bias-variance tradeoff out of the box.
+          There is very little tuning required — the default $m_{try} = p/3$ and a large
+          $B$ already give strong performance across a wide variety of datasets. The OOB
+          error is a nearly free internal validation score, and the feature-importance
+          scores give genuine insight into which variables drive predictions.
+        </div>
+        <div class="warn-box">
+          <b>Where it struggles:</b> Like all tree ensembles, it cannot extrapolate beyond
+          the range of the training targets. When all features are strongly relevant, the
+          forced feature subsampling may actually slow convergence compared to a single
+          deep tree. The model is also less interpretable than a single tree — you trade
+          the white-box transparency of one tree for the black-box predictive power of
+          hundreds. Memory footprint grows linearly with $B$, and prediction requires
+          evaluating all $B$ trees, which can be slow at inference time for very large forests.
+        </div>
+
+        <hr>
+
+        <h2>Side-by-Side Summary</h2>
+        <table class="step-table">
+          <tr>
+            <th>Model</th>
+            <th>Core idea</th>
+            <th>Training cost</th>
+            <th>Extrapolation?</th>
+            <th>Needs scaling?</th>
+          </tr>
+          <tr>
+            <td>Decision Tree</td>
+            <td>Greedy variance-reduction splits → piecewise constant</td>
+            <td>$O(N p \log N)$</td>
+            <td>No</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td>XGBoost</td>
+            <td>Sequential trees on 2nd-order loss residuals + regularisation</td>
+            <td>$O(K \cdot N p \log N)$</td>
+            <td>No</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td>KNN</td>
+            <td>Average of $k$ nearest neighbors — zero training</td>
+            <td>$O(1)$ train, $O(Np)$ predict</td>
+            <td>Partially</td>
+            <td><b>Yes</b></td>
+          </tr>
+          <tr>
+            <td>SVR</td>
+            <td>Flat hyperplane inside $\varepsilon$-tube, kernel trick for non-linearity</td>
+            <td>$O(N^2)$–$O(N^3)$</td>
+            <td>Yes (with RBF)</td>
+            <td><b>Yes</b></td>
+          </tr>
+          <tr>
+            <td>Random Forest</td>
+            <td>Bagged + decorrelated deep trees → averaged prediction</td>
+            <td>$O(B \cdot N \sqrt{p} \log N)$</td>
+            <td>No</td>
+            <td>No</td>
+          </tr>
+        </table>
+
+        <div class="note-box">
+          The math doesn't just describe what these models do — it <em>explains</em> the choices
+          you make when deploying them. Feature scale matters because distance formulas are in the
+          exponent. Overfitting happens because the optimisation objective has no regularisation term.
+          Extrapolation fails because tree-leaf predictions are constants, not functions. Reading the
+          formulas is reading the model's personality.
+        </div>
+
+        <hr>
+        <footer>
+          <p>Posted on: <b>October 14, 2026</b></p>
+        </footer>
+
+      </main>
+    </main>
+  </div>
+
+  <!-- Scripts for particles.js -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
