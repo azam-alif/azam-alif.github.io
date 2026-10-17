@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Before Training a Neural Network: Python Environments, CUDA and GPUs</title>
+  <meta name="description" content="A practical introduction to Python environments, micromamba, pip, TensorFlow, CUDA, GPUs, package compatibility, and automatic differentiation for scientific machine learning and PINNs.">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+<div id="particles-js"></div>
+
+<div class="container">
+<main class="main-content">
+
+<header>
+<h1>Before Training a Neural Network: Understanding the Environment</h1>
+<nav>
+<a href="../index.html">Home</a>&nbsp;
+<a href="../topics.html">Blog Topics</a>&nbsp;
+<a href="../project.html">Projects</a>&nbsp;
+</nav>
+</header>
+
+
+<h2>Introduction</h2>
+
+<p>
+Training a neural network for scientific research is not just about writing a
+model and running the code. Before reaching that stage, we need to establish
+a working software environment. Whether we are training a neural network for
+image restoration or a physics-informed neural network (PINN) to solve
+differential equations, software dependencies and hardware compatibility can
+become a source of frustration.
+</p>
+
+<p>
+While reproducing an existing deep-learning project, I spent considerable time
+understanding how the software components fit together. This post explains
+the essential concepts so that researchers can spend less time debugging their
+environment and more time working on their scientific problems.
+</p>
+
+<h2>1. Why Do We Need a Virtual Environment?</h2>
+
+<p>
+An operating system contains many software packages, each with its own
+dependencies and version requirements. Different research projects may require
+different versions of the same library. Installing everything into one Python
+environment can cause dependency conflicts.
+</p>
+
+<p>
+A virtual environment provides an isolated space for a particular project.
+Think of it as a small box inside a bigger box. The bigger box is your operating
+system, while the smaller box contains the Python packages and dependencies
+required by your project.
+</p>
+
+<p>
+I use <code>micromamba</code> to create and manage these environments. For
+example:
+</p>
+
+<pre><code>micromamba create -n pinn python=3.10
+micromamba activate pinn
+python --version</code></pre>
+
+<p>
+Python 3.10 is only an example here. The appropriate version depends on the
+requirements of the framework and the research code. Always check the project's
+installation instructions before choosing a version.
+</p>
+
+<h2>2. Conda, Micromamba, and pip</h2>
+
+<p>
+These tools help us manage software, but they serve slightly different
+purposes:
+</p>
+
+<ul>
+  <li><code>conda</code> manages environments and packages from Conda-compatible
+  repositories.</li>
+  <li><code>micromamba</code> provides a lightweight alternative for managing
+  Conda-compatible environments and packages.</li>
+  <li><code>pip</code> installs Python packages from Python package indexes,
+  including PyPI.</li>
+</ul>
+
+<p>
+Some scientific packages are convenient to install through Conda-compatible
+repositories, while others are commonly installed using pip. Both package
+managers can be used in the same environment, but their installation order and
+dependency resolution matter.
+</p>
+
+<p>
+A practical approach is to create an isolated environment, install the main
+framework and its compatible dependencies, and then add the remaining
+packages. Once everything works, record the environment so it can be
+reconstructed later.
+</p>
+
+<h2>3. CPU, GPU, NVIDIA Drivers, and CUDA</h2>
+
+<p>
+A CPU handles general-purpose computation, while a GPU can accelerate highly
+parallel operations such as the tensor computations used in neural networks.
+However, using a GPU requires more than simply having one installed in your
+computer.
+</p>
+
+<p>
+TensorFlow and PyTorch provide high-level interfaces for building and training
+neural networks. They handle many low-level computational details, so
+researchers usually do not need to write CUDA code themselves.
+</p>
+
+<p>
+CUDA is NVIDIA's platform for GPU computing. The NVIDIA driver allows
+applications to communicate with the GPU, while CUDA libraries provide
+functionality used by GPU-enabled software. cuDNN supplies GPU-accelerated
+routines used by deep-learning frameworks.
+</p>
+
+<p>
+These components must be compatible. Installing CUDA independently does not
+guarantee that TensorFlow or PyTorch will use the GPU. Compatibility depends
+on the framework version, its supported CUDA and cuDNN libraries, the driver,
+and the GPU hardware.
+</p>
+
+<p>
+After installation, verify that the framework detects the GPU. For TensorFlow:
+</p>
+
+<pre><code>import tensorflow as tf
+
+print(tf.__version__)
+print(tf.config.list_physical_devices("GPU"))</code></pre>
+
+<p>
+For PyTorch:
+</p>
+
+<pre><code>import torch
+
+print(torch.__version__)
+print(torch.cuda.is_available())</code></pre>
+
+<p>
+A detected GPU is a useful first check, although it does not guarantee that
+every operation will execute successfully or efficiently on it.
+</p>
+
+<h2>4. Why Do Package Versions Matter?</h2>
+
+<p>
+Python libraries depend on one another. An incompatible NumPy version may
+cause errors in a framework or another scientific package. A newer framework
+release may also change its API or drop support for older software.
+</p>
+
+<p>
+This is particularly important when reproducing published research. The
+original code may have been developed using specific versions of Python,
+TensorFlow or PyTorch, NumPy, and other dependencies. Upgrading everything
+immediately can introduce new problems.
+</p>
+
+<p>
+Start with the versions specified by the project. Once the original
+implementation works, test upgrades separately rather than changing several
+components at once.
+</p>
+
+<p>To inspect your installed Python packages, run:</p>
+
+<pre><code>python -m pip list
+python -m pip check</code></pre>
+
+<p>
+The first command lists installed packages. The second checks declared
+dependencies for conflicts or missing requirements. Neither command detects
+every possible runtime error or GPU compatibility issue, so the application
+must still be tested.
+</p>
+
+<p>
+For reproducibility, you can record your pip-installed packages:
+</p>
+
+<pre><code>python -m pip freeze > requirements.txt</code></pre>
+
+<p>
+This records package versions visible to pip, but it does not fully capture
+the system driver, GPU hardware, or every dependency installed through
+Conda-compatible repositories. For a more complete record, preserve the
+environment specification and document the hardware and driver versions too.
+</p>
+
+<h2>5. What Changes When Training a PINN?</h2>
+
+<p>
+A physics-informed neural network introduces another important consideration:
+automatic differentiation.
+</p>
+
+<p>
+Unlike a conventional supervised neural network trained only against labelled
+examples, a PINN can incorporate the residual of a differential equation into
+its loss function. For example, solving a partial differential equation may
+require first- or second-order derivatives of the network output with respect
+to spatial or temporal coordinates.
+</p>
+
+<p>
+Deep-learning frameworks use automatic differentiation to compute these
+derivatives. The framework must correctly track the operations involved in
+the computation. If the required derivatives are disconnected from the
+computational graph, the residual calculation may fail or return incorrect
+results.
+</p>
+
+<p>
+GPU acceleration can help with large workloads, but it is not automatically
+faster for every PINN. Small models, high-order derivatives, memory
+requirements, and the structure of the differential equation all influence
+performance.
+</p>
+
+<p>
+Before scaling up a PINN experiment, test the complete workflow on a small
+problem: evaluate the network, calculate the required derivatives, construct
+the PDE residual, compute the loss, and verify that gradients can be calculated
+with respect to the trainable parameters.
+</p>
+
+<h2>Conclusion</h2>
+
+<p>
+A reliable deep-learning workflow begins before the first training epoch.
+Isolating dependencies, choosing compatible package versions, understanding
+GPU requirements, and verifying automatic differentiation can prevent hours
+of unnecessary debugging.
+</p>
+
+<p>
+For scientific machine learning, the goal is not simply to make the code run.
+It is to establish an environment that can be reproduced, inspected, and
+trusted when running experiments.
+</p>
+
+<p>
+My advice is simple: get a minimal example working first, record the
+environment, and only then move to the full scientific problem.
+</p>
+
+<h3>Further Reading</h3>
+
+<ul>
+  <li>
+    <a href="https://mamba.readthedocs.io/en/latest/" target="_blank"
+    rel="noopener noreferrer">Micromamba Documentation</a> — environment and
+    package management.
+  </li>
+  <li>
+    <a href="https://www.tensorflow.org/install" target="_blank"
+    rel="noopener noreferrer">TensorFlow Installation Guide</a> — framework
+    installation and GPU support.
+  </li>
+  <li>
+    <a href="https://pytorch.org/get-started/locally/" target="_blank"
+    rel="noopener noreferrer">PyTorch Installation Guide</a> — selecting an
+    installation compatible with your system.
+  </li>
+  <li>
+    <a href="https://docs.nvidia.com/cuda/" target="_blank"
+    rel="noopener noreferrer">NVIDIA CUDA Documentation</a> — CUDA platform
+    and compatibility information.
+  </li>
+</ul>
+
+<hr>
+
+<footer>
+<p>Last updated on: <b>August 18, 2026</b></p>
+</footer>
+
+</main>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="../script.js"></script>
+
+</body>
+</html>
+
