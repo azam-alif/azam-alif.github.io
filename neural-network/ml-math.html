@@ -133,7 +133,7 @@
       <main>
 
         <p>
-          Five regression models — all pointing at the same goal of predicting a continuous
+          Six regression models — all pointing at the same goal of predicting a continuous
           output — yet each one reaches that goal through a completely different mathematical
           lens. In this post I walk through the core terminology, the governing equations,
           and — most importantly — <b>why those equations make a model strong or weak for
@@ -145,10 +145,11 @@
           <b>Models covered:</b>
           <ul>
             <li><a href="#dt">1. Decision Tree Regressor</a></li>
-            <li><a href="#xgb">2. XGBoost Regressor</a></li>
-            <li><a href="#knn">3. k-Nearest Neighbors (KNN)</a></li>
-            <li><a href="#svr">4. Support Vector Regression (SVR)</a></li>
-            <li><a href="#rf">5. Random Forest Regressor</a></li>
+            <li><a href="#knn">2. k-Nearest Neighbors (KNN)</a></li>
+            <li><a href="#et">3. Extra Trees Regressor</a></li>
+            <li><a href="#rf">4. Random Forest Regressor</a></li>
+            <li><a href="#svr">5. Support Vector Regression (SVR)</a></li>
+            <li><a href="#xgb">6. Gradient Boosting (XGBoost)</a></li>
           </ul>
         </div>
 
@@ -223,97 +224,9 @@
         <hr>
 
         <!-- ═══════════════════════════════════════════
-             2. XGBOOST REGRESSOR
+             2. K-NEAREST NEIGHBORS
         ════════════════════════════════════════════ -->
-        <h2 id="xgb"><span class="model-badge">02</span>XGBoost Regressor</h2>
-
-        <div class="model-img-container">
-          <img src="img/xgboost.jpg" alt="XGBoost ensemble of trees diagram">
-          <i>Image generated using DALL·E 3</i>
-        </div>
-
-        <h3>Key Terms</h3>
-        <table class="step-table">
-          <tr><th>Term</th><th>What it means</th></tr>
-          <tr><td>Boosting</td><td>Sequential ensemble technique where each new model corrects the residual errors of all previous models</td></tr>
-          <tr><td>Residual / Pseudo-residual</td><td>The negative gradient of the loss — what the next tree is trained on</td></tr>
-          <tr><td>Learning rate $\eta$</td><td>Shrinkage applied to each tree's contribution to prevent overcorrecting</td></tr>
-          <tr><td>Regularisation $\lambda, \gamma$</td><td>Penalties on leaf weights and tree complexity baked into XGBoost's objective</td></tr>
-          <tr><td>Gain</td><td>XGBoost's split score — information gain adjusted by regularisation terms</td></tr>
-          <tr><td>n_estimators</td><td>Number of trees (boosting rounds)</td></tr>
-          <tr><td>max_depth</td><td>Maximum depth of each individual tree (kept shallow, typically 3–6)</td></tr>
-        </table>
-
-        <h3>The Mathematics</h3>
-        <p>
-          XGBoost builds an additive model. After $K$ boosting rounds, the prediction is:
-        </p>
-        $$
-          \hat{y}_i^{(K)} = \sum_{k=1}^{K} f_k(\mathbf{x}_i)
-        $$
-        <p>where each $f_k$ is a regression tree. At round $t$, the new tree $f_t$ is found by minimising a <b>regularised second-order Taylor expansion</b> of the loss:</p>
-        $$
-          \mathcal{L}^{(t)} \approx \sum_{i=1}^{n}
-          \left[
-            g_i\, f_t(\mathbf{x}_i) + \tfrac{1}{2}\, h_i\, f_t(\mathbf{x}_i)^2
-          \right]
-          + \Omega(f_t)
-        $$
-        <p>where $g_i$ and $h_i$ are the first and second derivatives (gradient and Hessian) of the loss with respect to the current prediction $\hat{y}_i^{(t-1)}$:</p>
-        $$
-          g_i = \frac{\partial \ell(y_i,\, \hat{y}_i^{(t-1)})}{\partial \hat{y}_i^{(t-1)}},
-          \qquad
-          h_i = \frac{\partial^2 \ell(y_i,\, \hat{y}_i^{(t-1)})}{\partial (\hat{y}_i^{(t-1)})^2}
-        $$
-        <p>The regularisation term penalises tree complexity:</p>
-        $$
-          \Omega(f_t) = \gamma T + \frac{\lambda}{2}\sum_{j=1}^{T} w_j^2
-        $$
-        <p>where $T$ is the number of leaves and $w_j$ is the weight (output value) of leaf $j$. The optimal weight for leaf $j$ and the corresponding split gain are:</p>
-        $$
-          w_j^* = -\frac{\sum_{i \in R_j} g_i}{\sum_{i \in R_j} h_i + \lambda}
-        $$
-        $$
-          \text{Gain} = \frac{1}{2}
-          \left[
-            \frac{\left(\sum_{i \in \mathcal{S}_L} g_i\right)^2}{\sum_{i \in \mathcal{S}_L} h_i + \lambda}
-            + \frac{\left(\sum_{i \in \mathcal{S}_R} g_i\right)^2}{\sum_{i \in \mathcal{S}_R} h_i + \lambda}
-            - \frac{\left(\sum_{i \in \mathcal{S}} g_i\right)^2}{\sum_{i \in \mathcal{S}} h_i + \lambda}
-          \right] - \gamma
-        $$
-        <p>Each tree's contribution is then shrunk by the learning rate before being added:</p>
-        $$
-          \hat{y}_i^{(t)} = \hat{y}_i^{(t-1)} + \eta \cdot f_t(\mathbf{x}_i)
-        $$
-
-        <h3>Why This Formula Makes the Model Behave the Way It Does</h3>
-        <div class="good-box">
-          <b>Where it thrives:</b> The second-order Taylor expansion gives XGBoost a
-          much more accurate curvature estimate of the loss landscape than ordinary
-          gradient boosting — it "sees" not just the slope but also how fast the slope
-          changes, leading to better-calibrated leaf weights and faster convergence.
-          The built-in $\lambda$ and $\gamma$ regularisation directly suppress
-          overfitting at the objective level, not just as a post-hoc depth cap. This
-          combination makes XGBoost exceptionally powerful on structured tabular data
-          with complex, noisy, non-linear feature interactions. The learning rate $\eta$
-          slows down correction deliberately, allowing many shallow trees to combine
-          without overfitting. 
-        </div>
-        <div class="warn-box">
-          <b>Where it struggles:</b> Because it is still a tree ensemble, it shares
-          the decision tree's fundamental inability to extrapolate: predictions outside
-          the training range are capped at the extreme leaf values. On very small datasets,
-          even with regularisation, the many boosting rounds can overfit. It is also
-          noticeably slower to train than a random forest because trees must be built
-          sequentially — parallelism exists only within each tree, not across trees.
-        </div>
-
-        <hr>
-
-        <!-- ═══════════════════════════════════════════
-             3. K-NEAREST NEIGHBORS
-        ════════════════════════════════════════════ -->
-        <h2 id="knn"><span class="model-badge">03</span>k-Nearest Neighbors (KNN)</h2>
+        <h2 id="knn"><span class="model-badge">02</span>k-Nearest Neighbors (KNN)</h2>
 
         <div class="model-img-container">
           <img src="img/knn.jpg" alt="K-Nearest Neighbors regression diagram">
@@ -389,9 +302,164 @@
         <hr>
 
         <!-- ═══════════════════════════════════════════
-             4. SUPPORT VECTOR REGRESSION
+             3. EXTRA TREES REGRESSOR
         ════════════════════════════════════════════ -->
-        <h2 id="svr"><span class="model-badge">04</span>Support Vector Regression (SVR)</h2>
+        <h2 id="et"><span class="model-badge">03</span>Extra Trees Regressor</h2>
+
+        <div class="model-img-container">
+          <img src="img/extra-trees.jpg" alt="Extra Trees Regressor ensemble diagram">
+          <i>Image generated using DALL·E 3</i>
+        </div>
+
+        <h3>Key Terms</h3>
+        <table class="step-table">
+          <tr><th>Term</th><th>What it means</th></tr>
+          <tr><td>Extremely Randomised Trees</td><td>The full name — the algorithm deliberately injects extra randomness beyond Random Forests at both the split-feature and split-threshold levels</td></tr>
+          <tr><td>Random threshold</td><td>Instead of searching for the optimal threshold for each candidate feature, ET draws the threshold uniformly at random from the feature's range</td></tr>
+          <tr><td>Feature subsampling ($m_{try}$)</td><td>At each node only a random subset of $m_{try}$ features is considered, identical to Random Forest</td></tr>
+          <tr><td>No bootstrap</td><td>By default, ET trains every tree on the <em>full</em> training set — only the split randomness decorrelates the trees</td></tr>
+          <tr><td>n_estimators</td><td>Number of trees in the ensemble; more trees reduce variance at the cost of compute</td></tr>
+          <tr><td>Aggregation</td><td>Final prediction = average of all individual tree predictions (regression)</td></tr>
+        </table>
+
+        <h3>The Mathematics</h3>
+        <p>
+          Extra Trees (ET) is a <b>fully randomised ensemble</b> of $B$ decision trees. It shares
+          the bagging-ensemble prediction formula with Random Forest but replaces the
+          optimal-split search with a <b>random threshold</b> — the defining mathematical difference.
+        </p>
+        <p><b>Step 1 — (No bootstrap):</b> All $B$ trees see the complete training set $\mathcal{D} = \{(\mathbf{x}_i, y_i)\}_{i=1}^{N}$. This is the default; bootstrapping can be enabled but is off by default.</p>
+        <p><b>Step 2 — Random feature and threshold selection:</b> At every split node, $m_{try}$ features are drawn at random. For each candidate feature $j$, a threshold $t_j$ is drawn <em>uniformly at random</em> from the observed range of that feature in the node:</p>
+        $$
+          t_j \sim \text{Uniform}\!\left(\min_{i \in \mathcal{S}} x_{ij},\; \max_{i \in \mathcal{S}} x_{ij}\right)
+        $$
+        <p>The split $(j^*, t_{j^*})$ that maximises variance reduction among all $m_{try}$ randomly generated candidates is chosen:</p>
+        $$
+          (j^*, t_{j^*}) = \underset{j \in \mathcal{F},\; t_j}{\arg\max}\; \Delta\text{Var}(j, t_j)
+        $$
+        $$
+          \Delta\text{Var}(j, t) = \text{Var}(\mathcal{S})
+            - \frac{|\mathcal{S}_L|}{|\mathcal{S}|}\,\text{Var}(\mathcal{S}_L)
+            - \frac{|\mathcal{S}_R|}{|\mathcal{S}|}\,\text{Var}(\mathcal{S}_R)
+        $$
+        <p>where $\mathcal{F}$ is the randomly drawn set of $m_{try}$ feature indices, and $\mathcal{S}_L$, $\mathcal{S}_R$ are the resulting child nodes.</p>
+        <p><b>Step 3 — Aggregation:</b> The ensemble prediction is the simple average:</p>
+        $$
+          \hat{y}_{\text{ET}}(\mathbf{x}^*) = \frac{1}{B} \sum_{b=1}^{B} f_b(\mathbf{x}^*)
+        $$
+        <p>The same bias-variance decomposition that governs Random Forest applies here. The extra randomness in the threshold further <b>reduces inter-tree correlation $\rho$</b>, pushing the irreducible ensemble variance $\rho\sigma^2$ even lower at the cost of a slight increase in individual-tree bias:</p>
+        $$
+          \text{Var}\!\left[\hat{y}_{\text{ET}}\right]
+          = \rho_{\text{ET}} \sigma^2 + \frac{1-\rho_{\text{ET}}}{B}\, \sigma^2,
+          \quad \rho_{\text{ET}} \le \rho_{\text{RF}}
+        $$
+
+        <h3>Why This Formula Makes the Model Behave the Way It Does</h3>
+        <div class="good-box">
+          <b>Where it thrives:</b> By randomising the threshold, ET eliminates the most
+          expensive inner loop of tree building — scanning every possible split point —
+          making it significantly <b>faster to train</b> than Random Forest on the same
+          data. The lower inter-tree correlation $\rho_{\text{ET}}$ means the ensemble
+          variance can be smaller than Random Forest's, often yielding competitive or
+          superior generalisation. Like all tree ensembles, it needs no feature scaling
+          and handles mixed feature types and non-linear relationships out of the box.
+        </div>
+        <div class="warn-box">
+          <b>Where it struggles:</b> The random threshold introduces additional bias into
+          each individual tree — if the optimal split threshold is near the boundary of the
+          feature range, a uniformly random draw is unlikely to find it. On datasets where
+          the signal is clean and splits are highly informative, this extra bias can outweigh
+          the variance gain, causing ET to underperform Random Forest. Like all tree ensembles,
+          it cannot extrapolate beyond the range of the training targets, and memory footprint
+          grows linearly with the number of trees.
+        </div>
+
+        <hr>
+
+        <!-- ═══════════════════════════════════════════
+             4. RANDOM FOREST REGRESSOR
+        ════════════════════════════════════════════ -->
+        <h2 id="rf"><span class="model-badge">04</span>Random Forest Regressor</h2>
+
+        <div class="model-img-container">
+          <img src="img/random-forest.jpg" alt="Random Forest Regressor ensemble diagram">
+          <i>Image generated using DALL·E 3</i>
+        </div>
+
+        <h3>Key Terms</h3>
+        <table class="step-table">
+          <tr><th>Term</th><th>What it means</th></tr>
+          <tr><td>Bagging (Bootstrap Aggregating)</td><td>Each tree is trained on a random bootstrap sample (drawn with replacement) of the training data</td></tr>
+          <tr><td>Bootstrap sample</td><td>A sample of size $N$ drawn with replacement from the original $N$ training points — ~63% unique points per sample</td></tr>
+          <tr><td>Out-of-Bag (OOB) sample</td><td>The ~37% of training points not drawn for a given tree — used as a free validation set</td></tr>
+          <tr><td>Feature subsampling ($m_{try}$)</td><td>At each split only a random subset of $m_{try}$ features are considered — the key decorrelation step</td></tr>
+          <tr><td>n_estimators</td><td>Number of trees in the forest; more trees = lower variance, diminishing returns after a point</td></tr>
+          <tr><td>Aggregation</td><td>Final prediction = average of all individual tree predictions (regression)</td></tr>
+          <tr><td>Feature importance</td><td>Mean decrease in impurity (or permutation importance) averaged across all trees and all splits on that feature</td></tr>
+        </table>
+
+        <h3>The Mathematics</h3>
+        <p>
+          A Random Forest is a <b>bagged ensemble</b> of $B$ decorrelated decision trees. It introduces
+          two sources of randomness — bootstrap sampling and feature subsampling — to reduce the
+          variance of the ensemble without inflating bias.
+        </p>
+        <p><b>Step 1 — Bootstrap sampling:</b> For tree $b = 1, \dots, B$, draw a bootstrap dataset:</p>
+        $$
+          \mathcal{D}^{(b)} = \{(\mathbf{x}_{i_1}, y_{i_1}),\dots, (\mathbf{x}_{i_N}, y_{i_N})\}
+          \quad \text{where } i_1, \dots, i_N \overset{\text{i.i.d.}}{\sim} \text{Uniform}\{1,\dots,N\}
+        $$
+        <p><b>Step 2 — Feature subsampling:</b> At every split node within tree $b$, only a random subset of $m_{try}$ features is considered:</p>
+        $$
+          m_{try} \approx \frac{p}{3} \quad \text{(regression default)}
+        $$
+        <p>where $p$ is the total number of features. The split is then chosen to maximise variance reduction over only those $m_{try}$ candidate features.</p>
+        <p><b>Step 3 — Aggregation (averaging):</b> The forest prediction for a query $\mathbf{x}^*$ is the simple average over all $B$ trees:</p>
+        $$
+          \hat{y}_{\text{RF}}(\mathbf{x}^*) = \frac{1}{B} \sum_{b=1}^{B} f_b(\mathbf{x}^*)
+        $$
+        <p>The variance of this average over an ensemble of correlated trees with individual variance $\sigma^2$ and pairwise correlation $\rho$ is:</p>
+        $$
+          \text{Var}\!\left[\hat{y}_{\text{RF}}\right]
+          = \rho \sigma^2 + \frac{1-\rho}{B}\, \sigma^2
+        $$
+        <p>As $B \to \infty$ the second term vanishes, leaving $\rho \sigma^2$ as the irreducible ensemble variance. <b>Reducing $\rho$ between trees is exactly the job of feature subsampling</b> — it is the mathematical engine behind the forest's power.</p>
+        <p>The <b>OOB error</b> is computed without a separate validation set: for each training point $i$, only the trees for which $i$ was <em>not</em> in the bootstrap sample make a prediction:</p>
+        $$
+          \hat{y}_i^{\text{OOB}} = \frac{1}{|\mathcal{B}^{-i}|} \sum_{b \in \mathcal{B}^{-i}} f_b(\mathbf{x}_i)
+        $$
+        $$
+          \text{OOB MSE} = \frac{1}{N} \sum_{i=1}^{N} \left(y_i - \hat{y}_i^{\text{OOB}}\right)^2
+        $$
+        <p>where $\mathcal{B}^{-i}$ is the set of trees whose bootstrap sample did not include point $i$.</p>
+
+        <h3>Why This Formula Makes the Model Behave the Way It Does</h3>
+        <div class="good-box">
+          <b>Where it thrives:</b> The variance formula $\rho\sigma^2 + \frac{1-\rho}{B}\sigma^2$
+          reveals everything: by keeping the bias of each tree roughly the same as a
+          single deep tree (low bias) but dramatically reducing variance through averaging
+          and decorrelation, the forest hits an excellent bias-variance tradeoff out of the box.
+          There is very little tuning required — the default $m_{try} = p/3$ and a large
+          $B$ already give strong performance across a wide variety of datasets. The OOB
+          error is a nearly free internal validation score, and the feature-importance
+          scores give genuine insight into which variables drive predictions.
+        </div>
+        <div class="warn-box">
+          <b>Where it struggles:</b> Like all tree ensembles, it cannot extrapolate beyond
+          the range of the training targets. When all features are strongly relevant, the
+          forced feature subsampling may actually slow convergence compared to a single
+          deep tree. The model is also less interpretable than a single tree — you trade
+          the white-box transparency of one tree for the black-box predictive power of
+          hundreds. Memory footprint grows linearly with $B$, and prediction requires
+          evaluating all $B$ trees, which can be slow at inference time for very large forests.
+        </div>
+
+        <hr>
+
+        <!-- ═══════════════════════════════════════════
+             5. SUPPORT VECTOR REGRESSION
+        ════════════════════════════════════════════ -->
+        <h2 id="svr"><span class="model-badge">05</span>Support Vector Regression (SVR)</h2>
 
         <div class="model-img-container">
           <img src="img/svr.jpg" alt="Support Vector Regression epsilon-tube diagram">
@@ -477,81 +545,89 @@
         <hr>
 
         <!-- ═══════════════════════════════════════════
-             5. RANDOM FOREST REGRESSOR
+             6. GRADIENT BOOSTING (XGBOOST)
         ════════════════════════════════════════════ -->
-        <h2 id="rf"><span class="model-badge">05</span>Random Forest Regressor</h2>
+        <h2 id="xgb"><span class="model-badge">06</span>Gradient Boosting (XGBoost)</h2>
 
         <div class="model-img-container">
-          <img src="img/random-forest.jpg" alt="Random Forest Regressor ensemble diagram">
+          <img src="img/xgboost.jpg" alt="XGBoost ensemble of trees diagram">
           <i>Image generated using DALL·E 3</i>
         </div>
 
         <h3>Key Terms</h3>
         <table class="step-table">
           <tr><th>Term</th><th>What it means</th></tr>
-          <tr><td>Bagging (Bootstrap Aggregating)</td><td>Each tree is trained on a random bootstrap sample (drawn with replacement) of the training data</td></tr>
-          <tr><td>Bootstrap sample</td><td>A sample of size $N$ drawn with replacement from the original $N$ training points — ~63% unique points per sample</td></tr>
-          <tr><td>Out-of-Bag (OOB) sample</td><td>The ~37% of training points not drawn for a given tree — used as a free validation set</td></tr>
-          <tr><td>Feature subsampling ($m_{try}$)</td><td>At each split only a random subset of $m_{try}$ features are considered — the key decorrelation step</td></tr>
-          <tr><td>n_estimators</td><td>Number of trees in the forest; more trees = lower variance, diminishing returns after a point</td></tr>
-          <tr><td>Aggregation</td><td>Final prediction = average of all individual tree predictions (regression)</td></tr>
-          <tr><td>Feature importance</td><td>Mean decrease in impurity (or permutation importance) averaged across all trees and all splits on that feature</td></tr>
+          <tr><td>Boosting</td><td>Sequential ensemble technique where each new model corrects the residual errors of all previous models</td></tr>
+          <tr><td>Residual / Pseudo-residual</td><td>The negative gradient of the loss — what the next tree is trained on</td></tr>
+          <tr><td>Learning rate $\eta$</td><td>Shrinkage applied to each tree's contribution to prevent overcorrecting</td></tr>
+          <tr><td>Regularisation $\lambda, \gamma$</td><td>Penalties on leaf weights and tree complexity baked into XGBoost's objective</td></tr>
+          <tr><td>Gain</td><td>XGBoost's split score — information gain adjusted by regularisation terms</td></tr>
+          <tr><td>n_estimators</td><td>Number of trees (boosting rounds)</td></tr>
+          <tr><td>max_depth</td><td>Maximum depth of each individual tree (kept shallow, typically 3–6)</td></tr>
         </table>
 
         <h3>The Mathematics</h3>
         <p>
-          A Random Forest is a <b>bagged ensemble</b> of $B$ decorrelated decision trees. It introduces
-          two sources of randomness — bootstrap sampling and feature subsampling — to reduce the
-          variance of the ensemble without inflating bias.
+          XGBoost builds an additive model. After $K$ boosting rounds, the prediction is:
         </p>
-        <p><b>Step 1 — Bootstrap sampling:</b> For tree $b = 1, \dots, B$, draw a bootstrap dataset:</p>
         $$
-          \mathcal{D}^{(b)} = \{(\mathbf{x}_{i_1}, y_{i_1}),\dots, (\mathbf{x}_{i_N}, y_{i_N})\}
-          \quad \text{where } i_1, \dots, i_N \overset{\text{i.i.d.}}{\sim} \text{Uniform}\{1,\dots,N\}
+          \hat{y}_i^{(K)} = \sum_{k=1}^{K} f_k(\mathbf{x}_i)
         $$
-        <p><b>Step 2 — Feature subsampling:</b> At every split node within tree $b$, only a random subset of $m_{try}$ features is considered:</p>
+        <p>where each $f_k$ is a regression tree. At round $t$, the new tree $f_t$ is found by minimising a <b>regularised second-order Taylor expansion</b> of the loss:</p>
         $$
-          m_{try} \approx \frac{p}{3} \quad \text{(regression default)}
+          \mathcal{L}^{(t)} \approx \sum_{i=1}^{n}
+          \left[
+            g_i\, f_t(\mathbf{x}_i) + \tfrac{1}{2}\, h_i\, f_t(\mathbf{x}_i)^2
+          \right]
+          + \Omega(f_t)
         $$
-        <p>where $p$ is the total number of features. The split is then chosen to maximise variance reduction over only those $m_{try}$ candidate features.</p>
-        <p><b>Step 3 — Aggregation (averaging):</b> The forest prediction for a query $\mathbf{x}^*$ is the simple average over all $B$ trees:</p>
+        <p>where $g_i$ and $h_i$ are the first and second derivatives (gradient and Hessian) of the loss with respect to the current prediction $\hat{y}_i^{(t-1)}$:</p>
         $$
-          \hat{y}_{\text{RF}}(\mathbf{x}^*) = \frac{1}{B} \sum_{b=1}^{B} f_b(\mathbf{x}^*)
+          g_i = \frac{\partial \ell(y_i,\, \hat{y}_i^{(t-1)})}{\partial \hat{y}_i^{(t-1)}},
+          \qquad
+          h_i = \frac{\partial^2 \ell(y_i,\, \hat{y}_i^{(t-1)})}{\partial (\hat{y}_i^{(t-1)})^2}
         $$
-        <p>The variance of this average over an ensemble of correlated trees with individual variance $\sigma^2$ and pairwise correlation $\rho$ is:</p>
+        <p>The regularisation term penalises tree complexity:</p>
         $$
-          \text{Var}\!\left[\hat{y}_{\text{RF}}\right]
-          = \rho \sigma^2 + \frac{1-\rho}{B}\, \sigma^2
+          \Omega(f_t) = \gamma T + \frac{\lambda}{2}\sum_{j=1}^{T} w_j^2
         $$
-        <p>As $B \to \infty$ the second term vanishes, leaving $\rho \sigma^2$ as the irreducible ensemble variance. <b>Reducing $\rho$ between trees is exactly the job of feature subsampling</b> — it is the mathematical engine behind the forest's power.</p>
-        <p>The <b>OOB error</b> is computed without a separate validation set: for each training point $i$, only the trees for which $i$ was <em>not</em> in the bootstrap sample make a prediction:</p>
+        <p>where $T$ is the number of leaves and $w_j$ is the weight (output value) of leaf $j$. The optimal weight for leaf $j$ and the corresponding split gain are:</p>
         $$
-          \hat{y}_i^{\text{OOB}} = \frac{1}{|\mathcal{B}^{-i}|} \sum_{b \in \mathcal{B}^{-i}} f_b(\mathbf{x}_i)
+          w_j^* = -\frac{\sum_{i \in R_j} g_i}{\sum_{i \in R_j} h_i + \lambda}
         $$
         $$
-          \text{OOB MSE} = \frac{1}{N} \sum_{i=1}^{N} \left(y_i - \hat{y}_i^{\text{OOB}}\right)^2
+          \text{Gain} = \frac{1}{2}
+          \left[
+            \frac{\left(\sum_{i \in \mathcal{S}_L} g_i\right)^2}{\sum_{i \in \mathcal{S}_L} h_i + \lambda}
+            + \frac{\left(\sum_{i \in \mathcal{S}_R} g_i\right)^2}{\sum_{i \in \mathcal{S}_R} h_i + \lambda}
+            - \frac{\left(\sum_{i \in \mathcal{S}} g_i\right)^2}{\sum_{i \in \mathcal{S}} h_i + \lambda}
+          \right] - \gamma
         $$
-        <p>where $\mathcal{B}^{-i}$ is the set of trees whose bootstrap sample did not include point $i$.</p>
+        <p>Each tree's contribution is then shrunk by the learning rate before being added:</p>
+        $$
+          \hat{y}_i^{(t)} = \hat{y}_i^{(t-1)} + \eta \cdot f_t(\mathbf{x}_i)
+        $$
 
         <h3>Why This Formula Makes the Model Behave the Way It Does</h3>
         <div class="good-box">
-          <b>Where it thrives:</b> The variance formula $\rho\sigma^2 + \frac{1-\rho}{B}\sigma^2$
-          reveals everything: by keeping the bias of each tree roughly the same as a
-          single deep tree (low bias) but dramatically reducing variance through averaging
-          and decorrelation, the forest hits an excellent bias-variance tradeoff out of the box.
-          There is very little tuning required — the default $m_{try} = p/3$ and a large
-          $B$ already give strong performance across a wide variety of datasets. The OOB
-          error is a nearly free internal validation score, and the feature-importance
-          scores give genuine insight into which variables drive predictions.
+          <b>Where it thrives:</b> The second-order Taylor expansion gives XGBoost a
+          much more accurate curvature estimate of the loss landscape than ordinary
+          gradient boosting — it "sees" not just the slope but also how fast the slope
+          changes, leading to better-calibrated leaf weights and faster convergence.
+          The built-in $\lambda$ and $\gamma$ regularisation directly suppress
+          overfitting at the objective level, not just as a post-hoc depth cap. This
+          combination makes XGBoost exceptionally powerful on structured tabular data
+          with complex, noisy, non-linear feature interactions. The learning rate $\eta$
+          slows down correction deliberately, allowing many shallow trees to combine
+          without overfitting. 
         </div>
         <div class="warn-box">
-          <b>Where it struggles:</b> Like all tree ensembles, it cannot extrapolate beyond
-          the range of the training targets. When all features are strongly relevant, the
-          forced feature subsampling may actually slow convergence compared to a single
-          deep tree. The model is also less interpretable than a single tree — you trade
-          the white-box transparency of one tree for the black-box predictive power of
-          hundreds. Memory footprint grows linearly with $B$, and prediction requires
-          evaluating all $B$ trees, which can be slow at inference time for very large forests.
+          <b>Where it struggles:</b> Because it is still a tree ensemble, it shares
+          the decision tree's fundamental inability to extrapolate: predictions outside
+          the training range are capped at the extreme leaf values. On very small datasets,
+          even with regularisation, the many boosting rounds can overfit. It is also
+          noticeably slower to train than a random forest because trees must be built
+          sequentially — parallelism exists only within each tree, not across trees.
         </div>
 
         <hr>
@@ -573,18 +649,25 @@
             <td>No</td>
           </tr>
           <tr>
-            <td>XGBoost</td>
-            <td>Sequential trees on 2nd-order loss residuals + regularisation</td>
-            <td>$O(K \cdot N p \log N)$</td>
-            <td>No</td>
-            <td>No</td>
-          </tr>
-          <tr>
             <td>KNN</td>
             <td>Average of $k$ nearest neighbors — zero training</td>
             <td>$O(1)$ train, $O(Np)$ predict</td>
             <td>Partially</td>
             <td><b>Yes</b></td>
+          </tr>
+          <tr>
+            <td>Extra Trees</td>
+            <td>Fully randomised trees (random thresholds) → averaged prediction</td>
+            <td>$O(B \cdot N \sqrt{p} \log N)$</td>
+            <td>No</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td>Random Forest</td>
+            <td>Bagged + decorrelated deep trees → averaged prediction</td>
+            <td>$O(B \cdot N \sqrt{p} \log N)$</td>
+            <td>No</td>
+            <td>No</td>
           </tr>
           <tr>
             <td>SVR</td>
@@ -594,9 +677,9 @@
             <td><b>Yes</b></td>
           </tr>
           <tr>
-            <td>Random Forest</td>
-            <td>Bagged + decorrelated deep trees → averaged prediction</td>
-            <td>$O(B \cdot N \sqrt{p} \log N)$</td>
+            <td>Gradient Boosting</td>
+            <td>Sequential trees on 2nd-order loss residuals + regularisation</td>
+            <td>$O(K \cdot N p \log N)$</td>
             <td>No</td>
             <td>No</td>
           </tr>
@@ -615,6 +698,7 @@
           <p>Posted on: <b>October 14, 2026</b></p>
         </footer>
 
+
       </main>
     </main>
   </div>
@@ -624,3 +708,4 @@
   <script src="../script.js"></script>
 </body>
 </html>
+
